@@ -1,0 +1,101 @@
+'use client';
+
+import { Button as ChakraButton, ButtonProps as ChakraButtonProps, Icon } from '@chakra-ui/react';
+import Link from 'next/link';
+import React from 'react';
+
+interface ButtonProps extends Omit<ChakraButtonProps, 'children'> {
+  href?: string;
+  label?: string;
+  icon?: React.ElementType;
+  isActive?: boolean;
+  onClick?: () => void;
+  variantType?: 'primary' | 'secondary' | 'sidebar';
+}
+
+export function Button({
+  href,
+  label,
+  icon,
+  isActive,
+  onClick,
+  variantType = 'primary',
+  ...buttonProps
+}: ButtonProps) {
+  const variantStyles = {
+    primary: {
+      bg: 'primary.500',
+      color: 'white',
+      borderColor: 'primary.500',
+      hover: { bg: 'white', color: 'primary.500' },
+      active: {},
+    },
+    secondary: {
+      bg: 'secondary.500',
+      color: 'white',
+      borderColor: 'secondary.500',
+      hover: { bg: 'white', color: 'primary.500' },
+      active: {},
+    },
+    sidebar: {
+      bg: isActive ? 'primary.500' : 'transparent',
+      color: isActive ? 'white' : 'secondaryText.500',
+      borderColor: 'transparent',
+      hover: { bg: isActive ? 'primary.500' : 'primary.200' },
+      active: { bg: 'primary.200' },
+    },
+  };
+
+  const style = variantStyles[variantType];
+
+  const content = (
+    <>
+      {icon && <Icon as={icon} boxSize={5} />}
+      {label}
+    </>
+  );
+
+  return (
+    <ChakraButton
+      variant="ghost"
+      justifyContent="flex-start"
+      w="full"
+      h="50px"
+      bg={style.bg}
+      color={style.color}
+      border="1px solid"
+      borderColor={style.borderColor}
+      _hover={style.hover}
+      _active={style.active}
+      px={4}
+      rounded="lg"
+      onClick={href ? undefined : onClick}
+      {...buttonProps}
+    >
+      {href ? (
+        <Link
+          href={href}
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          {content}
+        </Link>
+      ) : (
+        <span
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          {content}
+        </span>
+      )}
+    </ChakraButton>
+  );
+}
