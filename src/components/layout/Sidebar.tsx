@@ -17,6 +17,21 @@ type SidebarProps = {
 export function Sidebar({ items = [] }: SidebarProps) {
   const pathname = usePathname();
 
+  // Check if the path is active
+  const isPathActive = (currentPath: string, href: string) => {
+    if (href === '/') return currentPath === '/';
+    return currentPath === href || currentPath.startsWith(`${href}/`);
+  };
+
+  // Get the active href
+  const activeHref = (() => {
+    const matches = items.filter(item => isPathActive(pathname, item.href));
+    if (matches.length === 0) return undefined;
+    return matches.reduce((longest, item) =>
+      !longest || item.href.length > longest.href.length ? item : longest
+    ).href;
+  })();
+
   return (
     <VStack gap={4} px={6} py={4} align="stretch" w="full">
       <HStack align="center" gap={2} py={6} px={4}>
@@ -27,7 +42,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
       </HStack>
 
       {items.map(item => {
-        const isActive = pathname === item.href;
+        const isActive = activeHref ? item.href === activeHref : isPathActive(pathname, item.href);
         return (
           <Button
             key={item.href}

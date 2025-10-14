@@ -1,18 +1,15 @@
 export const commonHeadings: Record<string, string> = {
-  '/': 'Dashboard',
   '/profile': 'My Profile',
   '/settings': 'Settings',
 };
 
 export const adminHeadings: Record<string, string> = {
-  '/admin': 'Admin Dashboard',
+  '/admin': 'Dashboard',
   '/admin/users': 'Manage Users',
-  '/admin/reports': 'Reports',
 };
 
 export const librarianHeadings: Record<string, string> = {
-  '/librarian': 'Librarian Dashboard',
+  '/librarian': 'Dashboard',
   '/librarian/books': 'Books Management',
-  '/librarian/members': 'Members',
-  '/librarian/loans': 'Loans',
+  '/librarian/books/add': 'Add New Book',
 };

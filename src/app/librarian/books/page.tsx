@@ -516,6 +516,7 @@ export default function BookPage() {
             h="40px"
             px={2}
             fontSize="sm"
+            href="/librarian/books/add"
             icon={IoAddSharp}
           />
         </HStack>
