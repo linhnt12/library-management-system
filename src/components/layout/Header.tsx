@@ -19,6 +19,7 @@ export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderP
 
   let heading = '';
 
+  // Get heading based on the pathname
   if (isAdmin) {
     heading = adminHeadings[pathname] || 'Admin';
   } else if (isLibrarian) {
@@ -28,7 +29,7 @@ export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderP
   }
 
   return (
-    <Flex as="header" align="center" justify="space-between" paddingBottom={8} bg="layoutBg.500">
+    <Flex as="header" align="center" justify="space-between" paddingBottom={4} bg="layoutBg.500">
       <Box>
         <Heading fontSize="2xl" fontWeight="semibold">
           {heading}

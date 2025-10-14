@@ -19,7 +19,7 @@ export function Layout({ children, sidebar, userName, userRole }: LayoutProps) {
       </Box>
       <Box flex="1" bg="layoutBg.500" px={6} py={4} gapY={4}>
         <Header userName={userName} userRole={userRole} />
-        <Box px={4} py={6} rounded="lg" bg="white" color="text.500">
+        <Box p={4} rounded="lg" bg="white" color="text.500">
           {children}
         </Box>
         <Footer />
