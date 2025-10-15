@@ -2,10 +2,10 @@
 
 import { Button, FormSelect, SearchInput } from '@/components';
 import { BookColumns, Table } from '@/components/table';
-import { Book } from '@/types';
 import { HStack, Text } from '@chakra-ui/react';
 import { useState } from 'react';
 import { IoAddSharp } from 'react-icons/io5';
+import { ROUTES } from '@/constants';
 
 export default function BookPage() {
   const [page, setPage] = useState(1);
@@ -15,7 +15,7 @@ export default function BookPage() {
   const [query, setQuery] = useState('');
 
   // TODO: This will be deleted when the API is implemented
-  const mockData: Book[] = [
+  const mockData: any[] = [
     {
       id: '1',
       title: 'Where The Flowers Bloom',
@@ -508,6 +508,7 @@ export default function BookPage() {
             onChange={val => setSortKey(val)}
             width="120px"
             height="40px"
+            variantType="filter"
           />
           <Button
             label="Add Book"
@@ -516,7 +517,7 @@ export default function BookPage() {
             h="40px"
             px={2}
             fontSize="sm"
-            href="/librarian/books/add"
+            href={ROUTES.LIBRARIAN.BOOKS_ADD}
             icon={IoAddSharp}
           />
         </HStack>

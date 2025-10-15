@@ -2,7 +2,7 @@
 
 import { tablePageSizeOptions } from '@/constants';
 import { Box, ButtonGroup, HStack, IconButton, Pagination, Text } from '@chakra-ui/react';
-import { FormSelect } from '@/components/forms';
+import { FormSelect } from '@/components';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
 export type TableFooterProps = {
@@ -37,6 +37,7 @@ export function TableFooter({
           width="70px"
           height="32px"
           triggerSize="xs"
+          variantType="filter"
         />
         <Text fontSize="sm" color="secondaryText.500">
           of {total} results

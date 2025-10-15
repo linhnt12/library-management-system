@@ -13,6 +13,10 @@ export type FormSelectProps = {
   width?: HTMLChakraProps<'div'>['w'];
   height?: HTMLChakraProps<'div'>['h'];
   triggerSize?: 'xs' | 'sm' | 'md';
+  bg?: HTMLChakraProps<'div'>['bg'];
+  border?: HTMLChakraProps<'div'>['border'];
+  borderColor?: HTMLChakraProps<'div'>['borderColor'];
+  variantType?: 'default' | 'filter';
 };
 
 export function FormSelect({
@@ -20,27 +24,48 @@ export function FormSelect({
   value,
   onChange,
   placeholder,
-  fontWeight,
+  fontWeight = 'medium',
   width,
   height,
   triggerSize = 'sm',
+  bg,
+  border,
+  borderColor,
+  variantType = 'default',
 }: FormSelectProps) {
   const collection = createListCollection({ items });
   const selected = value ? [value] : [];
+
+  const variantStyles = {
+    default: {
+      bg: bg || 'layoutBg.500',
+      border: border || '1px solid',
+      borderColor: borderColor || 'gray.200',
+    },
+    filter: {
+      bg: bg || 'paginationBg.500',
+      border: 'none',
+      borderColor: 'transparent',
+    },
+  };
+
+  const style = variantStyles[variantType];
+
   return (
     <Select.Root
       collection={collection}
       value={selected}
       w={width}
       fontSize="sm"
-      fontWeight="medium"
+      fontWeight={fontWeight}
       onValueChange={e => onChange?.(e.value[0])}
     >
       <Select.Trigger asChild>
         <Button
           size={triggerSize}
-          variant="subtle"
-          bg="paginationBg.500"
+          bg={style.bg}
+          border={style.border}
+          borderColor={style.borderColor}
           px={2}
           rounded="md"
           h={height}
@@ -51,13 +76,7 @@ export function FormSelect({
         </Button>
       </Select.Trigger>
       <Select.Positioner zIndex={30}>
-        <Select.Content
-          bg="white"
-          borderRadius="lg"
-          border="1px solid"
-          borderColor="gray.200"
-          boxShadow="md"
-        >
+        <Select.Content bg="white" borderRadius="lg" boxShadow="md">
           {collection.items.map(item => (
             <Select.Item
               key={item.value}
