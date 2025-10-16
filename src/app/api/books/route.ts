@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { BookType, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import { PublicBook, BooksListPayload, CreateBookData } from '@/types/book';
+import { Book, BooksListPayload, CreateBookData } from '@/types/book';
 import {
   successResponse,
   errorResponse,
@@ -22,6 +22,8 @@ export async function GET(request: NextRequest) {
     const authorIdParam = searchParams.get('authorId');
     const typeParam = searchParams.get('type') as BookType | null;
     const publishYearParam = searchParams.get('publishYear');
+    const sortBy = searchParams.get('sortBy');
+    const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
 
     const authorId = authorIdParam ? parseIntParam(authorIdParam, 0) : undefined;
     const publishYear = publishYearParam ? parseIntParam(publishYearParam, 0) : undefined;
@@ -51,12 +53,32 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * limit;
 
+    // Build orderBy clause
+    let orderBy: Prisma.BookOrderByWithRelationInput = { createdAt: 'desc' };
+
+    if (sortBy && sortOrder) {
+      // Map frontend sort keys to database fields
+      const sortFieldMap: Record<string, string> = {
+        id: 'id',
+        title: 'title',
+        publishYear: 'publishYear',
+        type: 'type',
+        pageCount: 'pageCount',
+        price: 'price',
+      };
+
+      const dbField = sortFieldMap[sortBy];
+      if (dbField) {
+        orderBy = { [dbField]: sortOrder };
+      }
+    }
+
     const [booksRaw, total] = await Promise.all([
       prisma.book.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         select: {
           id: true,
           authorId: true,
@@ -77,7 +99,7 @@ export async function GET(request: NextRequest) {
       prisma.book.count({ where }),
     ]);
 
-    const books = booksRaw as unknown as PublicBook[];
+    const books = booksRaw as unknown as Book[];
 
     return successResponse<BooksListPayload>({
       books,
@@ -138,7 +160,7 @@ export async function POST(request: NextRequest) {
       coverImageUrl: coverImageUrl ? sanitizeString(coverImageUrl) : null,
     };
 
-    const created: PublicBook = await prisma.book.create({
+    const created: Book = await prisma.book.create({
       data,
       select: {
         id: true,
@@ -158,7 +180,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return successResponse<PublicBook>(created, 'Book created successfully', 201);
+    return successResponse<Book>(created, 'Book created successfully', 201);
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('Unique constraint') || error.message.includes('isbn')) {

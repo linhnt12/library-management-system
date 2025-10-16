@@ -1,8 +1,8 @@
-import { CreateBookData, PublicBook } from '@/types/book';
+import { CreateBookData, Book } from '@/types/book';
 
 export class BookService {
   // Create book
-  static async createBook(data: CreateBookData): Promise<PublicBook> {
+  static async createBook(data: CreateBookData): Promise<Book> {
     const response = await fetch('/api/books', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -27,6 +27,8 @@ export class BookService {
     authorId?: number;
     type?: string;
     publishYear?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
   }) {
     const searchParams = new URLSearchParams();
 
@@ -36,6 +38,8 @@ export class BookService {
     if (params?.authorId) searchParams.set('authorId', params.authorId.toString());
     if (params?.type) searchParams.set('type', params.type);
     if (params?.publishYear) searchParams.set('publishYear', params.publishYear.toString());
+    if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
+    if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 
     const response = await fetch(`/api/books?${searchParams.toString()}`);
     const json = await response.json();
@@ -49,7 +53,7 @@ export class BookService {
   }
 
   // Get book by id
-  static async getBookById(id: number): Promise<PublicBook> {
+  static async getBookById(id: number): Promise<Book> {
     const response = await fetch(`/api/books/${id}`);
     const json = await response.json();
 
@@ -62,7 +66,7 @@ export class BookService {
   }
 
   // Update book
-  static async updateBook(id: number, data: Partial<CreateBookData>): Promise<PublicBook> {
+  static async updateBook(id: number, data: Partial<CreateBookData>): Promise<Book> {
     const response = await fetch(`/api/books/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

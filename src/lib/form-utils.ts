@@ -11,7 +11,7 @@ export interface FormSubmissionOptions<T, TData = unknown, TResult = unknown> {
   errorMessage?: string;
 }
 
-// Generic form submission handler với error handling và toast notifications
+// Generic form submission handler with error handling and toast notifications
 export async function handleFormSubmission<T, TData = unknown, TResult = unknown>(
   formData: T,
   options: FormSubmissionOptions<T, TData, TResult>
@@ -108,7 +108,7 @@ export const validators = {
     return null;
   },
 
-  multiSelectRequired: (value: any[], fieldName: string) => {
+  multiSelectRequired: (value: unknown[], fieldName: string) => {
     if (!value || value.length === 0) {
       return `Please select at least one ${fieldName}`;
     }

@@ -1,24 +1,24 @@
 'use client';
 
 import { Book } from '@/types';
-import { Badge, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
+import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 
-// TODOD: This will be fixed later
+// TODO: This will be fixed later
 export const BookColumns = [
   {
-    key: 'index',
-    header: 'No.',
-    sortable: false,
-    render: (_book: Book, rowIndex: number) => <Text>{rowIndex + 1}</Text>,
+    key: 'id',
+    header: 'ID',
+    sortable: true,
+    render: (book: Book) => <Text>{book.id}</Text>,
   },
   {
-    key: 'book',
+    key: 'title',
     header: 'Book',
     sortable: true,
     render: (book: Book) => (
       <HStack gap={3}>
         <Image
-          src={book.coverImage}
+          src={book.coverImageUrl ?? undefined}
           alt={book.title}
           width="40px"
           height="60px"
@@ -28,7 +28,7 @@ export const BookColumns = [
         <VStack align="start" gap={1}>
           <Text fontWeight="medium">{book.title}</Text>
           <Text fontSize="sm" color="gray.600">
-            {book.bookCode}
+            {book.isbn}
           </Text>
         </VStack>
       </HStack>
@@ -37,79 +37,54 @@ export const BookColumns = [
   {
     key: 'author',
     header: 'Author',
-    sortable: true,
+    sortable: false,
     render: (book: Book) => (
       <HStack gap={2}>
-        <Image
-          src={book.author.avatar}
+        {/* <Image
+          src={book.author.avatarUrl}
           alt={book.author.name}
           width="32px"
           height="32px"
           borderRadius="full"
-        />
-        <Text>{book.author.name}</Text>
+        /> */}
+        <Text>{book.authorId}</Text>
       </HStack>
     ),
   },
   {
     key: 'publisher',
     header: 'Publisher',
-    sortable: true,
-    render: (book: Book) => (
-      <VStack align="start" gap={0}>
-        <Text>{book.publisher.name}</Text>
-        <Text fontSize="sm" color="gray.600">
-          {book.publisher.year}
-        </Text>
-      </VStack>
-    ),
+    sortable: false,
+    render: (book: Book) => <Text>{book.publisher ?? 'N/A'}</Text>,
   },
   {
-    key: 'status',
-    header: 'Status',
+    key: 'publishYear',
+    header: 'Publish Year',
     sortable: true,
-    render: (book: Book) => {
-      const colors = {
-        bg: `{colors.status.${book.status}}`,
-        color: `{colors.statusText.${book.status}}`,
-      };
-      return (
-        <Badge
-          bg={colors.bg}
-          color={colors.color}
-          fontWeight="semibold"
-          px={3}
-          py={1}
-          borderRadius="full"
-        >
-          {book.status}
-        </Badge>
-      );
-    },
+    render: (book: Book) => <Text>{book.publishYear ?? 'N/A'}</Text>,
   },
   {
-    key: 'copies',
-    header: 'Copies',
-    sortable: true,
-    render: (book: Book) => (
-      <Text>
-        {book.copies.available}/{book.copies.total}
-      </Text>
-    ),
+    key: 'edition',
+    header: 'Edition',
+    sortable: false,
+    render: (book: Book) => <Text>{book.edition ?? 'N/A'}</Text>,
   },
   {
-    key: 'resourceLink',
-    header: 'Resource Link',
+    key: 'type',
+    header: 'Type',
     sortable: true,
-    render: (book: Book) => (
-      <HStack gap={2}>
-        <Text>🔗</Text>
-        <Link href={book.resourceLink} color="blue.500" fontSize="sm">
-          {book.resourceLink.length > 30
-            ? `${book.resourceLink.substring(0, 30)}...`
-            : book.resourceLink}
-        </Link>
-      </HStack>
-    ),
+    render: (book: Book) => <Text>{book.type}</Text>,
+  },
+  {
+    key: 'pageCount',
+    header: 'Page Count',
+    sortable: true,
+    render: (book: Book) => <Text>{book.pageCount ?? 'N/A'}</Text>,
+  },
+  {
+    key: 'price',
+    header: 'Price',
+    sortable: true,
+    render: (book: Book) => <Text>{book.price ?? 'N/A'}</Text>,
   },
 ];

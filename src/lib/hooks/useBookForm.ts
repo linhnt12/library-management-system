@@ -3,7 +3,7 @@ import { ROUTES } from '@/constants';
 import { useBookFormSubmission, useDialog } from '@/lib/hooks';
 import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
 import { BookService } from '@/services';
-import { CreateBookData, PublicBook } from '@/types/book';
+import { CreateBookData, Book } from '@/types/book';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -29,7 +29,7 @@ export function useBookForm() {
   const { submitBook, isSubmitting } = useBookFormSubmission<
     CreateBookFormState,
     CreateBookData,
-    PublicBook
+    Book
   >();
   const { dialog, openDialog, handleConfirm, handleCancel: handleDialogCancel } = useDialog();
 

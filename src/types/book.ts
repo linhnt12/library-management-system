@@ -1,7 +1,7 @@
 import { BookType } from '@prisma/client';
 import { PaginationResponse } from '@/types/api';
 
-export interface PublicBook {
+export interface Book {
   id: number;
   authorId: number;
   title: string;
@@ -19,7 +19,7 @@ export interface PublicBook {
 }
 
 export interface BooksListPayload {
-  books: PublicBook[];
+  books: Book[];
   pagination: PaginationResponse;
 }
 

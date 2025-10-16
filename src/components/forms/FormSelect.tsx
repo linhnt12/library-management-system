@@ -17,6 +17,7 @@ export type FormSelectProps = {
   border?: HTMLChakraProps<'div'>['border'];
   borderColor?: HTMLChakraProps<'div'>['borderColor'];
   variantType?: 'default' | 'filter';
+  id?: string;
 };
 
 export function FormSelect({
@@ -32,6 +33,7 @@ export function FormSelect({
   border,
   borderColor,
   variantType = 'default',
+  id,
 }: FormSelectProps) {
   const collection = createListCollection({ items });
   const selected = value ? [value] : [];
@@ -53,6 +55,7 @@ export function FormSelect({
 
   return (
     <Select.Root
+      id={id}
       collection={collection}
       value={selected}
       w={width}

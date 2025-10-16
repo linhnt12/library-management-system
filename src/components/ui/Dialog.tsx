@@ -29,7 +29,7 @@ export function Dialog({
   showCloseButton = true,
 }: DialogProps) {
   return (
-    <ChakraDialog.Root open={isOpen} onOpenChange={e => !e.open && onClose()}>
+    <ChakraDialog.Root open={isOpen} placement="center" onOpenChange={e => !e.open && onClose()}>
       <Portal>
         <ChakraDialog.Backdrop bg="blackAlpha.600" />
         <ChakraDialog.Positioner>

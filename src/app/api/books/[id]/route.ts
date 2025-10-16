@@ -8,7 +8,7 @@ import {
   parseIntParam,
   sanitizeString,
 } from '@/lib/api-utils';
-import { PublicBook, UpdateBookData } from '@/types/book';
+import { Book, UpdateBookData } from '@/types/book';
 
 // GET /api/books/[id] - Get book by id
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return errorResponse('Invalid book ID', 400);
     }
 
-    const book: PublicBook | null = await prisma.book.findFirst({
+    const book: Book | null = await prisma.book.findFirst({
       where: { id: bookId, isDeleted: false },
       select: {
         id: true,
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return errorResponse('Book not found', 404);
     }
 
-    const updated: PublicBook = await prisma.book.update({
+    const updated: Book = await prisma.book.update({
       where: { id: bookId },
       data: updateData,
       select: {
@@ -127,7 +127,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       },
     });
 
-    return successResponse<PublicBook>(updated, 'Book updated successfully');
+    return successResponse<Book>(updated, 'Book updated successfully');
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('Unique constraint') || error.message.includes('isbn')) {
