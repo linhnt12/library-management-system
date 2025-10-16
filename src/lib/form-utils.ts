@@ -100,6 +100,20 @@ export const validators = {
     }
     return null;
   },
+
+  selectRequired: (value: string, fieldName: string) => {
+    if (!value || value.trim() === '') {
+      return `Please select ${fieldName}`;
+    }
+    return null;
+  },
+
+  multiSelectRequired: (value: any[], fieldName: string) => {
+    if (!value || value.length === 0) {
+      return `Please select at least one ${fieldName}`;
+    }
+    return null;
+  },
 };
 
 // Data transformation utilities

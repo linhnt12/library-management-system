@@ -1,3 +1,4 @@
+import { SelectOption } from '@/components/forms/FormMultiSelect';
 import { validators } from '@/lib/form-utils';
 
 export type CreateBookFormState = {
@@ -12,6 +13,7 @@ export type CreateBookFormState = {
   type: 'PRINT' | 'EBOOK' | 'BOTH';
   description: string;
   coverImageUrl: string;
+  categories?: SelectOption[];
 };
 
 export type FormErrors = {
@@ -26,6 +28,7 @@ export type FormErrors = {
   type?: string;
   description?: string;
   coverImageUrl?: string;
+  categories?: string;
 };
 
 export function validateCreateBook(form: CreateBookFormState): {
@@ -34,22 +37,19 @@ export function validateCreateBook(form: CreateBookFormState): {
 } {
   const errors: FormErrors = {};
 
-  const authorIdError = validators.required(form.authorId, 'author ID');
+  const authorIdError = validators.selectRequired(form.authorId, 'Author');
   if (authorIdError) errors.authorId = authorIdError;
 
-  const titleError = validators.required(form.title, 'book title');
+  const titleError = validators.required(form.title, 'Book Title');
   if (titleError) errors.title = titleError;
 
-  const authorIdFormatError = validators.positiveInteger(form.authorId, 'Author ID');
-  if (authorIdFormatError) errors.authorId = authorIdFormatError;
-
-  const publishYearError = validators.numeric(form.publishYear, 'The publish year');
+  const publishYearError = validators.numeric(form.publishYear, 'Publish Year');
   if (publishYearError) errors.publishYear = publishYearError;
 
-  const pageCountError = validators.numeric(form.pageCount, 'The page count');
+  const pageCountError = validators.numeric(form.pageCount, 'Page Count');
   if (pageCountError) errors.pageCount = pageCountError;
 
-  const priceError = validators.numeric(form.price, 'The price');
+  const priceError = validators.numeric(form.price, 'Price');
   if (priceError) errors.price = priceError;
 
   const firstError = Object.values(errors).find(Boolean) || null;

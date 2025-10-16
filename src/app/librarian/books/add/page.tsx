@@ -1,18 +1,19 @@
 'use client';
 
-import { Box, Stack, Grid, GridItem } from '@chakra-ui/react';
 import {
-  FormSelect,
-  FormInput,
-  FormField,
-  FormTextarea,
-  FormSection,
-  FormDivider,
-  FormButtons,
   Dialog,
+  FormButtons,
+  FormDivider,
+  FormField,
+  FormInput,
+  FormMultiSelect,
+  FormSection,
+  FormSelect,
+  FormTextarea,
 } from '@/components';
-import { BOOK_TYPE_OPTIONS } from '@/constants';
+import { AUTHOR_OPTIONS, BOOK_TYPE_OPTIONS, CATEGORY_OPTIONS } from '@/constants';
 import { useBookForm } from '@/lib/hooks';
+import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
 
 export default function AddBookPage() {
   const {
@@ -54,17 +55,28 @@ export default function AddBookPage() {
             </GridItem>
 
             <GridItem>
-              {/* Author ID */}
-              <FormField label="Author ID" error={errors.authorId}>
-                <FormInput
-                  type="number"
+              {/* Author */}
+              <FormField label="Author" error={errors.authorId}>
+                <FormSelect
+                  items={AUTHOR_OPTIONS}
                   value={form.authorId}
-                  onChange={e => setField('authorId', e.target.value)}
-                  placeholder="Enter author ID"
+                  onChange={val => setField('authorId', val)}
+                  placeholder="Select author"
+                  height="50px"
                 />
               </FormField>
             </GridItem>
           </Grid>
+
+          {/* Categories */}
+          <FormField label="Categories" error={errors.categories}>
+            <FormMultiSelect
+              value={form.categories || []}
+              onChange={val => setField('categories', val)}
+              options={CATEGORY_OPTIONS}
+              placeholder="Select categories"
+            />
+          </FormField>
         </FormSection>
 
         <FormDivider />
@@ -139,7 +151,7 @@ export default function AddBookPage() {
 
             <GridItem>
               {/* Type */}
-              <FormField label="Type">
+              <FormField label="Type" error={errors.type}>
                 <FormSelect
                   items={BOOK_TYPE_OPTIONS}
                   value={form.type}

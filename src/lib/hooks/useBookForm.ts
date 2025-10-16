@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { BookService } from '@/services';
-import { useBookFormSubmission, useDialog } from '@/lib/hooks';
-import { validateCreateBook, CreateBookFormState, FormErrors } from '@/lib/validators';
-import { CreateBookData, PublicBook } from '@/types/book';
+import { SelectOption } from '@/components/forms/FormMultiSelect';
 import { ROUTES } from '@/constants';
+import { useBookFormSubmission, useDialog } from '@/lib/hooks';
+import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
+import { BookService } from '@/services';
+import { CreateBookData, PublicBook } from '@/types/book';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const initialState: CreateBookFormState = {
   authorId: '',
@@ -18,6 +19,7 @@ const initialState: CreateBookFormState = {
   type: 'PRINT',
   description: '',
   coverImageUrl: '',
+  categories: [],
 };
 
 export function useBookForm() {
@@ -31,7 +33,7 @@ export function useBookForm() {
   >();
   const { dialog, openDialog, handleConfirm, handleCancel: handleDialogCancel } = useDialog();
 
-  const setField = (key: keyof CreateBookFormState, value: string) => {
+  const setField = (key: keyof CreateBookFormState, value: string | SelectOption[]) => {
     setForm(prev => ({ ...prev, [key]: value }));
     // Clear error when user starts typing
     if (errors[key]) {
@@ -46,7 +48,7 @@ export function useBookForm() {
   };
 
   const transformData = (formData: CreateBookFormState): CreateBookData => ({
-    authorId: formData.authorId,
+    authorId: Number(formData.authorId),
     title: formData.title.trim(),
     isbn: formData.isbn.trim() || null,
     publishYear: formData.publishYear ? Number(formData.publishYear) : null,
