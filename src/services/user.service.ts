@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { Role, UserStatus } from '@prisma/client'
 import { CreateUserData, UpdateUserData, UserQueryFilters, PublicUser } from '@/types/user'
+import { ConflictError, NotFoundError } from '@/lib/errors'
 
 export class UserService {
   // Get users with pagination and filters
@@ -102,7 +103,7 @@ export class UserService {
     })
 
     if (existingUser) {
-      throw new Error('Email already exists')
+      throw new ConflictError('Email already exists')
     }
 
     const user = await prisma.user.create({
@@ -137,7 +138,7 @@ export class UserService {
     // Check if user exists
     const existingUser = await this.getUserById(id)
     if (!existingUser) {
-      throw new Error('User not found')
+      throw new NotFoundError('User not found')
     }
 
     // Check email uniqueness if email is being changed
@@ -147,13 +148,13 @@ export class UserService {
       })
 
       if (emailExists) {
-        throw new Error('Email already exists')
+        throw new ConflictError('Email already exists')
       }
     }
 
     // Prepare update data
     const updateData: any = { ...userData }
-    
+
     if (userData.status !== undefined) {
       if (userData.status === UserStatus.INACTIVE) {
         updateData.inactiveAt = new Date()
@@ -187,7 +188,7 @@ export class UserService {
     // Check if user exists
     const existingUser = await this.getUserById(id)
     if (!existingUser) {
-      throw new Error('User not found')
+      throw new NotFoundError('User not found')
     }
 
     await prisma.user.update({

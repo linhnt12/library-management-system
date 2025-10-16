@@ -16,6 +16,13 @@ import {
   RateLimitUtils,
 } from '@/lib/auth-utils'
 import { randomBytes } from 'crypto'
+import {
+  ValidationError,
+  ConflictError,
+  RateLimitError,
+  UnauthorizedError,
+  NotFoundError,
+} from '@/lib/errors'
 
 export class AuthService {
   // Register new user
@@ -56,14 +63,14 @@ export class AuthService {
     }
 
     if (validationErrors.length > 0) {
-      throw new Error(`Validation failed: ${validationErrors.join(', ')}`)
+      throw new ValidationError(`Validation failed: ${validationErrors.join(', ')}`)
     }
 
     // Check rate limiting
     const normalizedEmail = EmailUtils.normalize(email)
     const rateLimit = RateLimitUtils.checkRateLimit(`register:${normalizedEmail}`, 3, 60 * 60 * 1000) // 3 attempts per hour
     if (!rateLimit.allowed) {
-      throw new Error('Too many registration attempts. Please try again later.')
+      throw new RateLimitError('Too many registration attempts. Please try again later.')
     }
 
     // Check if email already exists
@@ -72,7 +79,7 @@ export class AuthService {
     })
 
     if (existingUser) {
-      throw new Error('Email already registered')
+      throw new ConflictError('Email already registered')
     }
 
     // Hash password
@@ -117,11 +124,11 @@ export class AuthService {
 
     // Validate input
     if (!EmailUtils.isValid(email)) {
-      throw new Error('Invalid email format')
+      throw new ValidationError('Invalid email format')
     }
 
     if (!password || password.length === 0) {
-      throw new Error('Password is required')
+      throw new ValidationError('Password is required')
     }
 
     const normalizedEmail = EmailUtils.normalize(email)
@@ -129,7 +136,7 @@ export class AuthService {
     // Check rate limiting
     const rateLimit = RateLimitUtils.checkRateLimit(`login:${normalizedEmail}`, 5, 15 * 60 * 1000) // 5 attempts per 15 minutes
     if (!rateLimit.allowed) {
-      throw new Error('Too many login attempts. Please try again later.')
+      throw new RateLimitError('Too many login attempts. Please try again later.')
     }
 
     // Find user
@@ -151,18 +158,18 @@ export class AuthService {
     })
 
     if (!user || user.isDeleted) {
-      throw new Error('Invalid email or password')
+      throw new UnauthorizedError('Invalid email or password')
     }
 
     // Check if user is active
     if (user.status !== UserStatus.ACTIVE) {
-      throw new Error('Account is inactive. Please contact administrator.')
+      throw new UnauthorizedError('Account is inactive. Please contact administrator.')
     }
 
     // Verify password
     const isPasswordValid = await PasswordUtils.compare(password, user.password)
     if (!isPasswordValid) {
-      throw new Error('Invalid email or password')
+      throw new UnauthorizedError('Invalid email or password')
     }
 
     // Reset rate limit on successful login
@@ -204,62 +211,54 @@ export class AuthService {
 
   // Refresh access token
   static async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string; expiresIn: number }> {
-    try {
-      // Verify refresh token
-      const payload = JWTUtils.verifyRefreshToken(refreshToken)
+    // Verify refresh token
+    const payload = JWTUtils.verifyRefreshToken(refreshToken)
 
-      // Check if refresh token exists in database
-      const storedToken = await prisma.refreshToken.findUnique({
+    // Check if refresh token exists in database
+    const storedToken = await prisma.refreshToken.findUnique({
+      where: { id: payload.tokenId },
+      include: { user: true },
+    })
+
+    if (!storedToken || storedToken.token !== refreshToken) {
+      throw new UnauthorizedError('Invalid refresh token')
+    }
+
+    // Check if token is expired
+    if (storedToken.expiresAt < new Date()) {
+      // Clean up expired token
+      await prisma.refreshToken.delete({
         where: { id: payload.tokenId },
-        include: { user: true },
       })
+      throw new UnauthorizedError('Refresh token expired')
+    }
 
-      if (!storedToken || storedToken.token !== refreshToken) {
-        throw new Error('Invalid refresh token')
-      }
+    // Check if user is still active
+    if (storedToken.user.status !== UserStatus.ACTIVE || storedToken.user.isDeleted) {
+      throw new UnauthorizedError('User account is inactive')
+    }
 
-      // Check if token is expired
-      if (storedToken.expiresAt < new Date()) {
-        // Clean up expired token
-        await prisma.refreshToken.delete({
-          where: { id: payload.tokenId },
-        })
-        throw new Error('Refresh token expired')
-      }
+    // Generate new access token
+    const accessToken = JWTUtils.generateAccessToken({
+      userId: storedToken.user.id,
+      email: storedToken.user.email,
+      role: storedToken.user.role,
+    })
 
-      // Check if user is still active
-      if (storedToken.user.status !== UserStatus.ACTIVE || storedToken.user.isDeleted) {
-        throw new Error('User account is inactive')
-      }
-
-      // Generate new access token
-      const accessToken = JWTUtils.generateAccessToken({
-        userId: storedToken.user.id,
-        email: storedToken.user.email,
-        role: storedToken.user.role,
-      })
-
-      return {
-        accessToken,
-        expiresIn: 15 * 60, // 15 minutes in seconds
-      }
-    } catch (error) {
-      throw new Error('Invalid or expired refresh token')
+    return {
+      accessToken,
+      expiresIn: 15 * 60, // 15 minutes in seconds
     }
   }
 
   // Logout user
   static async logout(refreshToken: string): Promise<void> {
-    try {
-      const payload = JWTUtils.verifyRefreshToken(refreshToken)
-      
-      // Remove refresh token from database
-      await prisma.refreshToken.delete({
-        where: { id: payload.tokenId },
-      })
-    } catch (error) {
-      // Token might already be invalid/expired, which is fine for logout
-    }
+    const payload = JWTUtils.verifyRefreshToken(refreshToken)
+
+    // Remove refresh token from database
+    await prisma.refreshToken.delete({
+      where: { id: payload.tokenId },
+    })
   }
 
   // Logout from all devices
@@ -276,12 +275,12 @@ export class AuthService {
     // Validate new password
     const passwordValidation = PasswordUtils.validate(newPassword)
     if (!passwordValidation.isValid) {
-      throw new Error(`Password validation failed: ${passwordValidation.errors.join(', ')}`)
+      throw new ValidationError(`Password validation failed: ${passwordValidation.errors.join(', ')}`)
     }
 
     // Check password confirmation
     if (newPassword !== confirmNewPassword) {
-      throw new Error('New passwords do not match')
+      throw new ValidationError('New passwords do not match')
     }
 
     // Get user
@@ -291,19 +290,19 @@ export class AuthService {
     })
 
     if (!user) {
-      throw new Error('User not found')
+      throw new NotFoundError('User not found')
     }
 
     // Verify current password
     const isCurrentPasswordValid = await PasswordUtils.compare(currentPassword, user.password)
     if (!isCurrentPasswordValid) {
-      throw new Error('Current password is incorrect')
+      throw new ValidationError('Current password is incorrect')
     }
 
     // Check if new password is different from current
     const isSamePassword = await PasswordUtils.compare(newPassword, user.password)
     if (isSamePassword) {
-      throw new Error('New password must be different from current password')
+      throw new ValidationError('New password must be different from current password')
     }
 
     // Hash new password

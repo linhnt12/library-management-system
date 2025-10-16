@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { UserService } from '@/services/user.service'
-import { 
-  successResponse, 
-  errorResponse, 
+import {
+  successResponse,
   handleRouteError,
   parseIntParam,
   validateRequiredFields,
   isValidEmail,
   sanitizeString
 } from '@/lib/api-utils'
+import { ValidationError, NotFoundError } from '@/lib/errors'
 
 // GET /api/users/[id] - Lấy thông tin user theo ID
 export async function GET(
@@ -19,13 +19,13 @@ export async function GET(
     const userId = parseIntParam(params.id)
 
     if (userId <= 0) {
-      return errorResponse('Invalid user ID', 400)
+      throw new ValidationError('Invalid user ID')
     }
 
     const user = await UserService.getUserById(userId)
 
     if (!user) {
-      return errorResponse('User not found', 404)
+      throw new NotFoundError('User not found')
     }
 
     return successResponse(user)
@@ -43,7 +43,7 @@ export async function PUT(
     const userId = parseIntParam(params.id)
 
     if (userId <= 0) {
-      return errorResponse('Invalid user ID', 400)
+      throw new ValidationError('Invalid user ID')
     }
 
     const body = await request.json()
@@ -51,7 +51,7 @@ export async function PUT(
 
     // Validate email format if provided
     if (email && !isValidEmail(email)) {
-      return errorResponse('Invalid email format', 400)
+      throw new ValidationError('Invalid email format')
     }
 
     // Prepare sanitized update data
@@ -67,14 +67,6 @@ export async function PUT(
 
     return successResponse(updatedUser, 'User updated successfully')
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message === 'User not found') {
-        return errorResponse('User not found', 404)
-      }
-      if (error.message === 'Email already exists') {
-        return errorResponse('Email already exists', 409)
-      }
-    }
     return handleRouteError(error, 'PUT /api/users/[id]')
   }
 }
@@ -88,16 +80,13 @@ export async function DELETE(
     const userId = parseIntParam(params.id)
 
     if (userId <= 0) {
-      return errorResponse('Invalid user ID', 400)
+      throw new ValidationError('Invalid user ID')
     }
 
     await UserService.deleteUser(userId)
 
     return successResponse(null, 'User deleted successfully')
   } catch (error) {
-    if (error instanceof Error && error.message === 'User not found') {
-      return errorResponse('User not found', 404)
-    }
     return handleRouteError(error, 'DELETE /api/users/[id]')
   }
 }
