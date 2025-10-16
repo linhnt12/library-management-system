@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Table as ChakraTable, HStack, IconButton, Text } from '@chakra-ui/react';
+import { Box, Table as ChakraTable, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
+import { Spinner } from '@/components';
 import { useState } from 'react';
 import { TiArrowSortedDown, TiArrowSortedUp, TiArrowUnsorted } from 'react-icons/ti';
 import { TableFooter } from './TableFooter';
@@ -16,6 +17,7 @@ type TableProps<T> = {
   page: number;
   pageSize: number;
   total: number;
+  loading?: boolean;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   onSort?: (key: string, direction: 'asc' | 'desc' | null) => void;
@@ -27,6 +29,7 @@ export function Table<T>({
   page,
   pageSize,
   total,
+  loading = false,
   onPageChange,
   onPageSizeChange,
   onSort,
@@ -37,10 +40,14 @@ export function Table<T>({
 
   const effectivePageSize = onPageSizeChange ? pageSize : internalPageSize;
 
-  // Calculate the slice of data to display for the current page
-  const startIndex = Math.max(0, (page - 1) * effectivePageSize);
-  const endIndex = Math.min(startIndex + effectivePageSize, data.length);
-  const paginatedData = data.slice(startIndex, endIndex);
+  // For server-side pagination, use data directly
+  // For client-side pagination, slice the data
+  const paginatedData = onPageChange
+    ? data
+    : data.slice(
+        Math.max(0, (page - 1) * effectivePageSize),
+        Math.min((page - 1) * effectivePageSize + effectivePageSize, data.length)
+      );
 
   // Handle sort
   const handleSort = (key: string) => {
@@ -102,7 +109,7 @@ export function Table<T>({
                 }}
               >
                 <HStack gap={2}>
-                  <Text fontWeight="400">{col.header}</Text>
+                  <Text fontWeight="md">{col.header}</Text>
                   {col.sortable && (
                     <IconButton
                       size="xs"
@@ -119,25 +126,48 @@ export function Table<T>({
           </ChakraTable.Row>
         </ChakraTable.Header>
         <ChakraTable.Body>
-          {paginatedData.map((item, rowIndex) => (
-            <ChakraTable.Row
-              key={rowIndex}
-              h="80px"
-              _hover={{ bg: 'gray.50' }}
-              borderBottomWidth={rowIndex === paginatedData.length - 1 ? 0 : '1px'}
-              borderColor="gray.200"
-            >
-              {columns.map(col => (
-                <ChakraTable.Cell key={String(col.key)}>
-                  {col.render
-                    ? col.render(item, startIndex + rowIndex)
-                    : ((item as unknown as Record<string, unknown>)[
-                        String(col.key)
-                      ] as React.ReactNode)}
-                </ChakraTable.Cell>
-              ))}
+          {loading ? (
+            <ChakraTable.Row>
+              <ChakraTable.Cell colSpan={columns.length}>
+                <VStack h="150px" alignItems="center" justifyContent="center" gap={4}>
+                  <Spinner />
+                  <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
+                    Loading...
+                  </Text>
+                </VStack>
+              </ChakraTable.Cell>
             </ChakraTable.Row>
-          ))}
+          ) : paginatedData.length === 0 ? (
+            <ChakraTable.Row>
+              <ChakraTable.Cell colSpan={columns.length}>
+                <VStack h="150px" alignItems="center" justifyContent="center" gap={4}>
+                  <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
+                    No data
+                  </Text>
+                </VStack>
+              </ChakraTable.Cell>
+            </ChakraTable.Row>
+          ) : (
+            paginatedData.map((item, rowIndex) => (
+              <ChakraTable.Row
+                key={rowIndex}
+                h="80px"
+                _hover={{ bg: 'gray.50' }}
+                borderBottomWidth={rowIndex === paginatedData.length - 1 ? 0 : '1px'}
+                borderColor="gray.200"
+              >
+                {columns.map(col => (
+                  <ChakraTable.Cell key={String(col.key)}>
+                    {col.render
+                      ? col.render(item, rowIndex)
+                      : ((item as unknown as Record<string, unknown>)[
+                          String(col.key)
+                        ] as React.ReactNode)}
+                  </ChakraTable.Cell>
+                ))}
+              </ChakraTable.Row>
+            ))
+          )}
         </ChakraTable.Body>
       </ChakraTable.Root>
 

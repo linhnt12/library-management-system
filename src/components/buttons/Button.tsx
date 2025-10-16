@@ -24,6 +24,7 @@ export function Button({
 }: ButtonProps) {
   const variantStyles = {
     primary: {
+      w: 'fit-content',
       bg: 'primary.500',
       color: 'white',
       borderColor: 'primary.500',
@@ -31,13 +32,15 @@ export function Button({
       active: {},
     },
     secondary: {
+      w: 'fit-content',
       bg: 'secondary.500',
       color: 'white',
       borderColor: 'secondary.500',
-      hover: { bg: 'white', color: 'primary.500' },
+      hover: { bg: 'white', color: 'secondary.500' },
       active: {},
     },
     sidebar: {
+      w: 'full',
       bg: isActive ? 'primary.500' : 'transparent',
       color: isActive ? 'white' : 'secondaryText.500',
       borderColor: 'transparent',
@@ -59,7 +62,7 @@ export function Button({
     <ChakraButton
       variant="ghost"
       justifyContent="flex-start"
-      w="full"
+      w={style.w}
       h="50px"
       bg={style.bg}
       color={style.color}

@@ -1,15 +1,17 @@
+import { ROUTES } from './routes';
+
 export const commonHeadings: Record<string, string> = {
-  '/profile': 'My Profile',
-  '/settings': 'Settings',
+  [ROUTES.PROFILE]: 'My Profile',
+  [ROUTES.SETTINGS]: 'Settings',
 };
 
 export const adminHeadings: Record<string, string> = {
-  '/admin': 'Dashboard',
-  '/admin/users': 'Manage Users',
+  [ROUTES.ADMIN.DASHBOARD]: 'Dashboard',
+  [ROUTES.ADMIN.USERS]: 'Manage Users',
 };
 
 export const librarianHeadings: Record<string, string> = {
-  '/librarian': 'Dashboard',
-  '/librarian/books': 'Books Management',
-  '/librarian/books/add': 'Add New Book',
+  [ROUTES.LIBRARIAN.DASHBOARD]: 'Dashboard',
+  [ROUTES.LIBRARIAN.BOOKS]: 'Books Management',
+  [ROUTES.LIBRARIAN.BOOKS_ADD]: 'Add New Book',
 };

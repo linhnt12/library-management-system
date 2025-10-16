@@ -5,6 +5,7 @@ import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { IconType } from 'react-icons';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
+import { ROUTES } from '@/constants';
 
 type SidebarProps = {
   items: {
@@ -58,14 +59,14 @@ export function Sidebar({ items = [] }: SidebarProps) {
       <HStack my={4} h="1px" bg="gray.200" />
 
       <Button
-        href="/settings"
+        href={ROUTES.SETTINGS}
         label="Settings"
         icon={IoSettingsOutline}
-        isActive={pathname === '/settings'}
+        isActive={pathname === ROUTES.SETTINGS}
         variantType="sidebar"
       />
 
-      <Button href="/logout" label="Logout" icon={IoLogOutOutline} variantType="sidebar" />
+      <Button href={ROUTES.LOGOUT} label="Logout" icon={IoLogOutOutline} variantType="sidebar" />
     </VStack>
   );
 }

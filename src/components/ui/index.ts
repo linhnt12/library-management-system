@@ -1,5 +1,6 @@
-export * from './color-mode';
-export * from './provider';
-export * from './toaster';
-export * from './tooltip';
-
+export * from './ColorMode';
+export * from './Dialog';
+export * from './Provider';
+export * from './Toaster';
+export * from './Tooltip';
+export * from './Spinner';
