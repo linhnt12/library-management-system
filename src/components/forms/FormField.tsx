@@ -6,12 +6,19 @@ export interface FormFieldProps extends Omit<StackProps, 'children'> {
   label: string;
   children: React.ReactNode;
   error?: string;
+  fontWeight?: string;
 }
 
-export function FormField({ label, children, error, ...rest }: FormFieldProps) {
+export function FormField({
+  label,
+  children,
+  error,
+  fontWeight = 'medium',
+  ...rest
+}: FormFieldProps) {
   return (
     <Stack gap={0} {...rest}>
-      <Text as="label" fontWeight="medium" display="block" mb={2}>
+      <Text as="label" fontWeight={fontWeight} display="block" mb={2}>
         {label}
       </Text>
       {children}

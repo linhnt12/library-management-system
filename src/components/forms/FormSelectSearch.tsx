@@ -2,16 +2,16 @@
 
 import React from 'react';
 import { FaCheck } from 'react-icons/fa6';
-import Select, { MultiValue } from 'react-select';
+import Select, { MultiValue, SingleValue } from 'react-select';
 
 export interface SelectOption {
   value: string | number;
   label: string;
 }
 
-export interface FormMultiSelectProps {
-  value?: SelectOption[];
-  onChange: (value: SelectOption[]) => void;
+export interface FormSelectSearchProps {
+  value?: SelectOption | SelectOption[];
+  onChange: (value: SelectOption | SelectOption[]) => void;
   options: SelectOption[];
   placeholder?: string;
   isDisabled?: boolean;
@@ -24,11 +24,11 @@ export interface FormMultiSelectProps {
   classNamePrefix?: string;
   variantType?: 'default' | 'filter';
   hideSelectedOptions?: boolean;
-  closeMenuOnSelect?: boolean;
+  multi?: boolean;
 }
 
-export const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
-  value = [],
+export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
+  value,
   onChange,
   options,
   placeholder = 'Select options...',
@@ -38,28 +38,13 @@ export const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
   isRtl = false,
   isSearchable = true,
   name,
-  className = 'basic-multi-select',
+  className = 'basic-select',
   classNamePrefix = 'select',
   variantType = 'default',
   hideSelectedOptions = false,
-  closeMenuOnSelect = false,
+  multi = false,
 }) => {
-  const variantStyles = {
-    default: {
-      bg: '#f7f6f4', // layoutBg.500
-      border: '1px solid',
-      borderColor: '#e4e4e7', // gray.200
-    },
-    filter: {
-      bg: '#f0efea', // paginationBg.500
-      border: 'none',
-      borderColor: 'transparent',
-    },
-  };
-
-  const style = variantStyles[variantType];
-
-  /*
+  /* Chakra UI colors
 		primary.200: #ff7b424d
 		primary.500: #ff7b42
 		layoutBg.500: #f7f6f4
@@ -67,13 +52,44 @@ export const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
 		paginationBg.500: #f0efea
 	*/
 
+  const variantStyles = {
+    default: {
+      bg: '#f7f6f4',
+      border: '1px solid',
+      borderColor: '#e4e4e7',
+    },
+    filter: {
+      bg: '#f0efea',
+      border: 'none',
+      borderColor: 'transparent',
+    },
+  };
+
+  const style = variantStyles[variantType];
+
+  const handleChange = (newValue: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
+    if (multi) {
+      onChange([...(newValue as MultiValue<SelectOption>)]);
+    } else {
+      onChange(newValue as SelectOption);
+    }
+  };
+
+  const isOptionSelected = (option: SelectOption) => {
+    if (multi) {
+      return Array.isArray(value) && value.some(selected => selected.value === option.value);
+    } else {
+      return !Array.isArray(value) && value?.value === option.value;
+    }
+  };
+
   return (
     <Select
       className={className}
       classNamePrefix={classNamePrefix}
-      isMulti
+      isMulti={multi}
       value={value}
-      onChange={(newValue: MultiValue<SelectOption>) => onChange([...newValue])}
+      onChange={handleChange}
       isDisabled={isDisabled}
       isLoading={isLoading}
       isClearable={isClearable}
@@ -83,11 +99,10 @@ export const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
       options={options}
       placeholder={placeholder}
       hideSelectedOptions={hideSelectedOptions}
-      closeMenuOnSelect={closeMenuOnSelect}
+      closeMenuOnSelect={!multi}
       formatOptionLabel={(option, { context }) => {
-        if (context === 'menu') {
-          // Check if the option is selected
-          const isSelected = value.some(selected => selected.value === option.value);
+        if (context === 'menu' && multi) {
+          const isSelected = isOptionSelected(option);
           return (
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
@@ -130,6 +145,11 @@ export const FormMultiSelect: React.FC<FormMultiSelectProps> = ({
             backgroundColor: '#ff7b424d',
             color: '#191d26',
           },
+        }),
+        singleValue: baseStyles => ({
+          ...baseStyles,
+          color: '#191d26',
+          fontSize: '14px',
         }),
         menu: baseStyles => ({
           ...baseStyles,

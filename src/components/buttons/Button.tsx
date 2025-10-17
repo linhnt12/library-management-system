@@ -27,6 +27,7 @@ export function Button({
       w: 'fit-content',
       bg: 'primary.500',
       color: 'white',
+      justifyContent: 'center',
       borderColor: 'primary.500',
       hover: { bg: 'white', color: 'primary.500' },
       active: {},
@@ -35,6 +36,7 @@ export function Button({
       w: 'fit-content',
       bg: 'secondary.500',
       color: 'white',
+      justifyContent: 'center',
       borderColor: 'secondary.500',
       hover: { bg: 'white', color: 'secondary.500' },
       active: {},
@@ -43,6 +45,7 @@ export function Button({
       w: 'full',
       bg: isActive ? 'primary.500' : 'transparent',
       color: isActive ? 'white' : 'secondaryText.500',
+      justifyContent: 'flex-start',
       borderColor: 'transparent',
       hover: { bg: isActive ? 'primary.500' : 'primary.200' },
       active: { bg: 'primary.200' },
@@ -82,6 +85,7 @@ export function Button({
             width: '100%',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: style.justifyContent,
             gap: '12px',
           }}
         >
@@ -94,6 +98,7 @@ export function Button({
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
+            justifyContent: style.justifyContent,
           }}
         >
           {content}

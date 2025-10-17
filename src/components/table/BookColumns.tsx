@@ -70,12 +70,6 @@ export const BookColumns = [
     render: (book: Book) => <Text>{book.edition ?? 'N/A'}</Text>,
   },
   {
-    key: 'type',
-    header: 'Type',
-    sortable: true,
-    render: (book: Book) => <Text>{book.type}</Text>,
-  },
-  {
     key: 'pageCount',
     header: 'Page Count',
     sortable: true,

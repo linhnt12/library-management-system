@@ -6,10 +6,11 @@ import {
   FormDivider,
   FormField,
   FormInput,
-  FormMultiSelect,
   FormSection,
   FormSelect,
+  FormSelectSearch,
   FormTextarea,
+  SelectOption,
 } from '@/components';
 import { AUTHOR_OPTIONS, BOOK_TYPE_OPTIONS, CATEGORY_OPTIONS } from '@/constants';
 import { useBookForm } from '@/lib/hooks';
@@ -57,12 +58,15 @@ export default function AddBookPage() {
             <GridItem>
               {/* Author */}
               <FormField label="Author" error={errors.authorId}>
-                <FormSelect
-                  items={AUTHOR_OPTIONS}
-                  value={form.authorId}
-                  onChange={val => setField('authorId', val)}
+                <FormSelectSearch
+                  value={
+                    form.authorId
+                      ? AUTHOR_OPTIONS.find(opt => opt.value === form.authorId)
+                      : undefined
+                  }
+                  onChange={val => setField('authorId', String((val as SelectOption)?.value || ''))}
+                  options={AUTHOR_OPTIONS}
                   placeholder="Select author"
-                  height="50px"
                 />
               </FormField>
             </GridItem>
@@ -70,11 +74,12 @@ export default function AddBookPage() {
 
           {/* Categories */}
           <FormField label="Categories" error={errors.categories}>
-            <FormMultiSelect
+            <FormSelectSearch
               value={form.categories || []}
-              onChange={val => setField('categories', val)}
+              onChange={val => setField('categories', val as SelectOption[])}
               options={CATEGORY_OPTIONS}
               placeholder="Select categories"
+              multi
             />
           </FormField>
         </FormSection>
