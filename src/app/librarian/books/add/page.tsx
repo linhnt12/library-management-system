@@ -7,12 +7,11 @@ import {
   FormField,
   FormInput,
   FormSection,
-  FormSelect,
   FormSelectSearch,
   FormTextarea,
   SelectOption,
 } from '@/components';
-import { BOOK_TYPE_OPTIONS, CATEGORY_OPTIONS } from '@/constants';
+import { CATEGORY_OPTIONS } from '@/constants';
 import { useBookForm } from '@/lib/hooks';
 import { useAuthorOptions } from '@/lib/hooks/useAuthors';
 import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
@@ -152,19 +151,6 @@ export default function AddBookPage() {
                   value={form.price}
                   onChange={e => setField('price', e.target.value)}
                   placeholder="Enter price"
-                />
-              </FormField>
-            </GridItem>
-
-            <GridItem>
-              {/* Type */}
-              <FormField label="Type" error={errors.type}>
-                <FormSelect
-                  items={BOOK_TYPE_OPTIONS}
-                  value={form.type}
-                  onChange={val => setField('type', val)}
-                  placeholder="Select type"
-                  height="50px"
                 />
               </FormField>
             </GridItem>
