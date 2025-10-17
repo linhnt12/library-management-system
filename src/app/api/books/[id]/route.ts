@@ -3,12 +3,12 @@ import { BookType, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import {
   successResponse,
-  errorResponse,
   handleRouteError,
   parseIntParam,
   sanitizeString,
 } from '@/lib/api-utils';
 import { Book, UpdateBookData } from '@/types/book';
+import { ValidationError, NotFoundError } from '@/lib/errors';
 
 // GET /api/books/[id] - Get book by id
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const bookId = parseIntParam(params.id);
 
     if (bookId <= 0) {
-      return errorResponse('Invalid book ID', 400);
+      throw new ValidationError('Invalid book ID');
     }
 
     const book: Book | null = await prisma.book.findFirst({
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     });
 
     if (!book) {
-      return errorResponse('Book not found', 404);
+      throw new NotFoundError('Book not found');
     }
 
     return successResponse(book);
@@ -55,7 +55,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const bookId = parseIntParam(params.id);
 
     if (bookId <= 0) {
-      return errorResponse('Invalid book ID', 400);
+      throw new ValidationError('Invalid book ID');
     }
 
     const body: UpdateBookData = await request.json();
@@ -78,7 +78,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       const authorIdNum =
         typeof authorId === 'string' ? parseIntParam(authorId, 0) : Number(authorId);
       if (!authorIdNum || authorIdNum <= 0) {
-        return errorResponse('Invalid authorId', 400);
+        throw new ValidationError('Invalid authorId');
       }
       updateData.authorId = authorIdNum;
     }
@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       select: { id: true },
     });
     if (!existing) {
-      return errorResponse('Book not found', 404);
+      throw new NotFoundError('Book not found');
     }
 
     const updated: Book = await prisma.book.update({
@@ -129,11 +129,6 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     return successResponse<Book>(updated, 'Book updated successfully');
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint') || error.message.includes('isbn')) {
-        return errorResponse('ISBN already exists', 409);
-      }
-    }
     return handleRouteError(error, 'PUT /api/books/[id]');
   }
 }
@@ -144,7 +139,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const bookId = parseIntParam(params.id);
 
     if (bookId <= 0) {
-      return errorResponse('Invalid book ID', 400);
+      throw new ValidationError('Invalid book ID');
     }
 
     const existing = await prisma.book.findFirst({
@@ -152,7 +147,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       select: { id: true },
     });
     if (!existing) {
-      return errorResponse('Book not found', 404);
+      throw new NotFoundError('Book not found');
     }
 
     await prisma.book.update({

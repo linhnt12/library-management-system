@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ApiResponse } from '@/types/api'
+import { ApiError } from './errors'
 
 // Success response helper
 export function successResponse<T>(
@@ -43,7 +44,7 @@ export function parsePaginationParams(searchParams: URLSearchParams) {
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
   const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '10')))
   const search = searchParams.get('search') || ''
-  
+
   return {
     page,
     limit,
@@ -73,17 +74,11 @@ export function sanitizeString(input: string): string {
 // Handle async route errors
 export function handleRouteError(error: unknown, context: string = 'API'): NextResponse {
   console.error(`${context} Error:`, error)
-  
-  if (error instanceof Error) {
-    // Handle known error types
-    if (error.message.includes('Unique constraint')) {
-      return errorResponse('Resource already exists', 409)
-    }
-    
-    if (error.message.includes('Record to update not found')) {
-      return errorResponse('Resource not found', 404)
-    }
+
+  // Handle custom API errors with status codes
+  if (error instanceof ApiError) {
+    return errorResponse(error.message, error.statusCode)
   }
-  
+
   return errorResponse('Internal server error', 500)
 }

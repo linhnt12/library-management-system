@@ -24,12 +24,34 @@ bun install
 
 ## 2) Environment Variables
 
-Create an `.env` file in the project root. Minimum variables:
+Copy the `.env.example` file to `.env`:
 
 ```bash
-# Example for Postgres
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/library?schema=public"
+cp .env.example .env
 ```
+
+Then configure the required variables in `.env`. You can use the default values or customize them:
+
+```env
+# Database Configuration
+DATABASE_URL=mysql://root:root123@localhost:3306/library_management
+
+# Default Admin User (Required for seeding)
+DEFAULT_ADMIN_EMAIL="admin@library.com"
+DEFAULT_ADMIN_PASSWORD="Admin@123456"
+DEFAULT_ADMIN_FULLNAME="System Administrator"
+
+# JWT Configuration
+JWT_SECRET="your-super-secret-jwt-key-change-this-in-production"
+JWT_REFRESH_SECRET="your-super-secret-refresh-key-change-this-in-production"
+JWT_EXPIRES_IN="15m"
+JWT_REFRESH_EXPIRES_IN="7d"
+```
+
+**Important Notes:**
+- All `DEFAULT_ADMIN_*` variables are **required** for the seed script to work
+- Change JWT secrets to secure random values for production
+- You can customize the admin credentials to your preference
 
 ## 3) Start the Database (via Docker)
 
@@ -42,11 +64,29 @@ This will provision the database defined in `docker-compose.yml`.
 ## 4) Initialize Prisma (Backend Data Layer)
 
 ```bash
+# Generate Prisma Client
 npx prisma generate
-npx prisma migrate dev --name init
-# optional: seed if you have a seed script
-# npx prisma db seed
+
+# Run database migrations
+npx prisma migrate dev
+
+# Seed the database with default Admin user
+npm run seed
+# or
+npx prisma db seed
 ```
+
+**What the seed does:**
+- Creates a default Admin user if none exists
+- Uses credentials from your `.env` file (`DEFAULT_ADMIN_EMAIL`, `DEFAULT_ADMIN_PASSWORD`, `DEFAULT_ADMIN_FULLNAME`)
+- Safe to run multiple times (won't create duplicates)
+
+**Default Login Credentials:**
+After seeding, you can login with:
+- **Email**: The value you set in `DEFAULT_ADMIN_EMAIL` (default: `admin@library.com`)
+- **Password**: The value you set in `DEFAULT_ADMIN_PASSWORD` (default: `Admin@123456`)
+
+⚠️ **Security Reminder**: Change the admin password after your first login!
 
 ## 5) Run in Development (Frontend + Backend)
 
@@ -83,6 +123,23 @@ By default the app listens on port 3000. Ensure the same `.env` is available in 
 
 ## Troubleshooting
 
+### Database & Migrations
 - If migrations fail, verify `DATABASE_URL` and that the database container is running.
 - If API requests fail, check server logs and confirm Prisma client is generated.
 - Delete `.next/` and re-run `npm run dev` if hot reload behaves unexpectedly.
+
+### Seeding Issues
+- **Error: "DEFAULT_ADMIN_EMAIL is required"**
+  - Make sure you have created a `.env` file (copy from `.env.example`)
+  - Ensure all three admin variables are set: `DEFAULT_ADMIN_EMAIL`, `DEFAULT_ADMIN_PASSWORD`, `DEFAULT_ADMIN_FULLNAME`
+  
+- **"Admin user already exists. Skipping seed."**
+  - This is normal behavior. The seed script only creates an admin if none exists.
+  - To create a new admin with different credentials, either:
+    1. Change the password through the app's change password feature, or
+    2. Manually delete the existing admin from the database first
+
+- **Seed script doesn't read .env file**
+  - Ensure the `.env` file is in the project root directory
+  - Run the seed command from the project root directory
+  - Restart your terminal/shell after creating `.env`

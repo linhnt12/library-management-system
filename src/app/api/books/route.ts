@@ -4,13 +4,13 @@ import { prisma } from '@/lib/prisma';
 import { Book, BooksListPayload, CreateBookData } from '@/types/book';
 import {
   successResponse,
-  errorResponse,
   handleRouteError,
   parsePaginationParams,
   validateRequiredFields,
   sanitizeString,
   parseIntParam,
 } from '@/lib/api-utils';
+import { ValidationError } from '@/lib/errors';
 
 // GET /api/books - Get books
 export async function GET(request: NextRequest) {
@@ -136,13 +136,13 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     const validationError = validateRequiredFields(body, ['authorId', 'title']);
     if (validationError) {
-      return errorResponse(validationError, 400);
+      throw new ValidationError(validationError);
     }
 
     const authorIdNum =
       typeof authorId === 'string' ? parseIntParam(authorId, 0) : Number(authorId);
     if (!authorIdNum || authorIdNum <= 0) {
-      return errorResponse('Invalid authorId', 400);
+      throw new ValidationError('Invalid authorId');
     }
 
     // Prepare data
@@ -182,11 +182,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse<Book>(created, 'Book created successfully', 201);
   } catch (error) {
-    if (error instanceof Error) {
-      if (error.message.includes('Unique constraint') || error.message.includes('isbn')) {
-        return errorResponse('ISBN already exists', 409);
-      }
-    }
     return handleRouteError(error, 'POST /api/books');
   }
 }

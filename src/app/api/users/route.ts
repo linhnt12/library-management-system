@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Role, UserStatus } from '@prisma/client'
 import { UserService } from '@/services/user.service'
-import { 
-  successResponse, 
-  errorResponse, 
-  handleRouteError, 
+import {
+  successResponse,
+  handleRouteError,
   parsePaginationParams,
   validateRequiredFields,
   isValidEmail,
   sanitizeString
 } from '@/lib/api-utils'
+import { ValidationError } from '@/lib/errors'
 
 // GET /api/users - Lấy danh sách users
 export async function GET(request: NextRequest) {
@@ -42,12 +42,12 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     const validationError = validateRequiredFields(body, ['fullName', 'email', 'password'])
     if (validationError) {
-      return errorResponse(validationError, 400)
+      throw new ValidationError(validationError)
     }
 
     // Validate email format
     if (!isValidEmail(email)) {
-      return errorResponse('Invalid email format', 400)
+      throw new ValidationError('Invalid email format')
     }
 
     const user = await UserService.createUser({
@@ -61,9 +61,6 @@ export async function POST(request: NextRequest) {
 
     return successResponse(user, 'User created successfully', 201)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Email already exists') {
-      return errorResponse('Email already exists', 409)
-    }
     return handleRouteError(error, 'POST /api/users')
   }
 }
