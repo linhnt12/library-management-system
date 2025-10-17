@@ -1,14 +1,13 @@
 'use client';
 
-import { Button, SearchInput } from '@/components';
+import { Button, SearchInput, toaster } from '@/components';
 import { BookColumns, Table } from '@/components/table';
-import { HStack } from '@chakra-ui/react';
-import { useState, useEffect, useCallback } from 'react';
-import { IoAddSharp } from 'react-icons/io5';
 import { ROUTES } from '@/constants';
 import { BookService } from '@/services';
 import { Book } from '@/types';
-import { toaster } from '@/components';
+import { HStack } from '@chakra-ui/react';
+import { useCallback, useEffect, useState } from 'react';
+import { IoAddSharp } from 'react-icons/io5';
 
 export default function BookPage() {
   const [page, setPage] = useState(1);
@@ -32,6 +31,7 @@ export default function BookPage() {
         search: searchQuery || undefined,
         sortBy: sortBy || undefined,
         sortOrder: sortOrder || undefined,
+        type: 'PRINT',
       });
 
       setBooks(response.books);
@@ -84,6 +84,15 @@ export default function BookPage() {
           onChange={handleSearch}
         />
         <HStack gap={4} alignItems="center">
+          <Button
+            label="Filter"
+            variantType="secondary"
+            w="auto"
+            h="40px"
+            px={2}
+            fontSize="sm"
+            // icon={FiFilter}
+          />
           <Button
             label="Add Book"
             variantType="primary"
