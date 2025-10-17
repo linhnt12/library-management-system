@@ -9,7 +9,7 @@ import {
   validateRequiredFields,
   sanitizeString,
   parseIntParam,
-} from '@/lib/api-utils';
+} from '@/lib/utils';
 import { ValidationError } from '@/lib/errors';
 
 // GET /api/books - Get books

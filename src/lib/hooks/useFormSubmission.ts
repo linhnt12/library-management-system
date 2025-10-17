@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { handleFormSubmission, FormSubmissionOptions } from '@/lib/form-utils';
+import { handleFormSubmission, FormSubmissionOptions } from '@/lib/utils';
 
 // Custom hook to handle form submission with loading state
 export function useFormSubmission<T, TData = unknown, TResult = unknown>(

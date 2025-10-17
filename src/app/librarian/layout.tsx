@@ -1,6 +1,6 @@
 'use client';
 
-import { Layout, Sidebar } from '@/components/layout';
+import { Layout, Sidebar } from '@/components';
 import { ROUTES } from '@/constants';
 import { ReactNode } from 'react';
 import { LuBook } from 'react-icons/lu';

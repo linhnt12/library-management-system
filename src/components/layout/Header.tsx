@@ -1,11 +1,10 @@
 'use client';
 
-import { IconButton } from '@/components/buttons';
+import { IconButton, Breadcrumbs } from '@/components';
 import { adminHeadings, commonHeadings, librarianHeadings } from '@/constants';
 import { Box, Flex, HStack, Heading, Image, Stack, Text } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { FiBell } from 'react-icons/fi';
-import { Breadcrumbs } from '@/components/layout';
 
 type HeaderProps = {
   userName?: string;

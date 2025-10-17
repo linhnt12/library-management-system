@@ -1,12 +1,7 @@
 import { NextRequest } from 'next/server';
 import { BookType, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
-import {
-  successResponse,
-  handleRouteError,
-  parseIntParam,
-  sanitizeString,
-} from '@/lib/api-utils';
+import { successResponse, handleRouteError, parseIntParam, sanitizeString } from '@/lib/utils';
 import { Book, UpdateBookData } from '@/types/book';
 import { ValidationError, NotFoundError } from '@/lib/errors';
 
