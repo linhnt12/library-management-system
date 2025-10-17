@@ -3,11 +3,14 @@
 import { appSystem } from '@/lib/theme';
 import { ChakraProvider } from '@chakra-ui/react';
 import { ColorModeProvider, type ColorModeProviderProps } from './ColorMode';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export function Provider(props: ColorModeProviderProps) {
   return (
     <ChakraProvider value={appSystem}>
-      <ColorModeProvider {...props} />
+      <AuthProvider>
+        <ColorModeProvider {...props} />
+      </AuthProvider>
     </ChakraProvider>
   );
 }

@@ -22,9 +22,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // API call helper
   const apiCall = async (url: string, options: RequestInit = {}) => {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     }
 
     // Add auth header if token exists
