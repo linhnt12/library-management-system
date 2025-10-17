@@ -1,40 +1,34 @@
-import { prisma } from '@/lib/prisma'
-import { Role, UserStatus } from '@prisma/client'
-import { CreateUserData, UpdateUserData, UserQueryFilters, PublicUser } from '@/types/user'
-import { ConflictError, NotFoundError } from '@/lib/errors'
+import { prisma } from '@/lib/prisma';
+import { Role, UserStatus } from '@prisma/client';
+import { CreateUserData, UpdateUserData, UserQueryFilters, PublicUser } from '@/types/user';
+import { ConflictError, NotFoundError } from '@/lib/errors';
 
 export class UserService {
   // Get users with pagination and filters
   static async getUsers(filters: UserQueryFilters) {
-    const {
-      search = '',
-      role,
-      status,
-      page = 1,
-      limit = 10,
-    } = filters
+    const { search = '', role, status, page = 1, limit = 10 } = filters;
 
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
 
     // Build where clause
     const where: any = {
       isDeleted: false,
-    }
+    };
 
     if (search) {
       where.OR = [
         { fullName: { contains: search, mode: 'insensitive' } },
         { email: { contains: search, mode: 'insensitive' } },
         { phoneNumber: { contains: search, mode: 'insensitive' } },
-      ]
+      ];
     }
 
     if (role) {
-      where.role = role
+      where.role = role;
     }
 
     if (status) {
-      where.status = status
+      where.status = status;
     }
 
     // Execute queries in parallel
@@ -58,7 +52,7 @@ export class UserService {
         },
       }),
       prisma.user.count({ where }),
-    ])
+    ]);
 
     return {
       users: users as PublicUser[],
@@ -68,7 +62,7 @@ export class UserService {
         total,
         totalPages: Math.ceil(total / limit),
       },
-    }
+    };
   }
 
   // Get user by ID
@@ -90,9 +84,9 @@ export class UserService {
         updatedAt: true,
         inactiveAt: true,
       },
-    })
+    });
 
-    return user as PublicUser | null
+    return user as PublicUser | null;
   }
 
   // Create new user
@@ -100,10 +94,10 @@ export class UserService {
     // Check if email already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: userData.email },
-    })
+    });
 
     if (existingUser) {
-      throw new ConflictError('Email already exists')
+      throw new ConflictError('Email already exists');
     }
 
     const user = await prisma.user.create({
@@ -128,38 +122,38 @@ export class UserService {
         updatedAt: true,
         inactiveAt: true,
       },
-    })
+    });
 
-    return user as PublicUser
+    return user as PublicUser;
   }
 
   // Update user
   static async updateUser(id: number, userData: UpdateUserData): Promise<PublicUser> {
     // Check if user exists
-    const existingUser = await this.getUserById(id)
+    const existingUser = await this.getUserById(id);
     if (!existingUser) {
-      throw new NotFoundError('User not found')
+      throw new NotFoundError('User not found');
     }
 
     // Check email uniqueness if email is being changed
     if (userData.email && userData.email !== existingUser.email) {
       const emailExists = await prisma.user.findUnique({
         where: { email: userData.email },
-      })
+      });
 
       if (emailExists) {
-        throw new ConflictError('Email already exists')
+        throw new ConflictError('Email already exists');
       }
     }
 
     // Prepare update data
-    const updateData: any = { ...userData }
+    const updateData: any = { ...userData };
 
     if (userData.status !== undefined) {
       if (userData.status === UserStatus.INACTIVE) {
-        updateData.inactiveAt = new Date()
+        updateData.inactiveAt = new Date();
       } else if (userData.status === UserStatus.ACTIVE) {
-        updateData.inactiveAt = null
+        updateData.inactiveAt = null;
       }
     }
 
@@ -178,17 +172,17 @@ export class UserService {
         updatedAt: true,
         inactiveAt: true,
       },
-    })
+    });
 
-    return updatedUser as PublicUser
+    return updatedUser as PublicUser;
   }
 
   // Soft delete user
   static async deleteUser(id: number): Promise<void> {
     // Check if user exists
-    const existingUser = await this.getUserById(id)
+    const existingUser = await this.getUserById(id);
     if (!existingUser) {
-      throw new NotFoundError('User not found')
+      throw new NotFoundError('User not found');
     }
 
     await prisma.user.update({
@@ -198,18 +192,18 @@ export class UserService {
         status: UserStatus.INACTIVE,
         inactiveAt: new Date(),
       },
-    })
+    });
   }
 
   // Check if email exists
   static async emailExists(email: string, excludeId?: number): Promise<boolean> {
-    const where: any = { email }
+    const where: any = { email };
     if (excludeId) {
-      where.id = { not: excludeId }
+      where.id = { not: excludeId };
     }
 
-    const user = await prisma.user.findFirst({ where })
-    return !!user
+    const user = await prisma.user.findFirst({ where });
+    return !!user;
   }
 
   // Get user statistics
@@ -221,7 +215,7 @@ export class UserService {
       prisma.user.count({ where: { isDeleted: false, role: Role.ADMIN } }),
       prisma.user.count({ where: { isDeleted: false, role: Role.LIBRARIAN } }),
       prisma.user.count({ where: { isDeleted: false, role: Role.READER } }),
-    ])
+    ]);
 
     return {
       total,
@@ -232,6 +226,6 @@ export class UserService {
         librarians,
         readers,
       },
-    }
+    };
   }
 }

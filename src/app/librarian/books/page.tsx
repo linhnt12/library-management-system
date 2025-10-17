@@ -1,9 +1,8 @@
 'use client';
 
-import { Button, SearchInput, toaster } from '@/components';
-import { BookColumns, Table } from '@/components/table';
+import { Button, SearchInput, toaster, Table, BookColumns } from '@/components';
 import { ROUTES } from '@/constants';
-import { BookService } from '@/services';
+import { BookService } from '@/api';
 import { Book } from '@/types';
 import { HStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';

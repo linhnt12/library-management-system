@@ -2,7 +2,7 @@
 
 import { Dialog as ChakraDialog, Portal, CloseButton } from '@chakra-ui/react';
 import React from 'react';
-import { Button } from '../buttons';
+import { Button } from '@/components';
 
 export interface DialogButton {
   label: string;
