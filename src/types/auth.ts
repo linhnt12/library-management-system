@@ -49,7 +49,6 @@ export interface LoginResponse {
   user: AuthUser
   accessToken: string
   refreshToken: string
-  expiresIn: number
 }
 
 export interface RegisterResponse {
@@ -83,25 +82,4 @@ export interface AuthContextType {
   logout: () => Promise<void>
   refreshToken: () => Promise<void>
   updateProfile: (userData: Partial<AuthUser>) => Promise<void>
-}
-
-// Session types
-export interface UserSession {
-  userId: number
-  email: string
-  role: Role
-  sessionId: string
-  expiresAt: Date
-}
-
-// Validation error types
-export interface AuthValidationError {
-  field: string
-  message: string
-}
-
-export interface AuthError {
-  message: string
-  code?: string
-  errors?: AuthValidationError[]
 }

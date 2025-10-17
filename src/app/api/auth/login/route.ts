@@ -22,19 +22,9 @@ export async function POST(request: NextRequest) {
       {
         user: result.user,
         accessToken: result.accessToken,
-        expiresIn: result.expiresIn
       },
       'Login successful'
     )
-
-    // Set refresh token cookie
-    response.cookies.set('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: body.rememberMe ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60, // 30 days or 7 days
-      path: '/'
-    })
 
     return response
   } catch (error) {

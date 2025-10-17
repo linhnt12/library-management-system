@@ -205,12 +205,11 @@ export class AuthService {
       user: userWithoutPassword as AuthUser,
       accessToken,
       refreshToken,
-      expiresIn: 15 * 60, // 15 minutes in seconds
     }
   }
 
   // Refresh access token
-  static async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string; expiresIn: number }> {
+  static async refreshAccessToken(refreshToken: string): Promise<{ accessToken: string; }> {
     // Verify refresh token
     const payload = JWTUtils.verifyRefreshToken(refreshToken)
 
@@ -247,7 +246,6 @@ export class AuthService {
 
     return {
       accessToken,
-      expiresIn: 15 * 60, // 15 minutes in seconds
     }
   }
 
