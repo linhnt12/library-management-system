@@ -18,6 +18,7 @@ export type FormSelectProps = {
   borderColor?: HTMLChakraProps<'div'>['borderColor'];
   variantType?: 'default' | 'filter';
   id?: string;
+  fontSize?: HTMLChakraProps<'div'>['fontSize'];
 };
 
 export function FormSelect({
@@ -34,6 +35,7 @@ export function FormSelect({
   borderColor,
   variantType = 'default',
   id,
+  fontSize = 'sm',
 }: FormSelectProps) {
   const collection = createListCollection({ items });
   const selected = value ? [value] : [];
@@ -59,7 +61,7 @@ export function FormSelect({
       collection={collection}
       value={selected}
       w={width}
-      fontSize="sm"
+      fontSize={fontSize}
       fontWeight={fontWeight}
       onValueChange={e => onChange?.(e.value[0])}
     >
@@ -84,6 +86,7 @@ export function FormSelect({
             <Select.Item
               key={item.value}
               item={item}
+              fontSize={fontSize}
               _hover={{ bg: 'primary.200' }}
               _highlighted={{ bg: 'primary.200' }}
               _selected={{ bg: 'primary.500', color: 'white' }}

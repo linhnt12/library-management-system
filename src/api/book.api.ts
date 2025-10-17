@@ -24,9 +24,12 @@ export class BookService {
     page?: number;
     limit?: number;
     search?: string;
-    authorId?: number;
+    authorIds?: number[];
     type?: string;
-    publishYear?: number;
+    publishYearFrom?: number;
+    publishYearTo?: number;
+    publishers?: string[];
+    status?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   }) {
@@ -35,9 +38,17 @@ export class BookService {
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.search) searchParams.set('search', params.search);
-    if (params?.authorId) searchParams.set('authorId', params.authorId.toString());
+    if (params?.authorIds && params.authorIds.length > 0) {
+      params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
+    }
     if (params?.type) searchParams.set('type', params.type);
-    if (params?.publishYear) searchParams.set('publishYear', params.publishYear.toString());
+    if (params?.publishYearFrom)
+      searchParams.set('publishYearFrom', params.publishYearFrom.toString());
+    if (params?.publishYearTo) searchParams.set('publishYearTo', params.publishYearTo.toString());
+    if (params?.publishers && params.publishers.length > 0) {
+      params.publishers.forEach(publisher => searchParams.append('publishers', publisher));
+    }
+    if (params?.status) searchParams.set('status', params.status);
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 

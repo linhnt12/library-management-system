@@ -10,7 +10,7 @@ interface ButtonProps extends Omit<ChakraButtonProps, 'children'> {
   icon?: React.ElementType;
   isActive?: boolean;
   onClick?: () => void;
-  variantType?: 'primary' | 'secondary' | 'sidebar';
+  variantType?: 'primary' | 'secondary' | 'sidebar' | 'tertiary';
 }
 
 export function Button({
@@ -49,6 +49,15 @@ export function Button({
       borderColor: 'transparent',
       hover: { bg: isActive ? 'primary.500' : 'primary.200' },
       active: { bg: 'primary.200' },
+    },
+    tertiary: {
+      w: 'fit-content',
+      bg: 'paginationBg.500',
+      color: 'primaryText.500',
+      justifyContent: 'center',
+      borderColor: 'transparent',
+      hover: { bg: 'primary.200', color: 'primaryText.500' },
+      active: {},
     },
   };
 
