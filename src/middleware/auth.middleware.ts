@@ -115,12 +115,3 @@ export const requireLibrarian = (
 export const optionalAuth = (
   handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { optional: true });
-
-// Response helpers (using api-utils)
-export function unauthorizedResponse(message = 'Authentication required') {
-  return errorResponse(message, 401);
-}
-
-export function forbiddenResponse(message = 'Insufficient permissions') {
-  return errorResponse(message, 403);
-}
