@@ -2,9 +2,9 @@ import { ROUTES } from '@/constants';
 import { useFormSubmission } from '@/lib/hooks';
 import { LoginFormState, LoginFormErrors, validateLogin } from '@/lib/validators';
 import { LoginRequest } from '@/types/auth';
-import { useAuth } from '@/contexts';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { AuthApi } from '@/api';
 
 const initialState: LoginFormState = {
   email: '',
@@ -13,7 +13,6 @@ const initialState: LoginFormState = {
 
 export function useLoginForm() {
   const router = useRouter();
-  const { login } = useAuth();
   const [form, setForm] = useState<LoginFormState>(initialState);
   const [errors, setErrors] = useState<LoginFormErrors>({});
   const { submit, isSubmitting } = useFormSubmission<LoginFormState, LoginRequest, void>({
@@ -58,7 +57,7 @@ export function useLoginForm() {
     await submit(form, {
       validate,
       transformData,
-      apiCall: login,
+      apiCall: AuthApi.login,
       onSuccess: () => {
         resetForm();
         // Router will be handled by middleware
