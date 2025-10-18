@@ -11,9 +11,10 @@ import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // GET /api/users/[id] - Lấy thông tin user theo ID
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const userId = parseIntParam(params.id);
+    const { id } = await params;
+    const userId = parseIntParam(id);
 
     if (userId <= 0) {
       throw new ValidationError('Invalid user ID');
@@ -32,9 +33,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/users/[id] - Cập nhật thông tin user
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const userId = parseIntParam(params.id);
+    const { id } = await params;
+    const userId = parseIntParam(id);
 
     if (userId <= 0) {
       throw new ValidationError('Invalid user ID');
@@ -52,8 +54,12 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const updateData: Prisma.UserUpdateInput = {
       fullName: fullName !== undefined ? { set: sanitizeString(fullName) } : undefined,
       email: email !== undefined ? { set: email.toLowerCase().trim() } : undefined,
-      phoneNumber: phoneNumber !== undefined ? { set: phoneNumber ? sanitizeString(phoneNumber) : null } : undefined,
-      address: address !== undefined ? { set: address ? sanitizeString(address) : null } : undefined,
+      phoneNumber:
+        phoneNumber !== undefined
+          ? { set: phoneNumber ? sanitizeString(phoneNumber) : null }
+          : undefined,
+      address:
+        address !== undefined ? { set: address ? sanitizeString(address) : null } : undefined,
       role: role !== undefined ? { set: role } : undefined,
       status: status !== undefined ? { set: status } : undefined,
     };
@@ -67,9 +73,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/users/[id] - Xóa user (soft delete)
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const userId = parseIntParam(params.id);
+    const { id } = await params;
+    const userId = parseIntParam(id);
 
     if (userId <= 0) {
       throw new ValidationError('Invalid user ID');

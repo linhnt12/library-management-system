@@ -1,16 +1,16 @@
-import { NextRequest } from 'next/server';
-import { BookType, Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
-import { Book, BooksListPayload, CreateBookData } from '@/types/book';
-import {
-  successResponse,
-  handleRouteError,
-  parsePaginationParams,
-  validateRequiredFields,
-  sanitizeString,
-  parseIntParam,
-} from '@/lib/utils';
 import { ValidationError } from '@/lib/errors';
+import { prisma } from '@/lib/prisma';
+import {
+  handleRouteError,
+  parseIntParam,
+  parsePaginationParams,
+  sanitizeString,
+  successResponse,
+  validateRequiredFields,
+} from '@/lib/utils';
+import { Book, BooksListPayload, CreateBookData } from '@/types/book';
+import { BookType, Prisma } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 // GET /api/books - Get books
 export async function GET(request: NextRequest) {
@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     const statusParam = searchParams.get('status');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
+    const isDeletedParam = searchParams.get('isDeleted');
 
     const authorIds =
       authorIdsParam.length > 0
@@ -37,7 +38,9 @@ export async function GET(request: NextRequest) {
       : undefined;
     const publishYearTo = publishYearToParam ? parseIntParam(publishYearToParam, 0) : undefined;
 
-    const where: Prisma.BookWhereInput = { isDeleted: false };
+    const where: Prisma.BookWhereInput = {
+      ...(isDeletedParam === 'false' && { isDeleted: false }),
+    };
 
     if (search) {
       where.OR = [
@@ -122,6 +125,7 @@ export async function GET(request: NextRequest) {
           type: true,
           description: true,
           coverImageUrl: true,
+          isDeleted: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -161,10 +165,14 @@ export async function POST(request: NextRequest) {
       type,
       description,
       coverImageUrl,
+      isDeleted,
     } = body;
 
     // Validate required fields
-    const validationError = validateRequiredFields(body, ['authorId', 'title']);
+    const validationError = validateRequiredFields(body as unknown as Record<string, unknown>, [
+      'authorId',
+      'title',
+    ]);
     if (validationError) {
       throw new ValidationError(validationError);
     }
@@ -188,6 +196,7 @@ export async function POST(request: NextRequest) {
       type: type || BookType.PRINT,
       description: description ? sanitizeString(description) : null,
       coverImageUrl: coverImageUrl ? sanitizeString(coverImageUrl) : null,
+      isDeleted: Boolean(isDeleted),
     };
 
     const created: Book = await prisma.book.create({
@@ -205,6 +214,7 @@ export async function POST(request: NextRequest) {
         type: true,
         description: true,
         coverImageUrl: true,
+        isDeleted: true,
         createdAt: true,
         updatedAt: true,
       },

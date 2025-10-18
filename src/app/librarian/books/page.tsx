@@ -15,6 +15,7 @@ import {
   toaster,
 } from '@/components';
 import { BOOK_STATUS_OPTIONS, PUBLISHER_OPTIONS, ROUTES } from '@/constants';
+import { useDialog } from '@/lib/hooks';
 import { useAuthorOptions } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
 import { HStack, Text, VStack } from '@chakra-ui/react';
@@ -23,6 +24,7 @@ import { IoAddSharp, IoFilter } from 'react-icons/io5';
 
 export default function BookPage() {
   const authorOptions = useAuthorOptions();
+  const { dialog, openDialog, handleConfirm, handleCancel } = useDialog();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -61,7 +63,6 @@ export default function BookPage() {
         search: searchQuery || undefined,
         sortBy: sortBy || undefined,
         sortOrder: sortOrder || undefined,
-        type: 'PRINT',
         authorIds: appliedFilters.authorIds,
         publishers: appliedFilters.publishers,
         publishYearFrom: appliedFilters.publishYearFrom,
@@ -162,6 +163,40 @@ export default function BookPage() {
     setSelectedPublishers(Array.isArray(value) ? value : []);
   };
 
+  // Handle book status change
+  const handleChangeBookStatus = (book: Book) => {
+    const newIsDeleted = !book.isDeleted;
+    const actionText = newIsDeleted ? 'deactivate' : 'activate';
+
+    openDialog({
+      title: 'Confirm Change Book Status',
+      message: `Do you want to ${actionText} this book "${book.title}"?`,
+      confirmText: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} Book`,
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        try {
+          await BookApi.updateBook(book.id, { isDeleted: newIsDeleted });
+          toaster.create({
+            title: 'Success',
+            description: `Book ${actionText}d successfully`,
+            type: 'success',
+          });
+          fetchBooks();
+        } catch (error) {
+          console.error('Error changing book status:', error);
+          toaster.create({
+            title: 'Error',
+            description: `Failed to ${actionText} book`,
+            type: 'error',
+          });
+        }
+      },
+    });
+  };
+
+  // Create columns with status change callback
+  const bookColumns = BookColumns(handleChangeBookStatus);
+
   return (
     <>
       <HStack mb={4} gap={4} justifyContent="space-between" alignItems="center">
@@ -195,7 +230,7 @@ export default function BookPage() {
         />
       </HStack>
       <Table
-        columns={BookColumns}
+        columns={bookColumns}
         data={books}
         page={page}
         pageSize={pageSize}
@@ -292,6 +327,27 @@ export default function BookPage() {
             onClick: handleApplyFilter,
           },
         ]}
+      />
+
+      {/* Status Change Confirmation Dialog */}
+      <Dialog
+        isOpen={dialog.isOpen}
+        onClose={handleCancel}
+        title={dialog.title}
+        content={dialog.message}
+        buttons={[
+          {
+            label: dialog.cancelText,
+            onClick: handleCancel,
+            variant: 'secondary',
+          },
+          {
+            label: dialog.confirmText,
+            onClick: handleConfirm,
+            variant: 'primary',
+          },
+        ]}
+        showCloseButton={false}
       />
     </>
   );

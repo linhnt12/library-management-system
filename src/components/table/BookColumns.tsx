@@ -1,12 +1,12 @@
 'use client';
 
-import { IconButton } from '@/components/buttons';
+import { IconButton, Tag } from '@/components';
 import { ROUTES } from '@/constants';
 import { useAuthors } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
 import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuEye, LuPencil } from 'react-icons/lu';
 
 // Component to render author name with hook
 function AuthorCell({ authorId }: { authorId: number }) {
@@ -14,6 +14,30 @@ function AuthorCell({ authorId }: { authorId: number }) {
   const author = authors?.find(a => a.id === authorId);
 
   return <Text>{author?.fullName || `Author ID: ${authorId}`}</Text>;
+}
+
+// Component to render status with click handler
+function StatusCell({
+  book,
+  onChangeStatus,
+}: {
+  book: Book;
+  onChangeStatus: (book: Book) => void;
+}) {
+  const handleStatusClick = () => {
+    onChangeStatus(book);
+  };
+
+  return (
+    <Tag
+      variantType={book.isDeleted ? 'inactive' : 'active'}
+      onClick={handleStatusClick}
+      cursor="pointer"
+      _hover={{ opacity: 0.8 }}
+    >
+      {book.isDeleted ? 'Inactive' : 'Active'}
+    </Tag>
+  );
 }
 
 // Component to render action buttons
@@ -29,11 +53,6 @@ function ActionsCell({ book }: { book: Book }) {
     console.log('View book:', book.id);
   };
 
-  const handleDelete = () => {
-    // TODO: Implement delete book functionality
-    console.log('Delete book:', book.id);
-  };
-
   return (
     <HStack gap={2} justifyContent="center">
       <IconButton aria-label="View book" onClick={handleView}>
@@ -42,15 +61,12 @@ function ActionsCell({ book }: { book: Book }) {
       <IconButton aria-label="Edit book" onClick={handleEdit}>
         <LuPencil />
       </IconButton>
-      <IconButton aria-label="Delete book" onClick={handleDelete}>
-        <LuTrash2 />
-      </IconButton>
     </HStack>
   );
 }
 
 // TODO: This will be fixed later
-export const BookColumns = [
+export const BookColumns = (onChangeStatus?: (book: Book) => void) => [
   {
     key: 'id',
     header: 'ID',
@@ -62,7 +78,6 @@ export const BookColumns = [
     key: 'title',
     header: 'Book',
     sortable: true,
-    width: '300px',
     render: (book: Book) => (
       <HStack gap={3}>
         <Image
@@ -86,7 +101,7 @@ export const BookColumns = [
     key: 'author',
     header: 'Author',
     sortable: false,
-    width: '150px',
+    width: '180px',
     render: (book: Book) => <AuthorCell authorId={book.authorId} />,
   },
   {
@@ -100,7 +115,7 @@ export const BookColumns = [
     key: 'publishYear',
     header: 'Publish Year',
     sortable: true,
-    width: '120px',
+    width: '150px',
     textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.publishYear ?? 'N/A'}</Text>,
   },
@@ -108,7 +123,7 @@ export const BookColumns = [
     key: 'edition',
     header: 'Edition',
     sortable: false,
-    width: '80px',
+    width: '100px',
     textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.edition ?? 'N/A'}</Text>,
   },
@@ -116,7 +131,7 @@ export const BookColumns = [
     key: 'pageCount',
     header: 'Page Count',
     sortable: true,
-    width: '120px',
+    width: '150px',
     textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.pageCount ?? 'N/A'}</Text>,
   },
@@ -127,6 +142,15 @@ export const BookColumns = [
     width: '100px',
     textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.price ?? 'N/A'}</Text>,
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    sortable: true,
+    width: '100px',
+    render: (book: Book) => (
+      <StatusCell book={book} onChangeStatus={onChangeStatus || (() => {})} />
+    ),
   },
   {
     key: 'actions',
