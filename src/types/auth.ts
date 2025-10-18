@@ -83,3 +83,11 @@ export interface AuthContextType {
   refreshToken: () => Promise<void>
   updateProfile: (userData: Partial<AuthUser>) => Promise<void>
 }
+
+// Cookie options
+export interface CookieSetOptions {
+  days?: number;
+  path?: string;
+  sameSite?: 'Lax' | 'Strict' | 'None';
+  secure?: boolean;
+};
