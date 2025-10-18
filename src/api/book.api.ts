@@ -1,22 +1,20 @@
-import { CreateBookData, Book } from '@/types/book';
+import { getAccessToken, handleJson } from '@/lib/utils';
+import { Book, CreateBookData } from '@/types/book';
 
-export class BookService {
+export class BookApi {
   // Create book
   static async createBook(data: CreateBookData): Promise<Book> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
     const response = await fetch('/api/books', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(data),
     });
 
-    const json = await response.json();
-
-    if (!response.ok || json.success === false) {
-      const error = json?.error || json?.message || 'Failed to create book';
-      throw new Error(error);
-    }
-
-    return json.data;
+    return await handleJson<Book>(response);
   }
 
   // Get books
@@ -32,7 +30,7 @@ export class BookService {
     status?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
-  }) {
+  }): Promise<{ books: Book[]; pagination: { total: number } }> {
     const searchParams = new URLSearchParams();
 
     if (params?.page) searchParams.set('page', params.page.toString());
@@ -52,59 +50,58 @@ export class BookService {
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 
-    const response = await fetch(`/api/books?${searchParams.toString()}`);
-    const json = await response.json();
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
 
-    if (!response.ok || json.success === false) {
-      const error = json?.error || json?.message || 'Failed to fetch books';
-      throw new Error(error);
-    }
+    const response = await fetch(`/api/books?${searchParams.toString()}`, {
+      method: 'GET',
+      headers,
+    });
 
-    return json.data;
+    return await handleJson<{ books: Book[]; pagination: { total: number } }>(response);
   }
 
   // Get book by id
   static async getBookById(id: number): Promise<Book> {
-    const response = await fetch(`/api/books/${id}`);
-    const json = await response.json();
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
 
-    if (!response.ok || json.success === false) {
-      const error = json?.error || json?.message || 'Failed to fetch book';
-      throw new Error(error);
-    }
+    const response = await fetch(`/api/books/${id}`, {
+      method: 'GET',
+      headers,
+    });
 
-    return json.data;
+    return await handleJson<Book>(response);
   }
 
   // Update book
   static async updateBook(id: number, data: Partial<CreateBookData>): Promise<Book> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
     const response = await fetch(`/api/books/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify(data),
     });
 
-    const json = await response.json();
-
-    if (!response.ok || json.success === false) {
-      const error = json?.error || json?.message || 'Failed to update book';
-      throw new Error(error);
-    }
-
-    return json.data;
+    return await handleJson<Book>(response);
   }
 
   // Delete book (soft delete)
   static async deleteBook(id: number): Promise<void> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
     const response = await fetch(`/api/books/${id}`, {
       method: 'DELETE',
+      headers,
     });
 
-    const json = await response.json();
-
-    if (!response.ok || json.success === false) {
-      const error = json?.error || json?.message || 'Failed to delete book';
-      throw new Error(error);
-    }
+    await handleJson<null>(response);
   }
 }

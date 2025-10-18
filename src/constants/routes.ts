@@ -15,9 +15,11 @@ export const ROUTES = {
     DASHBOARD: '/librarian',
     BOOKS: '/librarian/books',
     BOOKS_ADD: '/librarian/books/add',
+    BOOKS_EDIT: '/librarian/books/edit',
     BOOKS_COPIES: '/librarian/books/copies',
-    EBOOKS: '/librarian/ebooks',
-    EBOOKS_ADD: '/librarian/ebooks/add',
+    BOOKS_COPIES_ADD: '/librarian/books/copies/add',
+    BOOKS_EDITIONS: '/librarian/books/editions',
+    BOOKS_EDITIONS_ADD: '/librarian/books/editions/add',
     BORROWERS: '/librarian/borrowers',
   },
 

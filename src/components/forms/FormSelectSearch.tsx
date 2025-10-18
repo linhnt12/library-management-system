@@ -48,7 +48,7 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
   multi = false,
   height = '50px',
   width = '100%',
-  fontSize = 'sm',
+  fontSize = '16px',
 }) => {
   /* Chakra UI colors
 		primary.200: #ff7b424d
@@ -157,7 +157,7 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
         singleValue: baseStyles => ({
           ...baseStyles,
           color: '#191d26',
-          fontSize: '14px',
+          fontSize: fontSize,
         }),
         menu: baseStyles => ({
           ...baseStyles,

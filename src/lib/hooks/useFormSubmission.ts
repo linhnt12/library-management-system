@@ -35,16 +35,3 @@ export function useFormSubmission<T, TData = unknown, TResult = unknown>(
     isSubmitting,
   };
 }
-
-// Custom hook to handle book form submission
-export function useBookFormSubmission<T, TData = unknown, TResult = unknown>() {
-  const { submit, isSubmitting } = useFormSubmission<T, TData, TResult>({
-    successMessage: 'Book added successfully',
-    errorMessage: 'Failed to add book',
-  });
-
-  return {
-    submitBook: submit,
-    isSubmitting,
-  };
-}

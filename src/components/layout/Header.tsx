@@ -1,7 +1,7 @@
 'use client';
 
 import { IconButton, Breadcrumbs } from '@/components';
-import { adminHeadings, commonHeadings, librarianHeadings } from '@/constants';
+import { pageHeadings } from '@/constants';
 import { Box, Flex, HStack, Heading, Image, Stack, Text } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { FiBell } from 'react-icons/fi';
@@ -14,12 +14,11 @@ type HeaderProps = {
 export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderProps) {
   const pathname = usePathname();
 
-  const isAdmin = pathname.startsWith('/admin');
-  const isLibrarian = pathname.startsWith('/librarian');
-
-  const headingsMap = isAdmin ? adminHeadings : isLibrarian ? librarianHeadings : commonHeadings;
+  // Find heading for dynamic routes
   const heading =
-    headingsMap[pathname] || (isAdmin ? 'Admin' : isLibrarian ? 'Librarian' : 'Dashboard');
+    pageHeadings[pathname] ||
+    pageHeadings[pathname.replace(/\/\d+$/, '')] || // Remove trailing ID
+    'Dashboard';
 
   return (
     <Flex as="header" align="center" justify="space-between" paddingBottom={4} bg="layoutBg.500">
@@ -27,7 +26,7 @@ export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderP
         <Heading fontSize="2xl" fontWeight="semibold" mb={1}>
           {heading}
         </Heading>
-        <Breadcrumbs pathname={pathname} headingsMap={headingsMap} />
+        <Breadcrumbs pathname={pathname} headingsMap={pageHeadings} />
       </Box>
 
       <HStack gap={3}>

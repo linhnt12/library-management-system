@@ -1,6 +1,6 @@
 'use client';
 
-import { BookService } from '@/api';
+import { BookApi } from '@/api';
 import {
   BookColumns,
   Button,
@@ -55,7 +55,7 @@ export default function BookPage() {
     try {
       setLoading(true);
 
-      const response = await BookService.getBooks({
+      const response = await BookApi.getBooks({
         page,
         limit: pageSize,
         search: searchQuery || undefined,
