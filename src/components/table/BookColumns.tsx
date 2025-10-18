@@ -1,12 +1,12 @@
 'use client';
 
+import { IconButton } from '@/components/buttons';
+import { ROUTES } from '@/constants';
+import { useAuthors } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
 import { HStack, Image, Text, VStack } from '@chakra-ui/react';
-import { IconButton } from '@/components/buttons';
-import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
-import { useAuthors } from '@/lib/hooks/useAuthors';
-import { ROUTES } from '@/constants';
 import { useRouter } from 'next/navigation';
+import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 // Component to render author name with hook
 function AuthorCell({ authorId }: { authorId: number }) {
@@ -101,7 +101,7 @@ export const BookColumns = [
     header: 'Publish Year',
     sortable: true,
     width: '120px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.publishYear ?? 'N/A'}</Text>,
   },
   {
@@ -109,7 +109,7 @@ export const BookColumns = [
     header: 'Edition',
     sortable: false,
     width: '80px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.edition ?? 'N/A'}</Text>,
   },
   {
@@ -117,7 +117,7 @@ export const BookColumns = [
     header: 'Page Count',
     sortable: true,
     width: '120px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.pageCount ?? 'N/A'}</Text>,
   },
   {
@@ -125,7 +125,7 @@ export const BookColumns = [
     header: 'Price',
     sortable: true,
     width: '100px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     render: (book: Book) => <Text>{book.price ?? 'N/A'}</Text>,
   },
   {
@@ -133,7 +133,7 @@ export const BookColumns = [
     header: 'Actions',
     sortable: false,
     width: '120px',
-    textAlign: 'center',
+    textAlign: 'center' as const,
     render: (book: Book) => <ActionsCell book={book} />,
   },
 ];

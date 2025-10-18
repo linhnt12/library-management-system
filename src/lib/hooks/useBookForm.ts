@@ -1,11 +1,11 @@
+import { BookApi } from '@/api';
 import { SelectOption } from '@/components/forms/FormSelectSearch';
 import { ROUTES } from '@/constants';
-import { useFormSubmission, useDialog } from '@/lib/hooks';
+import { useDialog, useFormSubmission } from '@/lib/hooks';
 import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
-import { BookService } from '@/api';
 import { Book, CreateBookData, UpdateBookData } from '@/types/book';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const initialState: CreateBookFormState = {
   authorId: '',
@@ -48,7 +48,7 @@ export function useBookForm(bookId?: number) {
     const loadBook = async () => {
       try {
         setIsLoading(true);
-        const book = await BookService.getBookById(bookId);
+        const book = await BookApi.getBookById(bookId);
 
         // Transform book data to form state
         setForm({
@@ -165,7 +165,7 @@ export function useBookForm(bookId?: number) {
             await submit(form, {
               validate,
               transformData: transformDataForUpdate,
-              apiCall: (data: UpdateBookData) => BookService.updateBook(bookId!, data),
+              apiCall: (data: UpdateBookData) => BookApi.updateBook(bookId!, data),
               onSuccess: () => {
                 router.push(ROUTES.LIBRARIAN.BOOKS);
               },
@@ -175,7 +175,7 @@ export function useBookForm(bookId?: number) {
               validate,
               transformData: transformDataForCreate,
               apiCall: (data: CreateBookData | UpdateBookData) =>
-                BookService.createBook(data as CreateBookData),
+                BookApi.createBook(data as CreateBookData),
               onSuccess: () => {
                 resetForm();
                 router.push(ROUTES.LIBRARIAN.BOOKS);
