@@ -310,7 +310,6 @@ export default function BookPage() {
                 placeholder="Select status"
                 variantType="filter"
                 height="50px"
-                fontSize="md"
               />
             </FormField>
           </VStack>

@@ -35,7 +35,7 @@ export function FormSelect({
   borderColor,
   variantType = 'default',
   id,
-  fontSize = 'sm',
+  fontSize = 'md',
 }: FormSelectProps) {
   const collection = createListCollection({ items });
   const selected = value ? [value] : [];

@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
     rules: {},
   },
 
-  swcMinify: true,
-  productionBrowserSourceMaps: false,
-
   typescript: {
     ignoreBuildErrors: false,
   },

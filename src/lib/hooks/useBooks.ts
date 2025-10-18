@@ -36,17 +36,28 @@ export interface BookOption {
   publishYear: number | null;
 }
 
+// Hook to get all books for options
+export function useAllBooks() {
+  return useQuery({
+    queryKey: ['books', 'all'],
+    queryFn: async (): Promise<Book[]> => {
+      return BookApi.getAllBooks();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
 // Helper function to convert books to lightweight SelectOption format
 export function useBookOptions(): BookOption[] {
-  const { data: booksData } = useBooks();
+  const { data: books } = useAllBooks();
   const { data: authors } = useAuthors();
 
-  if (!booksData?.books || !authors) return [];
+  if (!books || !authors) return [];
 
   // Create a map for quick author lookup
   const authorMap = new Map(authors.map(author => [author.id, author]));
 
-  return booksData.books.map(book => ({
+  return books.map(book => ({
     value: book.id.toString(),
     label: book.title,
     title: book.title,
