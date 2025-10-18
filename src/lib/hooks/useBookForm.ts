@@ -70,7 +70,7 @@ export function useBookForm(bookId?: number) {
       } catch (error) {
         console.error('Failed to load book:', error);
         // Redirect to books list if book not found
-        router.push(ROUTES.LIBRARIAN.BOOKS);
+        router.push(ROUTES.DASHBOARD.BOOKS);
       } finally {
         setIsLoading(false);
       }
@@ -140,7 +140,7 @@ export function useBookForm(bookId?: number) {
       confirmText: 'Yes, Cancel',
       cancelText: 'No, Continue',
       onConfirm: () => {
-        router.push(ROUTES.LIBRARIAN.BOOKS);
+        router.push(ROUTES.DASHBOARD.BOOKS);
       },
     });
   }, [isEditMode, openDialog, router]);
@@ -170,7 +170,7 @@ export function useBookForm(bookId?: number) {
               transformData: transformDataForUpdate,
               apiCall: (data: UpdateBookData) => BookApi.updateBook(bookId!, data),
               onSuccess: () => {
-                router.push(ROUTES.LIBRARIAN.BOOKS);
+                router.push(ROUTES.DASHBOARD.BOOKS);
               },
             });
           } else {
@@ -181,7 +181,7 @@ export function useBookForm(bookId?: number) {
                 BookApi.createBook(data as CreateBookData),
               onSuccess: () => {
                 resetForm();
-                router.push(ROUTES.LIBRARIAN.BOOKS);
+                router.push(ROUTES.DASHBOARD.BOOKS);
               },
             });
           }

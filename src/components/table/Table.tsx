@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Table as ChakraTable, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
 import { Spinner } from '@/components';
+import { Box, Table as ChakraTable, HStack, IconButton, Text, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import { TiArrowSortedDown, TiArrowSortedUp, TiArrowUnsorted } from 'react-icons/ti';
 import { TableFooter } from './TableFooter';
@@ -93,8 +93,8 @@ export function Table<T>({
   };
 
   return (
-    <Box>
-      <ChakraTable.Root size="sm">
+    <Box height="100%" display="flex" flexDirection="column">
+      <ChakraTable.Root size="sm" flex="1">
         <ChakraTable.Header>
           <ChakraTable.Row>
             {columns.map(col => (
@@ -141,7 +141,7 @@ export function Table<T>({
           {loading ? (
             <ChakraTable.Row>
               <ChakraTable.Cell colSpan={columns.length}>
-                <VStack h="150px" alignItems="center" justifyContent="center" gap={4}>
+                <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
                   <Spinner />
                   <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
                     Loading...
@@ -152,7 +152,7 @@ export function Table<T>({
           ) : paginatedData.length === 0 ? (
             <ChakraTable.Row>
               <ChakraTable.Cell colSpan={columns.length}>
-                <VStack h="150px" alignItems="center" justifyContent="center" gap={4}>
+                <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
                   <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
                     No data
                   </Text>

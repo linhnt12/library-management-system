@@ -45,7 +45,7 @@ function ActionsCell({ book }: { book: Book }) {
   const router = useRouter();
 
   const handleEdit = () => {
-    router.push(`${ROUTES.LIBRARIAN.BOOKS_EDIT}/${book.id}`);
+    router.push(`${ROUTES.DASHBOARD.BOOKS_EDIT}/${book.id}`);
   };
 
   const handleView = () => {

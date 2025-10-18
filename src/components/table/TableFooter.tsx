@@ -1,8 +1,9 @@
 'use client';
 
+import { FormSelect } from '@/components';
 import { tablePageSizeOptions } from '@/constants';
 import { Box, ButtonGroup, HStack, IconButton, Pagination, Text } from '@chakra-ui/react';
-import { FormSelect } from '@/components';
+import { HiOutlineDotsHorizontal } from 'react-icons/hi';
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
 
 export type TableFooterProps = {
@@ -44,6 +45,7 @@ export function TableFooter({
           onChange={val => onPageSizeChange?.(Number(val))}
           width="70px"
           height="32px"
+          fontSize="sm"
           triggerSize="xs"
           variantType="filter"
         />
@@ -56,6 +58,7 @@ export function TableFooter({
         count={total}
         pageSize={pageSize}
         page={page}
+        siblingCount={2}
         onPageChange={e => onPageChange?.(e.page)}
       >
         <ButtonGroup size="xs" wrap="wrap">
@@ -85,6 +88,18 @@ export function TableFooter({
                 {p.value}
               </IconButton>
             )}
+            ellipsis={
+              <IconButton
+                bg="paginationBg.500"
+                color="primaryText.500"
+                _hover={{ bg: 'primary.200' }}
+                borderRadius="md"
+                fontSize="xs"
+                aria-label="Ellipsis"
+              >
+                <HiOutlineDotsHorizontal />
+              </IconButton>
+            }
           />
 
           <Pagination.NextTrigger asChild>

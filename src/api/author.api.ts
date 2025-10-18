@@ -1,6 +1,6 @@
 import { Author } from '@/types';
 
-export class AuthorService {
+export class AuthorApi {
   // Get authors
   static async getAuthors(): Promise<Author[]> {
     const response = await fetch('/api/authors');

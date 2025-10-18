@@ -12,16 +12,22 @@ import {
   FormTextarea,
   SelectOption,
 } from '@/components';
-import { BOOK_TYPE_OPTIONS, CATEGORY_OPTIONS } from '@/constants';
+import { CATEGORY_OPTIONS } from '@/constants';
 import { useBookForm } from '@/lib/hooks';
 import { useAuthorOptions } from '@/lib/hooks/useAuthors';
 import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
-import { useParams } from 'next/navigation';
 
-export default function EditBookPage() {
-  const params = useParams();
-  const bookId = Number(params.id);
+interface BookFormProps {
+  bookId?: number;
+  submitLabel?: string;
+  cancelLabel?: string;
+}
 
+export function BookForm({
+  bookId,
+  submitLabel = 'Save Book',
+  cancelLabel = 'Cancel',
+}: BookFormProps) {
   const authorOptions = useAuthorOptions();
   const {
     form,
@@ -49,10 +55,23 @@ export default function EditBookPage() {
             />
           </FormField>
 
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+          {/* Author */}
+          <FormField label="Author" error={errors.authorId}>
+            <FormSelectSearch
+              value={
+                form.authorId ? authorOptions.find(opt => opt.value === form.authorId) : undefined
+              }
+              onChange={val => setField('authorId', String((val as SelectOption)?.value || ''))}
+              options={authorOptions}
+              placeholder="Select author"
+              fontSize="md"
+            />
+          </FormField>
+
+          <Grid templateColumns={{ base: '1fr', md: '3fr 1fr' }} gap={4}>
             <GridItem>
               {/* ISBN */}
-              <FormField label="ISBN">
+              <FormField label="ISBN" error={errors.isbn}>
                 <FormInput
                   value={form.isbn}
                   onChange={e => setField('isbn', e.target.value)}
@@ -62,18 +81,17 @@ export default function EditBookPage() {
             </GridItem>
 
             <GridItem>
-              {/* Author */}
-              <FormField label="Author" error={errors.authorId}>
-                <FormSelectSearch
-                  value={
-                    form.authorId
-                      ? authorOptions.find(opt => opt.value === form.authorId)
-                      : undefined
-                  }
-                  onChange={val => setField('authorId', String((val as SelectOption)?.value || ''))}
-                  options={authorOptions}
-                  placeholder="Select author"
-                  fontSize="md"
+              {/* Status */}
+              <FormField label="Status">
+                <FormSelect
+                  items={[
+                    { label: 'Active', value: 'false' },
+                    { label: 'Inactive', value: 'true' },
+                  ]}
+                  value={form.isDeleted ? 'true' : 'false'}
+                  onChange={value => setField('isDeleted', value === 'true')}
+                  placeholder="Select status"
+                  height="50px"
                 />
               </FormField>
             </GridItem>
@@ -95,7 +113,7 @@ export default function EditBookPage() {
 
         {/* Section 2: Publication Information */}
         <FormSection title="Publication Information">
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
             <GridItem>
               {/* Publish year */}
               <FormField label="Publish year" error={errors.publishYear}>
@@ -136,7 +154,7 @@ export default function EditBookPage() {
 
         {/* Section 3: Physical & Pricing Information */}
         <FormSection title="Physical & Pricing Information">
-          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
             {/* Page count */}
             <GridItem>
               <FormField label="Page count" error={errors.pageCount}>
@@ -157,19 +175,6 @@ export default function EditBookPage() {
                   value={form.price}
                   onChange={e => setField('price', e.target.value)}
                   placeholder="Enter price"
-                />
-              </FormField>
-            </GridItem>
-
-            <GridItem>
-              {/* Type */}
-              <FormField label="Type" error={errors.type}>
-                <FormSelect
-                  items={BOOK_TYPE_OPTIONS}
-                  value={form.type}
-                  onChange={val => setField('type', val)}
-                  placeholder="Select type"
-                  height="50px"
                 />
               </FormField>
             </GridItem>
@@ -201,8 +206,8 @@ export default function EditBookPage() {
 
         {/* Buttons */}
         <FormButtons
-          submitLabel="Update Book"
-          cancelLabel="Cancel"
+          submitLabel={submitLabel}
+          cancelLabel={cancelLabel}
           isSubmitting={isSubmitting}
           onCancel={handleCancel}
         />

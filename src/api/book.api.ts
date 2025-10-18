@@ -93,6 +93,20 @@ export class BookApi {
     return await handleJson<Book>(response);
   }
 
+  // Get all books
+  static async getAllBooks(): Promise<Book[]> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetch('/api/books/all', {
+      method: 'GET',
+      headers,
+    });
+
+    return await handleJson<Book[]>(response);
+  }
+
   // Delete book (soft delete)
   static async deleteBook(id: number): Promise<void> {
     const token = getAccessToken();
