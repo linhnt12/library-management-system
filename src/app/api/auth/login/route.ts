@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       {
         user: result.user,
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
       },
       'Login successful'
     );

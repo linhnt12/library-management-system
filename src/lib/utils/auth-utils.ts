@@ -78,7 +78,7 @@ export class JWTUtils {
         issuer: 'library-management-system',
         audience: 'library-users',
       }) as JWTPayload;
-    } catch (error) {
+    } catch {
       throw new Error('Invalid or expired access token');
     }
   }
@@ -89,19 +89,22 @@ export class JWTUtils {
         issuer: 'library-management-system',
         audience: 'library-users',
       }) as RefreshTokenPayload;
-    } catch (error) {
+    } catch {
       throw new Error('Invalid or expired refresh token');
     }
   }
 
-  static decodeToken(token: string): any {
-    return jwt.decode(token);
+  static decodeToken(token: string): null | string | Record<string, unknown> {
+    return jwt.decode(token) as null | string | Record<string, unknown>;
   }
 
   static getTokenExpiration(token: string): Date | null {
     const decoded = this.decodeToken(token);
-    if (decoded && decoded.exp) {
-      return new Date(decoded.exp * 1000);
+    if (decoded && typeof decoded === 'object') {
+      const exp = (decoded as Record<string, unknown>).exp;
+      if (typeof exp === 'number') {
+        return new Date(exp * 1000);
+      }
     }
     return null;
   }
@@ -219,4 +222,31 @@ export class RateLimitUtils {
   static resetRateLimit(identifier: string): void {
     this.attempts.delete(identifier.toLowerCase());
   }
+}
+
+// Client-side access token helpers (no-ops on server)
+export function getAccessToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem('accessToken');
+  } catch {
+    return null;
+  }
+}
+
+export function setAccessToken(token: string | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (token) {
+      localStorage.setItem('accessToken', token);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+  } catch {
+    // ignore storage errors
+  }
+}
+
+export function clearAccessToken(): void {
+  setAccessToken(null);
 }

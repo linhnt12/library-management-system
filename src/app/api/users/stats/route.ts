@@ -1,9 +1,8 @@
-import { NextRequest } from 'next/server';
-import { UserService } from '@/api/user.api';
-import { successResponse, handleRouteError } from '@/lib/utils';
+import { handleRouteError, successResponse } from '@/lib/utils';
+import { UserService } from '@/services/user.service';
 
 // GET /api/users/stats - Get user stats
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const stats = await UserService.getUserStats();
 

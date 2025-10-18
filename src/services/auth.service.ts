@@ -1,22 +1,22 @@
-import { prisma } from '@/lib/prisma';
-import { Role, UserStatus } from '@prisma/client';
 import {
-  RegisterRequest,
-  LoginRequest,
-  AuthUser,
-  LoginResponse,
-  RegisterResponse,
-  ChangePasswordRequest,
-} from '@/types/auth';
-import { PasswordUtils, JWTUtils, EmailUtils, ValidationUtils, RateLimitUtils } from '@/lib/utils';
-import { randomBytes } from 'crypto';
-import {
-  ValidationError,
   ConflictError,
+  NotFoundError,
   RateLimitError,
   UnauthorizedError,
-  NotFoundError,
+  ValidationError,
 } from '@/lib/errors';
+import { prisma } from '@/lib/prisma';
+import { EmailUtils, JWTUtils, PasswordUtils, RateLimitUtils, ValidationUtils } from '@/lib/utils';
+import {
+  AuthUser,
+  ChangePasswordRequest,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from '@/types/auth';
+import { Role, UserStatus } from '@prisma/client';
+import { randomBytes } from 'crypto';
 
 export class AuthService {
   // Register new user

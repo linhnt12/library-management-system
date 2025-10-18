@@ -1,23 +1,23 @@
 'use client';
 
+import { BookService } from '@/api';
 import {
-  Button,
-  SearchInput,
-  toaster,
-  Table,
   BookColumns,
+  Button,
   Dialog,
-  FormSelectSearch,
+  FormField,
   FormInput,
   FormSelect,
-  FormField,
+  FormSelectSearch,
+  SearchInput,
   SelectOption,
+  Table,
+  toaster,
 } from '@/components';
-import { ROUTES, PUBLISHER_OPTIONS, BOOK_STATUS_OPTIONS } from '@/constants';
+import { BOOK_STATUS_OPTIONS, PUBLISHER_OPTIONS, ROUTES } from '@/constants';
 import { useAuthorOptions } from '@/lib/hooks/useAuthors';
-import { BookService } from '@/api';
 import { Book } from '@/types';
-import { HStack, VStack, Text } from '@chakra-ui/react';
+import { HStack, Text, VStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { IoAddSharp, IoFilter } from 'react-icons/io5';
 
@@ -71,8 +71,7 @@ export default function BookPage() {
 
       setBooks(response.books);
       setTotal(response.pagination.total);
-    } catch (error) {
-      console.error('Error fetching books:', error);
+    } catch {
       toaster.create({
         title: 'Failed',
         description: 'Failed to fetch books',
