@@ -1,8 +1,8 @@
-import { LoginRequest, RegisterRequest, ChangePasswordRequest, AuthUser } from '@/types/auth';
-import { getAccessToken, setAccessToken, clearAccessToken, handleJson } from '@/lib/utils';
+import { clearAuthSession, getAccessToken, handleJson, setAuthSession } from '@/lib/utils';
+import { AuthUser, ChangePasswordRequest, LoginRequest, RegisterRequest } from '@/types/auth';
 
 export class AuthApi {
-    // Login and persist access token
+    // Login and persist tokens + userId
     static async login(credentials: LoginRequest): Promise<void> {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
@@ -11,8 +11,8 @@ export class AuthApi {
             body: JSON.stringify(credentials),
         });
 
-        const data = await handleJson<{ user: AuthUser; accessToken: string }>(response);
-        setAccessToken(data.accessToken);
+        const data = await handleJson<{ userId: number; accessToken: string; refreshToken: string }>(response);
+        setAuthSession({ accessToken: data.accessToken, refreshToken: data.refreshToken, userId: data.userId });
     }
 
     // Register new account
@@ -57,7 +57,7 @@ export class AuthApi {
             credentials: 'include',
         });
         const data = await handleJson<{ accessToken: string }>(response);
-        setAccessToken(data.accessToken);
+        setAuthSession(data.accessToken);
     }
 
     // Logout and clear access token
@@ -68,7 +68,7 @@ export class AuthApi {
                 credentials: 'include',
             });
         } finally {
-            clearAccessToken();
+            clearAuthSession();
         }
     }
 }

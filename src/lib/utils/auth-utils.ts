@@ -1,6 +1,7 @@
+import { CookieSetOptions, JWTPayload, RefreshTokenPayload } from '@/types/auth';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JWTPayload, RefreshTokenPayload } from '@/types/auth';
+import { NextRequest } from 'next/server';
 
 // Environment variables with defaults
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key';
@@ -224,29 +225,91 @@ export class RateLimitUtils {
   }
 }
 
-// Client-side access token helpers (no-ops on server)
+// (Server-side Edge runtime)
+export function getAccessTokenFromRequest(req: NextRequest): string | null {
+  return req.cookies.get('accessToken')?.value ?? null;
+}
+
+// Client-side access token helpers (cookie-based; no-ops on server)
+function getCookie(name: string): string | null {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const part = parts.pop();
+    if (!part) return null;
+    return part.split(';').shift() ?? null;
+  }
+  return null;
+}
+
+function setCookie(name: string, value: string, options: CookieSetOptions = {}): void {
+  if (typeof document === 'undefined') return;
+  const { days, path = '/', sameSite = 'Lax', secure } = options;
+  let cookie = `${name}=${encodeURIComponent(value)}; path=${path}; SameSite=${sameSite}`;
+  if (typeof days === 'number') {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    cookie += `; Expires=${date.toUTCString()}`;
+  }
+  const isHttps = typeof location !== 'undefined' && location.protocol === 'https:';
+  if (secure ?? isHttps) cookie += '; Secure';
+  document.cookie = cookie;
+}
+
+function deleteCookie(name: string, path: string = '/'): void {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=; Path=${path}; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+}
+
 export function getAccessToken(): string | null {
-  if (typeof window === 'undefined') return null;
   try {
-    return localStorage.getItem('accessToken');
+    return getCookie('accessToken');
   } catch {
     return null;
   }
 }
 
-export function setAccessToken(token: string | null): void {
+export function setAuthSession(
+  value:
+    | string
+    | null
+    | { accessToken: string; refreshToken?: string | null; userId?: number | null },
+  options?: CookieSetOptions
+): void {
   if (typeof window === 'undefined') return;
   try {
-    if (token) {
-      localStorage.setItem('accessToken', token);
-    } else {
-      localStorage.removeItem('accessToken');
+    if (typeof value === 'string' || value === null) {
+      if (value) {
+        setCookie('accessToken', value, options);
+      } else {
+        deleteCookie('accessToken');
+      }
+      return;
+    }
+
+    const { accessToken, refreshToken, userId } = value;
+    if (accessToken) setCookie('accessToken', accessToken, options);
+    if (typeof refreshToken !== 'undefined') {
+      if (refreshToken) setCookie('refreshToken', refreshToken, options);
+      else deleteCookie('refreshToken');
+    }
+    if (typeof userId !== 'undefined') {
+      if (userId !== null) setCookie('userId', String(userId), options);
+      else deleteCookie('userId');
     }
   } catch {
-    // ignore storage errors
+    // ignore cookie errors
   }
 }
 
-export function clearAccessToken(): void {
-  setAccessToken(null);
+export function clearAuthSession(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    deleteCookie('accessToken');
+    deleteCookie('refreshToken');
+    deleteCookie('userId');
+  } catch {
+    // ignore cookie errors
+  }
 }

@@ -1,5 +1,5 @@
 import { JWTUtils, errorResponse } from '@/lib/utils';
-import { AuthService } from '@/services/auth.service';
+import { UserService } from '@/services/user.service';
 import { AuthUser } from '@/types/auth';
 import { Role } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
@@ -34,7 +34,7 @@ export async function authenticateToken(request: NextRequest): Promise<{ success
     const payload = JWTUtils.verifyAccessToken(token);
 
     // Get user from database
-    const user = await AuthService.getUserById(payload.userId);
+    const user = await UserService.getUserById(payload.userId);
 
     if (!user) {
       return {
@@ -115,12 +115,3 @@ export const requireLibrarian = (
 export const optionalAuth = (
   handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { optional: true });
-
-// Response helpers (using api-utils)
-export function unauthorizedResponse(message = 'Authentication required') {
-  return errorResponse(message, 401);
-}
-
-export function forbiddenResponse(message = 'Insufficient permissions') {
-  return errorResponse(message, 403);
-}
