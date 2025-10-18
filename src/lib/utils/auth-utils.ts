@@ -227,7 +227,7 @@ export class RateLimitUtils {
 
 // (Server-side Edge runtime)
 export function getAccessTokenFromRequest(req: NextRequest): string | null {
-  return req.cookies.get('access_token')?.value ?? req.cookies.get('accessToken')?.value ?? null;
+  return req.cookies.get('accessToken')?.value ?? null;
 }
 
 // Client-side access token helpers (cookie-based; no-ops on server)
