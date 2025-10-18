@@ -5,6 +5,8 @@ import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { IconButton } from '@/components/buttons';
 import { LuEye, LuPencil, LuTrash2 } from 'react-icons/lu';
 import { useAuthors } from '@/lib/hooks/useAuthors';
+import { ROUTES } from '@/constants';
+import { useRouter } from 'next/navigation';
 
 // Component to render author name with hook
 function AuthorCell({ authorId }: { authorId: number }) {
@@ -12,6 +14,39 @@ function AuthorCell({ authorId }: { authorId: number }) {
   const author = authors?.find(a => a.id === authorId);
 
   return <Text>{author?.fullName || `Author ID: ${authorId}`}</Text>;
+}
+
+// Component to render action buttons
+function ActionsCell({ book }: { book: Book }) {
+  const router = useRouter();
+
+  const handleEdit = () => {
+    router.push(`${ROUTES.LIBRARIAN.BOOKS_EDIT}/${book.id}`);
+  };
+
+  const handleView = () => {
+    // TODO: Implement view book functionality
+    console.log('View book:', book.id);
+  };
+
+  const handleDelete = () => {
+    // TODO: Implement delete book functionality
+    console.log('Delete book:', book.id);
+  };
+
+  return (
+    <HStack gap={2} justifyContent="center">
+      <IconButton aria-label="View book" onClick={handleView}>
+        <LuEye />
+      </IconButton>
+      <IconButton aria-label="Edit book" onClick={handleEdit}>
+        <LuPencil />
+      </IconButton>
+      <IconButton aria-label="Delete book" onClick={handleDelete}>
+        <LuTrash2 />
+      </IconButton>
+    </HStack>
+  );
 }
 
 // TODO: This will be fixed later
@@ -97,38 +132,8 @@ export const BookColumns = [
     key: 'actions',
     header: 'Actions',
     sortable: false,
-    width: '150px',
+    width: '120px',
     textAlign: 'center',
-    render: (book: Book) => (
-      <HStack gap={2} justifyContent="center">
-        <IconButton
-          aria-label="View book"
-          onClick={() => {
-            // TODO: Implement view book functionality
-            console.log('View book:', book.id);
-          }}
-        >
-          <LuEye />
-        </IconButton>
-        <IconButton
-          aria-label="Edit book"
-          onClick={() => {
-            // TODO: Implement edit book functionality
-            console.log('Edit book:', book.id);
-          }}
-        >
-          <LuPencil />
-        </IconButton>
-        <IconButton
-          aria-label="Delete book"
-          onClick={() => {
-            // TODO: Implement delete book functionality
-            console.log('Delete book:', book.id);
-          }}
-        >
-          <LuTrash2 />
-        </IconButton>
-      </HStack>
-    ),
+    render: (book: Book) => <ActionsCell book={book} />,
   },
 ];

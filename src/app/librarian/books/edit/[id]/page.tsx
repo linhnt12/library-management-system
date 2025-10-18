@@ -16,8 +16,12 @@ import { BOOK_TYPE_OPTIONS, CATEGORY_OPTIONS } from '@/constants';
 import { useBookForm } from '@/lib/hooks';
 import { useAuthorOptions } from '@/lib/hooks/useAuthors';
 import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
+import { useParams } from 'next/navigation';
 
-export default function AddBookPage() {
+export default function EditBookPage() {
+  const params = useParams();
+  const bookId = Number(params.id);
+
   const authorOptions = useAuthorOptions();
   const {
     form,
@@ -29,7 +33,7 @@ export default function AddBookPage() {
     dialog,
     handleConfirm,
     handleDialogCancel,
-  } = useBookForm();
+  } = useBookForm(bookId);
 
   return (
     <Box as="form" onSubmit={handleSubmit} px={4} py={2} paddingBottom={0}>
@@ -197,7 +201,7 @@ export default function AddBookPage() {
 
         {/* Buttons */}
         <FormButtons
-          submitLabel="Add Book"
+          submitLabel="Update Book"
           cancelLabel="Cancel"
           isSubmitting={isSubmitting}
           onCancel={handleCancel}
