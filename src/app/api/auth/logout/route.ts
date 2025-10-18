@@ -1,6 +1,6 @@
-import { NextRequest } from 'next/server';
-import { AuthService } from '@/services/auth.service';
 import { successResponse } from '@/lib/utils';
+import { AuthService } from '@/services/auth.service';
+import { NextRequest } from 'next/server';
 
 // POST /api/auth/logout - Logout user
 export async function POST(request: NextRequest) {
@@ -16,11 +16,25 @@ export async function POST(request: NextRequest) {
     // Create response
     const response = successResponse(null, 'Logout successful');
 
-    // Clear refresh token cookie
+    // Clear cookies: refreshToken (httpOnly), accessToken, userId
     response.cookies.set('refreshToken', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
+      maxAge: 0,
+      path: '/',
+    });
+    response.cookies.set('accessToken', '', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+    response.cookies.set('userId', '', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 0,
       path: '/',
     });
@@ -29,12 +43,26 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('POST /api/auth/logout Error:', error);
 
-    // Even if logout fails, clear the cookie
+    // Even if logout fails, clear the cookies
     const response = successResponse(null, 'Logout successful');
     response.cookies.set('refreshToken', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
+      maxAge: 0,
+      path: '/',
+    });
+    response.cookies.set('accessToken', '', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+    response.cookies.set('userId', '', {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 0,
       path: '/',
     });

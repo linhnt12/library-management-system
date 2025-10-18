@@ -1,13 +1,13 @@
 'use client';
 
+import { AuthApi } from '@/api';
 import { Button } from '@/components/buttons';
-import { HStack, Image, Text, VStack } from '@chakra-ui/react';
-import { usePathname } from 'next/navigation';
-import { IconType } from 'react-icons';
-import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
-import { IoChevronDown, IoChevronUp } from 'react-icons/io5';
 import { ROUTES } from '@/constants';
+import { HStack, Image, Text, VStack } from '@chakra-ui/react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { IconType } from 'react-icons';
+import { IoChevronDown, IoChevronUp, IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
 
 type SidebarItem = {
   label: string;
@@ -22,6 +22,7 @@ type SidebarProps = {
 
 export function Sidebar({ items = [] }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
 
   // Auto-expand submenus that have active children
   const getInitialExpandedItems = () => {
@@ -52,6 +53,14 @@ export function Sidebar({ items = [] }: SidebarProps) {
     setExpandedItems(prev =>
       prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]
     );
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AuthApi.logout();
+    } finally {
+      router.replace(ROUTES.LOGIN);
+    }
   };
 
   return (
@@ -109,7 +118,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
         variantType="sidebar"
       />
 
-      <Button href={ROUTES.LOGOUT} label="Logout" icon={IoLogOutOutline} variantType="sidebar" />
+      <Button onClick={handleLogout} label="Logout" icon={IoLogOutOutline} variantType="sidebar" />
     </VStack>
   );
 }

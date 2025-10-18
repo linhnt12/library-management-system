@@ -1,8 +1,8 @@
-import { NextRequest } from 'next/server';
+import { ValidationError } from '@/lib/errors';
+import { handleRouteError, successResponse } from '@/lib/utils';
 import { AuthService } from '@/services/auth.service';
 import { LoginRequest } from '@/types/auth';
-import { successResponse, handleRouteError } from '@/lib/utils';
-import { ValidationError } from '@/lib/errors';
+import { NextRequest } from 'next/server';
 
 // POST /api/auth/login - Login user
 export async function POST(request: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     // Set refresh token as httpOnly cookie
     const response = successResponse(
       {
-        user: result.user,
+        userId: result.userId,
         accessToken: result.accessToken,
         refreshToken: result.refreshToken,
       },
