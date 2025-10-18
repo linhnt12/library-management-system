@@ -1,0 +1,238 @@
+'use client';
+
+import {
+  Dialog,
+  FormButtons,
+  FormDivider,
+  FormField,
+  FormInput,
+  FormSection,
+  FormSelect,
+  FormSelectSearch,
+  FormTextarea,
+  SelectOption,
+} from '@/components';
+import { CATEGORY_OPTIONS } from '@/constants';
+import { useBookForm } from '@/lib/hooks';
+import { useAuthorOptions } from '@/lib/hooks/useAuthors';
+import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
+
+interface BookFormProps {
+  bookId?: number;
+  submitLabel?: string;
+  cancelLabel?: string;
+}
+
+export function BookForm({
+  bookId,
+  submitLabel = 'Save Book',
+  cancelLabel = 'Cancel',
+}: BookFormProps) {
+  const authorOptions = useAuthorOptions();
+  const {
+    form,
+    errors,
+    isSubmitting,
+    setField,
+    handleSubmit,
+    handleCancel,
+    dialog,
+    handleConfirm,
+    handleDialogCancel,
+  } = useBookForm(bookId);
+
+  return (
+    <Box as="form" onSubmit={handleSubmit} px={4} py={2} paddingBottom={0}>
+      <Stack gap={3}>
+        {/* Section 1: Basic Information */}
+        <FormSection title="Basic Information">
+          {/* Title */}
+          <FormField label="Title" error={errors.title}>
+            <FormInput
+              value={form.title}
+              onChange={e => setField('title', e.target.value)}
+              placeholder="Enter title"
+            />
+          </FormField>
+
+          {/* Author */}
+          <FormField label="Author" error={errors.authorId}>
+            <FormSelectSearch
+              value={
+                form.authorId ? authorOptions.find(opt => opt.value === form.authorId) : undefined
+              }
+              onChange={val => setField('authorId', String((val as SelectOption)?.value || ''))}
+              options={authorOptions}
+              placeholder="Select author"
+              fontSize="md"
+            />
+          </FormField>
+
+          <Grid templateColumns={{ base: '1fr', md: '3fr 1fr' }} gap={4}>
+            <GridItem>
+              {/* ISBN */}
+              <FormField label="ISBN" error={errors.isbn}>
+                <FormInput
+                  value={form.isbn}
+                  onChange={e => setField('isbn', e.target.value)}
+                  placeholder="Enter ISBN"
+                />
+              </FormField>
+            </GridItem>
+
+            <GridItem>
+              {/* Status */}
+              <FormField label="Status">
+                <FormSelect
+                  items={[
+                    { label: 'Active', value: 'false' },
+                    { label: 'Inactive', value: 'true' },
+                  ]}
+                  value={form.isDeleted ? 'true' : 'false'}
+                  onChange={value => setField('isDeleted', value === 'true')}
+                  placeholder="Select status"
+                  height="50px"
+                />
+              </FormField>
+            </GridItem>
+          </Grid>
+
+          {/* Categories */}
+          <FormField label="Categories" error={errors.categories}>
+            <FormSelectSearch
+              value={form.categories || []}
+              onChange={val => setField('categories', val as SelectOption[])}
+              options={CATEGORY_OPTIONS}
+              placeholder="Select categories"
+              multi
+            />
+          </FormField>
+        </FormSection>
+
+        <FormDivider />
+
+        {/* Section 2: Publication Information */}
+        <FormSection title="Publication Information">
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
+            <GridItem>
+              {/* Publish year */}
+              <FormField label="Publish year" error={errors.publishYear}>
+                <FormInput
+                  type="number"
+                  value={form.publishYear}
+                  onChange={e => setField('publishYear', e.target.value)}
+                  placeholder="Enter publish year"
+                />
+              </FormField>
+            </GridItem>
+
+            <GridItem>
+              {/* Publisher */}
+              <FormField label="Publisher">
+                <FormInput
+                  value={form.publisher}
+                  onChange={e => setField('publisher', e.target.value)}
+                  placeholder="Enter publisher"
+                />
+              </FormField>
+            </GridItem>
+
+            <GridItem>
+              {/* Edition */}
+              <FormField label="Edition">
+                <FormInput
+                  value={form.edition}
+                  onChange={e => setField('edition', e.target.value)}
+                  placeholder="Enter edition"
+                />
+              </FormField>
+            </GridItem>
+          </Grid>
+        </FormSection>
+
+        <FormDivider />
+
+        {/* Section 3: Physical & Pricing Information */}
+        <FormSection title="Physical & Pricing Information">
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
+            {/* Page count */}
+            <GridItem>
+              <FormField label="Page count" error={errors.pageCount}>
+                <FormInput
+                  type="number"
+                  value={form.pageCount}
+                  onChange={e => setField('pageCount', e.target.value)}
+                  placeholder="Enter page count"
+                />
+              </FormField>
+            </GridItem>
+
+            <GridItem>
+              {/* Price */}
+              <FormField label="Price" error={errors.price}>
+                <FormInput
+                  type="number"
+                  value={form.price}
+                  onChange={e => setField('price', e.target.value)}
+                  placeholder="Enter price"
+                />
+              </FormField>
+            </GridItem>
+          </Grid>
+        </FormSection>
+
+        <FormDivider />
+
+        {/* Section 4: Additional Information */}
+        <FormSection title="Additional Information">
+          {/* Cover image (URL) */}
+          <FormField label="Cover image (URL)">
+            <FormInput
+              value={form.coverImageUrl}
+              onChange={e => setField('coverImageUrl', e.target.value)}
+              placeholder="https://..."
+            />
+          </FormField>
+
+          {/* Description */}
+          <FormField label="Description">
+            <FormTextarea
+              value={form.description}
+              onChange={e => setField('description', e.target.value)}
+              placeholder="Enter description"
+            />
+          </FormField>
+        </FormSection>
+
+        {/* Buttons */}
+        <FormButtons
+          submitLabel={submitLabel}
+          cancelLabel={cancelLabel}
+          isSubmitting={isSubmitting}
+          onCancel={handleCancel}
+        />
+      </Stack>
+
+      {/* Confirmation Dialog */}
+      <Dialog
+        isOpen={dialog.isOpen}
+        onClose={handleDialogCancel}
+        title={dialog.title}
+        content={dialog.message}
+        buttons={[
+          {
+            label: dialog.cancelText,
+            onClick: handleDialogCancel,
+            variant: 'secondary',
+          },
+          {
+            label: dialog.confirmText,
+            onClick: handleConfirm,
+            variant: 'primary',
+          },
+        ]}
+        showCloseButton={false}
+      />
+    </Box>
+  );
+}

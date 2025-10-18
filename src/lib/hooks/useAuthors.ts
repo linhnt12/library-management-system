@@ -1,13 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { AuthorApi } from '@/api';
 import { SelectOption } from '@/components';
-import { AuthorService } from '@/api';
 import { Author } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 
 export function useAuthors() {
   return useQuery({
     queryKey: ['authors'],
     queryFn: async (): Promise<Author[]> => {
-      return AuthorService.getAuthors();
+      return AuthorApi.getAuthors();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
