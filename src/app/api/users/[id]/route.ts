@@ -1,13 +1,14 @@
-import { NextRequest } from 'next/server';
-import { UserService } from '@/api/user.api';
+import { NotFoundError, ValidationError } from '@/lib/errors';
 import {
-  successResponse,
   handleRouteError,
-  parseIntParam,
   isValidEmail,
+  parseIntParam,
   sanitizeString,
+  successResponse,
 } from '@/lib/utils';
-import { ValidationError, NotFoundError } from '@/lib/errors';
+import { UserService } from '@/services/user.service';
+import { Prisma } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 // GET /api/users/[id] - Lấy thông tin user theo ID
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -48,14 +49,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Prepare sanitized update data
-    const updateData: any = {};
-    if (fullName !== undefined) updateData.fullName = sanitizeString(fullName);
-    if (email !== undefined) updateData.email = email.toLowerCase().trim();
-    if (phoneNumber !== undefined)
-      updateData.phoneNumber = phoneNumber ? sanitizeString(phoneNumber) : null;
-    if (address !== undefined) updateData.address = address ? sanitizeString(address) : null;
-    if (role !== undefined) updateData.role = role;
-    if (status !== undefined) updateData.status = status;
+    const updateData: Prisma.UserUpdateInput = {
+      fullName: fullName !== undefined ? { set: sanitizeString(fullName) } : undefined,
+      email: email !== undefined ? { set: email.toLowerCase().trim() } : undefined,
+      phoneNumber: phoneNumber !== undefined ? { set: phoneNumber ? sanitizeString(phoneNumber) : null } : undefined,
+      address: address !== undefined ? { set: address ? sanitizeString(address) : null } : undefined,
+      role: role !== undefined ? { set: role } : undefined,
+      status: status !== undefined ? { set: status } : undefined,
+    };
 
     const updatedUser = await UserService.updateUser(userId, updateData);
 

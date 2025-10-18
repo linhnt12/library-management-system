@@ -1,7 +1,7 @@
-import { prisma } from '@/lib/prisma';
-import { Role, UserStatus } from '@prisma/client';
-import { CreateUserData, UpdateUserData, UserQueryFilters, PublicUser } from '@/types/user';
 import { ConflictError, NotFoundError } from '@/lib/errors';
+import { prisma } from '@/lib/prisma';
+import { CreateUserData, PublicUser, UserQueryFilters } from '@/types/user';
+import { Prisma, Role, UserStatus } from '@prisma/client';
 
 export class UserService {
   // Get users with pagination and filters
@@ -11,15 +11,15 @@ export class UserService {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {
+    const where: Prisma.UserWhereInput = {
       isDeleted: false,
     };
 
     if (search) {
       where.OR = [
-        { fullName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { phoneNumber: { contains: search, mode: 'insensitive' } },
+        { fullName: { contains: search } },
+        { email: { contains: search } },
+        { phoneNumber: { contains: search } },
       ];
     }
 
@@ -128,7 +128,7 @@ export class UserService {
   }
 
   // Update user
-  static async updateUser(id: number, userData: UpdateUserData): Promise<PublicUser> {
+  static async updateUser(id: number, userData: Prisma.UserUpdateInput): Promise<PublicUser> {
     // Check if user exists
     const existingUser = await this.getUserById(id);
     if (!existingUser) {
@@ -138,7 +138,7 @@ export class UserService {
     // Check email uniqueness if email is being changed
     if (userData.email && userData.email !== existingUser.email) {
       const emailExists = await prisma.user.findUnique({
-        where: { email: userData.email },
+        where: { email: userData.email as string },
       });
 
       if (emailExists) {
@@ -147,7 +147,7 @@ export class UserService {
     }
 
     // Prepare update data
-    const updateData: any = { ...userData };
+    const updateData: Prisma.UserUpdateInput = { ...userData };
 
     if (userData.status !== undefined) {
       if (userData.status === UserStatus.INACTIVE) {
@@ -197,7 +197,7 @@ export class UserService {
 
   // Check if email exists
   static async emailExists(email: string, excludeId?: number): Promise<boolean> {
-    const where: any = { email };
+    const where: Prisma.UserWhereInput = { email };
     if (excludeId) {
       where.id = { not: excludeId };
     }

@@ -1,6 +1,6 @@
+import { handleRouteError, successResponse } from '@/lib/utils';
+import { UserService } from '@/services/user.service';
 import { NextRequest } from 'next/server';
-import { UserService } from '@/api/user.api';
-import { successResponse, handleRouteError } from '@/lib/utils';
 
 // GET /api/users/stats - Get user stats
 export async function GET(request: NextRequest) {

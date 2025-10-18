@@ -1,15 +1,15 @@
-import { NextRequest } from 'next/server';
-import { Role, UserStatus } from '@prisma/client';
-import { UserService } from '@/api/user.api';
-import {
-  successResponse,
-  handleRouteError,
-  parsePaginationParams,
-  validateRequiredFields,
-  isValidEmail,
-  sanitizeString,
-} from '@/lib/utils';
 import { ValidationError } from '@/lib/errors';
+import {
+  handleRouteError,
+  isValidEmail,
+  parsePaginationParams,
+  sanitizeString,
+  successResponse,
+  validateRequiredFields,
+} from '@/lib/utils';
+import { UserService } from '@/services/user.service';
+import { Role, UserStatus } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 // GET /api/users - Lấy danh sách users
 export async function GET(request: NextRequest) {
