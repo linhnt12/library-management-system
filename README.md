@@ -49,6 +49,7 @@ JWT_REFRESH_EXPIRES_IN="7d"
 ```
 
 **Important Notes:**
+
 - All `DEFAULT_ADMIN_*` variables are **required** for the seed script to work
 - Change JWT secrets to secure random values for production
 - You can customize the admin credentials to your preference
@@ -77,12 +78,14 @@ npx prisma db seed
 ```
 
 **What the seed does:**
+
 - Creates a default Admin user if none exists
 - Uses credentials from your `.env` file (`DEFAULT_ADMIN_EMAIL`, `DEFAULT_ADMIN_PASSWORD`, `DEFAULT_ADMIN_FULLNAME`)
 - Safe to run multiple times (won't create duplicates)
 
 **Default Login Credentials:**
 After seeding, you can login with:
+
 - **Email**: The value you set in `DEFAULT_ADMIN_EMAIL` (default: `admin@library.com`)
 - **Password**: The value you set in `DEFAULT_ADMIN_PASSWORD` (default: `Admin@123456`)
 
@@ -117,22 +120,23 @@ By default the app listens on port 3000. Ensure the same `.env` is available in 
 
 - `src/app` — Next.js App Router
   - `src/app/api` — Backend API routes
-  - `src/app/(auth)`, `src/app/admin`, `src/app/librarian` — Frontend routes
+  - `src/app/(auth)`, `src/app/dashboard` — Frontend routes
 - `prisma/schema.prisma` — Data models
 - `docker-compose.yml` — Local database services
 
 ## Troubleshooting
 
 ### Database & Migrations
+
 - If migrations fail, verify `DATABASE_URL` and that the database container is running.
 - If API requests fail, check server logs and confirm Prisma client is generated.
 - Delete `.next/` and re-run `npm run dev` if hot reload behaves unexpectedly.
 
 ### Seeding Issues
+
 - **Error: "DEFAULT_ADMIN_EMAIL is required"**
   - Make sure you have created a `.env` file (copy from `.env.example`)
   - Ensure all three admin variables are set: `DEFAULT_ADMIN_EMAIL`, `DEFAULT_ADMIN_PASSWORD`, `DEFAULT_ADMIN_FULLNAME`
-  
 - **"Admin user already exists. Skipping seed."**
   - This is normal behavior. The seed script only creates an admin if none exists.
   - To create a new admin with different credentials, either:

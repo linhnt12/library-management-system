@@ -5,13 +5,12 @@ export const pageHeadings: Record<string, string> = {
   [ROUTES.PROFILE]: 'My Profile',
   [ROUTES.SETTINGS]: 'Settings',
 
-  // Admin routes
-  [ROUTES.ADMIN.DASHBOARD]: 'Dashboard',
-  [ROUTES.ADMIN.USERS]: 'Manage Users',
-
-  // Librarian routes
-  [ROUTES.LIBRARIAN.DASHBOARD]: 'Dashboard',
-  [ROUTES.LIBRARIAN.BOOKS]: 'Books Management',
-  [ROUTES.LIBRARIAN.BOOKS_ADD]: 'Add New Book',
-  [ROUTES.LIBRARIAN.BOOKS_EDIT]: 'Edit Book',
+  // Dashboard routes
+  [ROUTES.DASHBOARD.HOME]: 'Dashboard',
+  [ROUTES.DASHBOARD.BOOKS]: 'Books Management',
+  [ROUTES.DASHBOARD.BOOKS_ADD]: 'Add New Book',
+  [ROUTES.DASHBOARD.BOOKS_EDIT]: 'Edit Book',
+  [ROUTES.DASHBOARD.USERS]: 'Manage Users',
+  [ROUTES.DASHBOARD.REPORTS]: 'Reports',
+  [ROUTES.DASHBOARD.BORROWERS]: 'Borrowers',
 };

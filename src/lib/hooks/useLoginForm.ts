@@ -64,7 +64,7 @@ export function useLoginForm() {
         resetForm();
         // Fetch current user after login (ensures data and returns it)
         const user = await queryClient.fetchQuery({ queryKey: meQueryKey, queryFn: AuthApi.me });
-        const destination = user.role === 'ADMIN' ? ROUTES.ADMIN.DASHBOARD : ROUTES.LIBRARIAN.DASHBOARD;
+        const destination = ROUTES.DASHBOARD.HOME;
         router.push(destination);
       },
     });

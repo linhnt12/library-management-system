@@ -225,7 +225,7 @@ export default function BookPage() {
           h="40px"
           px={2}
           fontSize="sm"
-          href={ROUTES.LIBRARIAN.BOOKS_ADD}
+          href={ROUTES.DASHBOARD.BOOKS_ADD}
           icon={IoAddSharp}
         />
       </HStack>

@@ -61,7 +61,7 @@ export function useBookItemForm(bookItemId?: number) {
       } catch (error) {
         console.error('Failed to load book item:', error);
         // Redirect to book items list if book item not found
-        router.push(ROUTES.LIBRARIAN.BOOKS);
+        router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
       } finally {
         setIsLoading(false);
       }
@@ -125,7 +125,7 @@ export function useBookItemForm(bookItemId?: number) {
       confirmText: 'Yes, Cancel',
       cancelText: 'No, Continue',
       onConfirm: () => {
-        router.push(ROUTES.LIBRARIAN.BOOKS);
+        router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
       },
     });
   }, [isEditMode, openDialog, router]);
@@ -155,7 +155,7 @@ export function useBookItemForm(bookItemId?: number) {
               transformData: transformDataForUpdate,
               apiCall: (data: UpdateBookItemData) => BookItemApi.updateBookItem(bookItemId!, data),
               onSuccess: () => {
-                router.push(ROUTES.LIBRARIAN.BOOKS);
+                router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
               },
             });
           } else {
@@ -166,7 +166,7 @@ export function useBookItemForm(bookItemId?: number) {
                 BookItemApi.createBookItem(data as CreateBookItemData),
               onSuccess: () => {
                 resetForm();
-                router.push(ROUTES.LIBRARIAN.BOOKS);
+                router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
               },
             });
           }
