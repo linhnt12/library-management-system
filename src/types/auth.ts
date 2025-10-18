@@ -46,7 +46,7 @@ export interface AuthUser {
 }
 
 export interface LoginResponse {
-  user: AuthUser
+  userId: number
   accessToken: string
   refreshToken: string
 }

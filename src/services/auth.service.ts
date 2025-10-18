@@ -7,14 +7,7 @@ import {
 } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { EmailUtils, JWTUtils, PasswordUtils, RateLimitUtils, ValidationUtils } from '@/lib/utils';
-import {
-  AuthUser,
-  ChangePasswordRequest,
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
-  RegisterResponse,
-} from '@/types/auth';
+import { AuthUser, ChangePasswordRequest, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
 import { Role, UserStatus } from '@prisma/client';
 import { randomBytes } from 'crypto';
 
@@ -196,11 +189,8 @@ export class AuthService {
       },
     });
 
-    // Remove password from response
-    const { password: _, ...userWithoutPassword } = user;
-
     return {
-      user: userWithoutPassword as AuthUser,
+      userId: user.id,
       accessToken,
       refreshToken,
     };
@@ -314,32 +304,6 @@ export class AuthService {
 
     // Logout from all devices (invalidate all refresh tokens)
     await this.logoutAll(userId);
-  }
-
-  // Get user by ID (for authentication middleware)
-  static async getUserById(userId: number): Promise<AuthUser | null> {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        fullName: true,
-        email: true,
-        phoneNumber: true,
-        address: true,
-        role: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        isDeleted: true,
-      },
-    });
-
-    if (!user || user.isDeleted || user.status !== UserStatus.ACTIVE) {
-      return null;
-    }
-
-    const { isDeleted: _, ...userWithoutDeleted } = user;
-    return userWithoutDeleted as AuthUser;
   }
 
   // Clean up expired refresh tokens (should be run periodically)

@@ -1,6 +1,6 @@
+import { JWTPayload, RefreshTokenPayload } from '@/types/auth';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { JWTPayload, RefreshTokenPayload } from '@/types/auth';
 
 // Environment variables with defaults
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key';
@@ -234,19 +234,54 @@ export function getAccessToken(): string | null {
   }
 }
 
-export function setAccessToken(token: string | null): void {
+export function setAuthSession(
+  value:
+    | string
+    | null
+    | { accessToken: string; refreshToken?: string | null; userId?: number | null }
+): void {
   if (typeof window === 'undefined') return;
   try {
-    if (token) {
-      localStorage.setItem('accessToken', token);
-    } else {
-      localStorage.removeItem('accessToken');
+    if (typeof value === 'string' || value === null) {
+      if (value) {
+        localStorage.setItem('accessToken', value);
+      } else {
+        localStorage.removeItem('accessToken');
+      }
+      return;
+    }
+
+    // value is an object with auth fields
+    const { accessToken, refreshToken, userId } = value;
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    }
+    if (typeof refreshToken !== 'undefined') {
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      } else {
+        localStorage.removeItem('refreshToken');
+      }
+    }
+    if (typeof userId !== 'undefined') {
+      if (userId !== null) {
+        localStorage.setItem('userId', String(userId));
+      } else {
+        localStorage.removeItem('userId');
+      }
     }
   } catch {
     // ignore storage errors
   }
 }
 
-export function clearAccessToken(): void {
-  setAccessToken(null);
+export function clearAuthSession(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userId');
+  } catch {
+    // ignore storage errors
+  }
 }
