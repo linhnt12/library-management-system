@@ -1,10 +1,12 @@
+import { AuthApi } from '@/api';
 import { ROUTES } from '@/constants';
 import { useFormSubmission } from '@/lib/hooks';
-import { LoginFormState, LoginFormErrors, validateLogin } from '@/lib/validators';
+import { meQueryKey } from '@/lib/hooks/useMe';
+import { queryClient } from '@/lib/query-client';
+import { LoginFormErrors, LoginFormState, validateLogin } from '@/lib/validators';
 import { LoginRequest } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { AuthApi } from '@/api';
 
 const initialState: LoginFormState = {
   email: '',
@@ -58,10 +60,12 @@ export function useLoginForm() {
       validate,
       transformData,
       apiCall: AuthApi.login,
-      onSuccess: () => {
+      onSuccess: async () => {
         resetForm();
-        // Router will be handled by middleware
-        router.push(ROUTES.LIBRARIAN.DASHBOARD);
+        // Fetch current user after login (ensures data and returns it)
+        const user = await queryClient.fetchQuery({ queryKey: meQueryKey, queryFn: AuthApi.me });
+        const destination = user.role === 'ADMIN' ? ROUTES.ADMIN.DASHBOARD : ROUTES.LIBRARIAN.DASHBOARD;
+        router.push(destination);
       },
     });
   };
