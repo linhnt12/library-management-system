@@ -20,6 +20,7 @@ const initialState: CreateBookFormState = {
   description: '',
   coverImageUrl: '',
   categories: [],
+  isDeleted: false,
 };
 
 export function useBookForm(bookId?: number) {
@@ -64,6 +65,7 @@ export function useBookForm(bookId?: number) {
           description: book.description || '',
           coverImageUrl: book.coverImageUrl || '',
           categories: [], // TODO: This will be update later
+          isDeleted: book.isDeleted,
         });
       } catch (error) {
         console.error('Failed to load book:', error);
@@ -78,7 +80,7 @@ export function useBookForm(bookId?: number) {
   }, [bookId, router]);
 
   const setField = useCallback(
-    (key: keyof CreateBookFormState, value: string | SelectOption[]) => {
+    (key: keyof CreateBookFormState, value: string | SelectOption[] | boolean) => {
       setForm(prev => ({ ...prev, [key]: value }));
       // Clear error when user starts typing
       if (errors[key]) {
@@ -108,6 +110,7 @@ export function useBookForm(bookId?: number) {
       type: formData.type,
       description: formData.description.trim() || null,
       coverImageUrl: formData.coverImageUrl.trim() || null,
+      isDeleted: formData.isDeleted,
     }),
     []
   );

@@ -1,21 +1,22 @@
-import { NextRequest } from 'next/server';
-import { BookType, Prisma } from '@prisma/client';
+import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
-import { successResponse, handleRouteError, parseIntParam, sanitizeString } from '@/lib/utils';
+import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
 import { Book, UpdateBookData } from '@/types/book';
-import { ValidationError, NotFoundError } from '@/lib/errors';
+import { BookType, Prisma } from '@prisma/client';
+import { NextRequest } from 'next/server';
 
 // GET /api/books/[id] - Get book by id
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const bookId = parseIntParam(params.id);
+    const { id } = await params;
+    const bookId = parseIntParam(id);
 
     if (bookId <= 0) {
       throw new ValidationError('Invalid book ID');
     }
 
     const book: Book | null = await prisma.book.findFirst({
-      where: { id: bookId, isDeleted: false },
+      where: { id: bookId },
       select: {
         id: true,
         authorId: true,
@@ -31,6 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         coverImageUrl: true,
         createdAt: true,
         updatedAt: true,
+        isDeleted: true,
       },
     });
 
@@ -45,9 +47,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PUT /api/books/[id] - Update book
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const bookId = parseIntParam(params.id);
+    const { id } = await params;
+    const bookId = parseIntParam(id);
 
     if (bookId <= 0) {
       throw new ValidationError('Invalid book ID');
@@ -66,6 +69,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       type,
       description,
       coverImageUrl,
+      isDeleted,
     } = body;
 
     const updateData: Prisma.BookUncheckedUpdateInput = {};
@@ -91,10 +95,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       updateData.description = description ? sanitizeString(description) : null;
     if (coverImageUrl !== undefined)
       updateData.coverImageUrl = coverImageUrl ? sanitizeString(coverImageUrl) : null;
+    if (isDeleted !== undefined) updateData.isDeleted = Boolean(isDeleted);
 
     // Ensure book exists
     const existing = await prisma.book.findFirst({
-      where: { id: bookId, isDeleted: false },
+      where: { id: bookId },
       select: { id: true },
     });
     if (!existing) {
@@ -119,6 +124,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         coverImageUrl: true,
         createdAt: true,
         updatedAt: true,
+        isDeleted: true,
       },
     });
 
@@ -129,9 +135,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE /api/books/[id] - Delete book (soft delete)
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const bookId = parseIntParam(params.id);
+    const { id } = await params;
+    const bookId = parseIntParam(id);
 
     if (bookId <= 0) {
       throw new ValidationError('Invalid book ID');

@@ -1,5 +1,5 @@
-import { BookType } from '@prisma/client';
 import { PaginationResponse } from '@/types/api';
+import { BookType } from '@prisma/client';
 
 export interface Book {
   id: number;
@@ -16,6 +16,7 @@ export interface Book {
   coverImageUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
 }
 
 export interface BooksListPayload {
@@ -35,6 +36,7 @@ export interface CreateBookData {
   type?: BookType;
   description?: string | null;
   coverImageUrl?: string | null;
+  isDeleted?: boolean;
 }
 
 export interface UpdateBookData {
@@ -49,4 +51,5 @@ export interface UpdateBookData {
   type?: BookType;
   description?: string | null;
   coverImageUrl?: string | null;
+  isDeleted?: boolean;
 }

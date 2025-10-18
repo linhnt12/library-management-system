@@ -1,5 +1,5 @@
 import { getAccessToken, handleJson } from '@/lib/utils';
-import { Book, CreateBookData } from '@/types/book';
+import { Book, CreateBookData, UpdateBookData } from '@/types/book';
 
 export class BookApi {
   // Create book
@@ -30,6 +30,7 @@ export class BookApi {
     status?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
+    isDeleted?: boolean;
   }): Promise<{ books: Book[]; pagination: { total: number } }> {
     const searchParams = new URLSearchParams();
 
@@ -49,6 +50,7 @@ export class BookApi {
     if (params?.status) searchParams.set('status', params.status);
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
+    if (params?.isDeleted !== undefined) searchParams.set('isDeleted', params.isDeleted.toString());
 
     const token = getAccessToken();
     const headers: Record<string, string> = {};
@@ -77,7 +79,7 @@ export class BookApi {
   }
 
   // Update book
-  static async updateBook(id: number, data: Partial<CreateBookData>): Promise<Book> {
+  static async updateBook(id: number, data: UpdateBookData): Promise<Book> {
     const token = getAccessToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;

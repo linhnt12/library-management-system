@@ -45,7 +45,7 @@ export default function AddBookPage() {
             />
           </FormField>
 
-          <Grid templateColumns="repeat(2, 1fr)" gap={4}>
+          <Grid templateColumns="repeat(3, 1fr)" gap={4}>
             <GridItem>
               {/* ISBN */}
               <FormField label="ISBN">
@@ -70,6 +70,22 @@ export default function AddBookPage() {
                   options={authorOptions}
                   placeholder="Select author"
                   fontSize="md"
+                />
+              </FormField>
+            </GridItem>
+
+            <GridItem>
+              {/* Status */}
+              <FormField label="Status">
+                <FormSelect
+                  items={[
+                    { label: 'Active', value: 'false' },
+                    { label: 'Inactive', value: 'true' },
+                  ]}
+                  value={form.isDeleted ? 'true' : 'false'}
+                  onChange={value => setField('isDeleted', value === 'true')}
+                  placeholder="Select status"
+                  height="50px"
                 />
               </FormField>
             </GridItem>

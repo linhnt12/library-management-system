@@ -14,6 +14,7 @@ export type CreateBookFormState = {
   description: string;
   coverImageUrl: string;
   categories?: SelectOption[];
+  isDeleted: boolean;
 };
 
 export type FormErrors = {
@@ -29,6 +30,7 @@ export type FormErrors = {
   description?: string;
   coverImageUrl?: string;
   categories?: string;
+  isDeleted?: string;
 };
 
 export function validateCreateBook(form: CreateBookFormState): {
