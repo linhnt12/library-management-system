@@ -18,16 +18,25 @@ export const CATEGORY_OPTIONS = [
   { value: 10, label: 'Technology' },
 ];
 
-// Mock data for authors
-export const AUTHOR_OPTIONS = [
-  { value: '1', label: 'J.K. Rowling' },
-  { value: '2', label: 'Stephen King' },
-  { value: '3', label: 'Agatha Christie' },
-  { value: '4', label: 'George Orwell' },
-  { value: '5', label: 'Harper Lee' },
-  { value: '6', label: 'F. Scott Fitzgerald' },
-  { value: '7', label: 'Jane Austen' },
-  { value: '8', label: 'Charles Dickens' },
-  { value: '9', label: 'Mark Twain' },
-  { value: '10', label: 'Ernest Hemingway' },
+// Mock data for publishers
+export const PUBLISHER_OPTIONS = [
+  { value: '1', label: 'Penguin Random House' },
+  { value: '2', label: 'HarperCollins' },
+  { value: '3', label: 'Simon & Schuster' },
+  { value: '4', label: 'Macmillan Publishers' },
+  { value: '5', label: 'Hachette Book Group' },
+  { value: '6', label: 'Scholastic' },
+  { value: '7', label: 'Oxford University Press' },
+  { value: '8', label: 'Cambridge University Press' },
+  { value: '9', label: 'Wiley' },
+  { value: '10', label: 'Pearson' },
+];
+
+// Mock data for book status
+export const BOOK_STATUS_OPTIONS = [
+  { value: 'AVAILABLE', label: 'Available' },
+  { value: 'OUT_OF_STOCK', label: 'Out of Stock' },
+  { value: 'MAINTENANCE', label: 'Maintenance' },
+  { value: 'LOST', label: 'Lost' },
+  { value: 'DAMAGED', label: 'Damaged' },
 ];

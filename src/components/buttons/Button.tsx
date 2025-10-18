@@ -8,15 +8,17 @@ interface ButtonProps extends Omit<ChakraButtonProps, 'children'> {
   href?: string;
   label?: string;
   icon?: React.ElementType;
+  rightIcon?: React.ElementType;
   isActive?: boolean;
   onClick?: () => void;
-  variantType?: 'primary' | 'secondary' | 'sidebar';
+  variantType?: 'primary' | 'secondary' | 'sidebar' | 'sidebar-submenu' | 'tertiary';
 }
 
 export function Button({
   href,
   label,
   icon,
+  rightIcon,
   isActive,
   onClick,
   variantType = 'primary',
@@ -50,6 +52,24 @@ export function Button({
       hover: { bg: isActive ? 'primary.500' : 'primary.200' },
       active: { bg: 'primary.200' },
     },
+    'sidebar-submenu': {
+      w: 'full',
+      bg: isActive ? 'primary.500' : 'transparent',
+      color: isActive ? 'white' : 'secondaryText.500',
+      justifyContent: 'flex-start',
+      borderColor: 'transparent',
+      hover: { bg: isActive ? 'primary.500' : 'primary.200' },
+      active: { bg: 'primary.200' },
+    },
+    tertiary: {
+      w: 'fit-content',
+      bg: 'paginationBg.500',
+      color: 'primaryText.500',
+      justifyContent: 'center',
+      borderColor: 'transparent',
+      hover: { bg: 'primary.200', color: 'primaryText.500' },
+      active: {},
+    },
   };
 
   const style = variantStyles[variantType];
@@ -58,6 +78,7 @@ export function Button({
     <>
       {icon && <Icon as={icon} boxSize={5} />}
       {label}
+      {rightIcon && <Icon as={rightIcon} boxSize={4} ml="auto" />}
     </>
   );
 

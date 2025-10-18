@@ -56,7 +56,7 @@ export function useBookForm() {
     pageCount: formData.pageCount ? Number(formData.pageCount) : null,
     price: formData.price ? Number(formData.price) : null,
     edition: formData.edition.trim() || null,
-    type: formData.type,
+    type: 'PRINT',
     description: formData.description.trim() || null,
     coverImageUrl: formData.coverImageUrl.trim() || null,
   });

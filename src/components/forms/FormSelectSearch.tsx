@@ -25,6 +25,9 @@ export interface FormSelectSearchProps {
   variantType?: 'default' | 'filter';
   hideSelectedOptions?: boolean;
   multi?: boolean;
+  height?: string;
+  width?: string;
+  fontSize?: string;
 }
 
 export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
@@ -43,6 +46,9 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
   variantType = 'default',
   hideSelectedOptions = false,
   multi = false,
+  height = '50px',
+  width = '100%',
+  fontSize = 'sm',
 }) => {
   /* Chakra UI colors
 		primary.200: #ff7b424d
@@ -117,12 +123,14 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
       styles={{
         control: baseStyles => ({
           ...baseStyles,
-          minHeight: '50px',
+          minHeight: height,
+          width: width,
           backgroundColor: style.bg,
           border: style.border,
           borderColor: `${style.borderColor} !important`,
           borderRadius: '8px',
           boxShadow: 'none',
+          fontSize: fontSize,
           '&:hover': {
             borderColor: style.borderColor,
           },

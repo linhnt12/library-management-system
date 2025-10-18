@@ -5,33 +5,54 @@ import { HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { IconType } from 'react-icons';
 import { IoLogOutOutline, IoSettingsOutline } from 'react-icons/io5';
+import { IoChevronDown, IoChevronUp } from 'react-icons/io5';
 import { ROUTES } from '@/constants';
+import { useState } from 'react';
+
+type SidebarItem = {
+  label: string;
+  href: string;
+  icon?: IconType;
+  children?: SidebarItem[];
+};
 
 type SidebarProps = {
-  items: {
-    label: string;
-    href: string;
-    icon?: IconType;
-  }[];
+  items: SidebarItem[];
 };
 
 export function Sidebar({ items = [] }: SidebarProps) {
   const pathname = usePathname();
 
-  // Check if the path is active
-  const isPathActive = (currentPath: string, href: string) => {
-    if (href === '/') return currentPath === '/';
-    return currentPath === href || currentPath.startsWith(`${href}/`);
+  // Auto-expand submenus that have active children
+  const getInitialExpandedItems = () => {
+    const expanded: string[] = [];
+    items.forEach(item => {
+      if (item.children) {
+        const hasActiveChild = item.children.some(
+          child => pathname === child.href || pathname.startsWith(`${child.href}/`)
+        );
+        if (hasActiveChild) {
+          expanded.push(item.label);
+        }
+      }
+    });
+    return expanded;
   };
 
-  // Get the active href
-  const activeHref = (() => {
-    const matches = items.filter(item => isPathActive(pathname, item.href));
-    if (matches.length === 0) return undefined;
-    return matches.reduce((longest, item) =>
-      !longest || item.href.length > longest.href.length ? item : longest
-    ).href;
-  })();
+  const [expandedItems, setExpandedItems] = useState<string[]>(getInitialExpandedItems);
+
+  // Check if the path is active (exact match only)
+  const isPathActive = (currentPath: string, href: string) => {
+    if (href === '/') return currentPath === '/';
+    return currentPath === href;
+  };
+
+  // Toggle submenu
+  const toggleSubmenu = (label: string) => {
+    setExpandedItems(prev =>
+      prev.includes(label) ? prev.filter(item => item !== label) : [...prev, label]
+    );
+  };
 
   return (
     <VStack gap={4} px={6} py={4} align="stretch" w="full">
@@ -43,16 +64,38 @@ export function Sidebar({ items = [] }: SidebarProps) {
       </HStack>
 
       {items.map(item => {
-        const isActive = activeHref ? item.href === activeHref : isPathActive(pathname, item.href);
+        const isActive = isPathActive(pathname, item.href);
+        const hasChildren = item.children && item.children.length > 0;
+        const isExpanded = expandedItems.includes(item.label);
+
         return (
-          <Button
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            isActive={isActive}
-            variantType="sidebar"
-          />
+          <VStack key={item.href} gap={0} align="stretch">
+            {/* Main item */}
+            <Button
+              href={hasChildren || !item.href ? undefined : item.href}
+              label={item.label}
+              icon={item.icon}
+              isActive={isActive}
+              variantType="sidebar"
+              onClick={hasChildren ? () => toggleSubmenu(item.label) : undefined}
+              rightIcon={hasChildren ? (isExpanded ? IoChevronUp : IoChevronDown) : undefined}
+            />
+
+            {/* Submenu items */}
+            {hasChildren && isExpanded && item.children && (
+              <VStack gap={1} align="stretch" pl={8} mt={1}>
+                {item.children.map(child => (
+                  <Button
+                    key={child.href}
+                    href={child.href}
+                    label={child.label}
+                    isActive={pathname === child.href}
+                    variantType="sidebar-submenu"
+                  />
+                ))}
+              </VStack>
+            )}
+          </VStack>
         );
       })}
 

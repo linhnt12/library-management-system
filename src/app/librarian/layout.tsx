@@ -8,7 +8,16 @@ import { SlGrid } from 'react-icons/sl';
 
 const sidebarItems = [
   { label: 'Dashboard', href: ROUTES.LIBRARIAN.DASHBOARD, icon: SlGrid },
-  { label: 'Books', href: ROUTES.LIBRARIAN.BOOKS, icon: LuBook },
+  {
+    label: 'Books',
+    href: '',
+    icon: LuBook,
+    children: [
+      { label: 'All Books', href: ROUTES.LIBRARIAN.BOOKS },
+      { label: 'Add Book', href: ROUTES.LIBRARIAN.BOOKS_ADD },
+      { label: 'Book Copies', href: ROUTES.LIBRARIAN.BOOKS_COPIES },
+    ],
+  },
   { label: 'Ebooks', href: ROUTES.LIBRARIAN.EBOOKS, icon: LuBook },
   { label: 'Borrowers', href: ROUTES.LIBRARIAN.BORROWERS },
 ];
