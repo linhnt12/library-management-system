@@ -1,6 +1,7 @@
-import { Provider, Toaster } from '@/components/ui';
+'use client';
+
 import { QueryProvider } from '@/components/providers/QueryProvider';
-import type { Metadata } from 'next';
+import { Provider, Toaster } from '@/components/ui';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -13,11 +14,6 @@ const interMono = Inter({
   variable: '--font-inter-mono',
   subsets: ['latin'],
 });
-
-export const metadata: Metadata = {
-  title: 'Libra',
-  description: 'Library Management System',
-};
 
 export default function RootLayout({
   children,
