@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import { ApiResponse } from '@/types/api';
 import { ApiError } from '@/lib/errors';
+import { ApiResponse } from '@/types/api';
+import { NextResponse } from 'next/server';
 
 // Success response helper
 export function successResponse<T>(data: T, message?: string, status: number = 200): NextResponse {
@@ -27,7 +27,7 @@ export function errorResponse(error: string, status: number = 400): NextResponse
 
 // Validation helper
 export function validateRequiredFields(
-  data: Record<string, any>,
+  data: Record<string, unknown>,
   requiredFields: string[]
 ): string | null {
   for (const field of requiredFields) {

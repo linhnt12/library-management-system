@@ -1,5 +1,5 @@
 // API Response Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string
@@ -17,24 +17,4 @@ export interface PaginationResponse {
   limit: number
   total: number
   totalPages: number
-}
-
-export interface PaginatedApiResponse<T = any> extends ApiResponse<{
-  users?: T[]
-  books?: T[]
-  authors?: T[]
-  categories?: T[]
-  pagination: PaginationResponse
-}> {}
-
-// Error Types
-export interface ApiError {
-  message: string
-  code?: string
-  field?: string
-}
-
-export interface ValidationError {
-  field: string
-  message: string
 }
