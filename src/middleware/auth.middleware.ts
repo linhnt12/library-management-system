@@ -1,29 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { JWTUtils, errorResponse } from '@/lib/utils';
 import { AuthService } from '@/services/auth.service';
-import { Role } from '@prisma/client';
 import { AuthUser } from '@/types/auth';
+import { Role } from '@prisma/client';
+import { NextRequest, NextResponse } from 'next/server';
 
-// Extend NextRequest to include user
-declare global {
-  namespace Express {
-    interface Request {
-      user?: AuthUser;
-    }
+// Module augmentation for NextRequest
+declare module 'next' {
+  interface NextRequest {
+    user?: AuthUser;
   }
 }
 
-// Add user to request type
+// Extending NextRequest
 export interface AuthenticatedRequest extends NextRequest {
   user: AuthUser;
 }
 
 // Authentication middleware
-export async function authenticateToken(request: NextRequest): Promise<{
-  success: boolean;
-  user?: AuthUser;
-  error?: string;
-}> {
+export async function authenticateToken(request: NextRequest): Promise<{ success: boolean; user?: AuthUser; error?: string; }> {
   try {
     // Get token from Authorization header
     const authHeader = request.headers.get('authorization');
@@ -53,7 +47,7 @@ export async function authenticateToken(request: NextRequest): Promise<{
       success: true,
       user,
     };
-  } catch (error) {
+  } catch {
     return {
       success: false,
       error: 'Invalid or expired token',
@@ -70,13 +64,13 @@ export function authorizeRoles(allowedRoles: Role[]) {
 
 // Middleware wrapper for API routes
 export function withAuth(
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>,
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>,
   options?: {
     roles?: Role[];
     optional?: boolean;
   }
 ) {
-  return async (request: NextRequest, context?: any): Promise<NextResponse> => {
+  return async (request: NextRequest, context?: unknown): Promise<NextResponse> => {
     // Authenticate user
     const authResult = await authenticateToken(request);
 
@@ -107,19 +101,19 @@ export function withAuth(
 
 // Helper functions for common role checks
 export const requireAuth = (
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler);
 
 export const requireAdmin = (
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { roles: [Role.ADMIN] });
 
 export const requireLibrarian = (
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { roles: [Role.ADMIN, Role.LIBRARIAN] });
 
 export const optionalAuth = (
-  handler: (req: AuthenticatedRequest, context?: any) => Promise<NextResponse>
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { optional: true });
 
 // Response helpers (using api-utils)
