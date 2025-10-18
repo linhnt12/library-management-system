@@ -16,9 +16,11 @@ const sidebarItems = [
       { label: 'All Books', href: ROUTES.LIBRARIAN.BOOKS },
       { label: 'Add Book', href: ROUTES.LIBRARIAN.BOOKS_ADD },
       { label: 'Book Copies', href: ROUTES.LIBRARIAN.BOOKS_COPIES },
+      { label: 'Add Book Copy', href: ROUTES.LIBRARIAN.BOOKS_COPIES_ADD },
+      { label: 'Book Editions', href: ROUTES.LIBRARIAN.BOOKS_EDITIONS },
+      { label: 'Add Book Edition', href: ROUTES.LIBRARIAN.BOOKS_EDITIONS_ADD },
     ],
   },
-  { label: 'Ebooks', href: ROUTES.LIBRARIAN.EBOOKS, icon: LuBook },
   { label: 'Borrowers', href: ROUTES.LIBRARIAN.BORROWERS },
 ];
 

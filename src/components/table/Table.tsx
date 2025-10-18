@@ -12,6 +12,8 @@ type TableProps<T> = {
     header: string;
     render?: (item: T, rowIndex: number) => React.ReactNode;
     sortable?: boolean;
+    textAlign?: 'left' | 'center' | 'right';
+    width?: string | number;
   }[];
   data: T[];
   page: number;
@@ -99,6 +101,7 @@ export function Table<T>({
               <ChakraTable.ColumnHeader
                 key={String(col.key)}
                 bg="layoutBg.500"
+                width={col.width}
                 _first={{
                   borderTopLeftRadius: 'lg',
                   borderBottomLeftRadius: 'lg',
@@ -108,7 +111,16 @@ export function Table<T>({
                   borderBottomRightRadius: 'lg',
                 }}
               >
-                <HStack gap={2}>
+                <HStack
+                  gap={2}
+                  justifyContent={
+                    col.textAlign === 'center'
+                      ? 'center'
+                      : col.textAlign === 'right'
+                        ? 'flex-end'
+                        : 'flex-start'
+                  }
+                >
                   <Text fontWeight="md">{col.header}</Text>
                   {col.sortable && (
                     <IconButton
@@ -157,7 +169,17 @@ export function Table<T>({
                 borderColor="gray.200"
               >
                 {columns.map(col => (
-                  <ChakraTable.Cell key={String(col.key)}>
+                  <ChakraTable.Cell
+                    key={String(col.key)}
+                    width={col.width}
+                    textAlign={
+                      col.textAlign === 'center'
+                        ? 'center'
+                        : col.textAlign === 'right'
+                          ? 'right'
+                          : 'left'
+                    }
+                  >
                     {col.render
                       ? col.render(item, rowIndex)
                       : ((item as unknown as Record<string, unknown>)[

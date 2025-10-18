@@ -3,7 +3,7 @@ import { ROUTES } from '@/constants';
 import { useBookFormSubmission, useDialog } from '@/lib/hooks';
 import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
 import { BookService } from '@/api';
-import { CreateBookData, Book } from '@/types/book';
+import { Book, CreateBookData } from '@/types/book';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -56,7 +56,7 @@ export function useBookForm() {
     pageCount: formData.pageCount ? Number(formData.pageCount) : null,
     price: formData.price ? Number(formData.price) : null,
     edition: formData.edition.trim() || null,
-    type: 'PRINT',
+    type: formData.type,
     description: formData.description.trim() || null,
     coverImageUrl: formData.coverImageUrl.trim() || null,
   });
