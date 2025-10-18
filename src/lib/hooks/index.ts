@@ -1,6 +1,7 @@
 export * from './useAuthors';
 export * from './useBookForm';
 export * from './useBookItemForm';
+export * from './useBookItems';
 export * from './useBooks';
 export * from './useDialog';
 export * from './useFormSubmission';

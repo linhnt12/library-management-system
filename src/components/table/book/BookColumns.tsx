@@ -65,7 +65,6 @@ function ActionsCell({ book }: { book: Book }) {
   );
 }
 
-// TODO: This will be fixed later
 export const BookColumns = (onChangeStatus?: (book: Book) => void) => [
   {
     key: 'id',

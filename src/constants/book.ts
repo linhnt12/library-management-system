@@ -1,3 +1,6 @@
+import { getConditionOptions, getStatusOptions } from '@/lib/utils/enum-utils';
+import { Condition, ItemStatus } from '@prisma/client';
+
 export const BOOK_TYPE_OPTIONS = [
   { value: 'PRINT', label: 'Print' },
   { value: 'EBOOK', label: 'Ebook' },
@@ -31,6 +34,29 @@ export const PUBLISHER_OPTIONS = [
   { value: '9', label: 'Wiley' },
   { value: '10', label: 'Pearson' },
 ];
+
+// Custom labels for condition
+export const CONDITION_LABELS: Partial<Record<Condition, string>> = {
+  NEW: 'New',
+  GOOD: 'Good',
+  WORN: 'Worn',
+  DAMAGED: 'Damaged',
+  LOST: 'Lost',
+};
+
+// Custom labels for status
+export const STATUS_LABELS: Partial<Record<ItemStatus, string>> = {
+  AVAILABLE: 'Available',
+  ON_BORROW: 'On Borrow',
+  RESERVED: 'Reserved',
+  MAINTENANCE: 'Maintenance',
+  RETIRED: 'Retired',
+  LOST: 'Lost',
+};
+
+// Book item options
+export const BOOK_ITEM_CONDITION_OPTIONS = getConditionOptions(CONDITION_LABELS);
+export const BOOK_ITEM_STATUS_OPTIONS = getStatusOptions(STATUS_LABELS);
 
 // Mock data for book status
 export const BOOK_STATUS_OPTIONS = [

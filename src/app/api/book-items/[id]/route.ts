@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const bookItemId = parseIntParam(id);
 
     if (bookItemId <= 0) {
-      throw new ValidationError('Invalid book item ID');
+      throw new ValidationError('Invalid book copy ID');
     }
 
     const bookItem: BookItem | null = await prisma.bookItem.findFirst({
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     if (!bookItem) {
-      throw new NotFoundError('Book item not found');
+      throw new NotFoundError('Book copy not found');
     }
 
     return successResponse(bookItem);
@@ -50,7 +50,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const bookItemId = parseIntParam(id);
 
     if (bookItemId <= 0) {
-      throw new ValidationError('Invalid book item ID');
+      throw new ValidationError('Invalid book copy ID');
     }
 
     const body: UpdateBookItemData = await request.json();
@@ -110,7 +110,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       select: { id: true },
     });
     if (!existing) {
-      throw new NotFoundError('Book item not found');
+      throw new NotFoundError('Book copy not found');
     }
 
     const updated: BookItem = await prisma.bookItem.update({
@@ -129,7 +129,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
 
-    return successResponse<BookItem>(updated, 'Book item updated successfully');
+    return successResponse<BookItem>(updated, 'Book copy updated successfully');
   } catch (error) {
     return handleRouteError(error, 'PUT /api/book-items/[id]');
   }
@@ -145,7 +145,7 @@ export async function DELETE(
     const bookItemId = parseIntParam(id);
 
     if (bookItemId <= 0) {
-      throw new ValidationError('Invalid book item ID');
+      throw new ValidationError('Invalid book copy ID');
     }
 
     // Ensure book item exists
@@ -157,7 +157,7 @@ export async function DELETE(
       select: { id: true },
     });
     if (!existing) {
-      throw new NotFoundError('Book item not found');
+      throw new NotFoundError('Book copy not found');
     }
 
     await prisma.bookItem.update({
@@ -165,7 +165,7 @@ export async function DELETE(
       data: { isDeleted: true },
     });
 
-    return successResponse<null>(null, 'Book item deleted successfully');
+    return successResponse<null>(null, 'Book copy deleted successfully');
   } catch (error) {
     return handleRouteError(error, 'DELETE /api/book-items/[id]');
   }

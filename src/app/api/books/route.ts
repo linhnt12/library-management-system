@@ -8,7 +8,7 @@ import {
   successResponse,
   validateRequiredFields,
 } from '@/lib/utils';
-import { Book, BooksListPayload, CreateBookData } from '@/types/book';
+import { Book, BookWithAuthor, BooksListPayload, CreateBookData } from '@/types/book';
 import { BookType, Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
         { isbn: { contains: search } },
         { publisher: { contains: search } },
         { description: { contains: search } },
+        { author: { fullName: { contains: search } } },
       ];
     }
 
@@ -128,12 +129,18 @@ export async function GET(request: NextRequest) {
           isDeleted: true,
           createdAt: true,
           updatedAt: true,
+          author: {
+            select: {
+              id: true,
+              fullName: true,
+            },
+          },
         },
       }),
       prisma.book.count({ where }),
     ]);
 
-    const books = booksRaw as unknown as Book[];
+    const books = booksRaw as unknown as BookWithAuthor[];
 
     return successResponse<BooksListPayload>({
       books,

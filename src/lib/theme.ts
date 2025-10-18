@@ -19,12 +19,14 @@ const tokens = defineTokens({
       Borrowed: { value: '#ffcbbf' },
       Damaged: { value: '#f9e8e9' },
       Lost: { value: '#ededef' },
+      Reserved: { value: '#e5effa' },
     },
     statusText: {
       Available: { value: '#008b6b' },
       Borrowed: { value: '#161e25' },
       Damaged: { value: '#a2001d' },
       Lost: { value: '#7f8289' },
+      Reserved: { value: '#0057b7' },
     },
   },
 });

@@ -32,8 +32,8 @@ export function useBookItemForm(bookItemId?: number) {
     CreateBookItemData | UpdateBookItemData,
     BookItem
   >({
-    successMessage: isEditMode ? 'Book item updated successfully' : 'Book item added successfully',
-    errorMessage: isEditMode ? 'Failed to update book item' : 'Failed to add book item',
+    successMessage: isEditMode ? 'Book copy updated successfully' : 'Book copy added successfully',
+    errorMessage: isEditMode ? 'Failed to update book copy' : 'Failed to add book copy',
   });
 
   const { dialog, openDialog, handleConfirm, handleCancel: handleDialogCancel } = useDialog();
@@ -120,7 +120,7 @@ export function useBookItemForm(bookItemId?: number) {
   const handleCancel = useCallback(() => {
     const action = isEditMode ? 'Edit' : 'Add';
     openDialog({
-      title: `Cancel ${action} Book Item`,
+      title: `Cancel ${action} Book Copy`,
       message: `Are you sure you want to cancel? All unsaved changes will be lost.`,
       confirmText: 'Yes, Cancel',
       cancelText: 'No, Continue',
@@ -144,9 +144,9 @@ export function useBookItemForm(bookItemId?: number) {
       const action = isEditMode ? 'update' : 'add';
       const actionText = isEditMode ? 'Update' : 'Add';
       openDialog({
-        title: `Confirm ${actionText} Book Item`,
-        message: `Do you want to ${action} this book item "${form.code}"${isEditMode ? '' : ' to the system'}?`,
-        confirmText: `${actionText} Book Item`,
+        title: `Confirm ${actionText} Book Copy`,
+        message: `Do you want to ${action} this book copy "${form.code}"${isEditMode ? '' : ' to the system'}?`,
+        confirmText: `${actionText} Book Copy`,
         cancelText: 'Cancel',
         onConfirm: async () => {
           if (isEditMode) {

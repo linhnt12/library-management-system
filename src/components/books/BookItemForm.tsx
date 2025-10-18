@@ -24,7 +24,7 @@ interface BookItemFormProps {
 
 export function BookItemForm({
   bookItemId,
-  submitLabel = 'Save Book Item',
+  submitLabel = 'Save Book Copy',
   cancelLabel = 'Cancel',
 }: BookItemFormProps) {
   const bookOptions = useBookOptions();

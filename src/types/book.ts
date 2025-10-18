@@ -19,8 +19,15 @@ export interface Book {
   isDeleted: boolean;
 }
 
+export interface BookWithAuthor extends Book {
+  author: {
+    id: number;
+    fullName: string;
+  };
+}
+
 export interface BooksListPayload {
-  books: Book[];
+  books: BookWithAuthor[];
   pagination: PaginationResponse;
 }
 

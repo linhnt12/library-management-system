@@ -22,7 +22,6 @@ export function Layout({ children, sidebar, userName, userRole }: LayoutProps) {
         bg="layoutBg.500"
         px={6}
         py={4}
-        gapY={4}
         ml="280px"
         minH="100vh"
         display="flex"
