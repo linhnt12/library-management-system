@@ -94,104 +94,107 @@ export function Table<T>({
 
   return (
     <Box height="100%" display="flex" flexDirection="column">
-      <ChakraTable.Root size="sm" flex="1">
-        <ChakraTable.Header>
-          <ChakraTable.Row>
-            {columns.map(col => (
-              <ChakraTable.ColumnHeader
-                key={String(col.key)}
-                bg="layoutBg.500"
-                width={col.width}
-                _first={{
-                  borderTopLeftRadius: 'lg',
-                  borderBottomLeftRadius: 'lg',
-                }}
-                _last={{
-                  borderTopRightRadius: 'lg',
-                  borderBottomRightRadius: 'lg',
-                }}
-              >
-                <HStack
-                  gap={2}
-                  justifyContent={
-                    col.textAlign === 'center'
-                      ? 'center'
-                      : col.textAlign === 'right'
-                        ? 'flex-end'
-                        : 'flex-start'
-                  }
+      <Box flex="1" overflow="auto">
+        <ChakraTable.Root size="sm">
+          <ChakraTable.Header>
+            <ChakraTable.Row>
+              {columns.map(col => (
+                <ChakraTable.ColumnHeader
+                  key={String(col.key)}
+                  bg="layoutBg.500"
+                  width={col.width}
+                  _first={{
+                    borderTopLeftRadius: 'lg',
+                    borderBottomLeftRadius: 'lg',
+                  }}
+                  _last={{
+                    borderTopRightRadius: 'lg',
+                    borderBottomRightRadius: 'lg',
+                  }}
                 >
-                  <Text fontWeight="md">{col.header}</Text>
-                  {col.sortable && (
-                    <IconButton
-                      size="xs"
-                      variant="ghost"
-                      aria-label={`Sort by ${col.header}`}
-                      onClick={() => handleSort(String(col.key))}
-                    >
-                      {getSortIcon(String(col.key))}
-                    </IconButton>
-                  )}
-                </HStack>
-              </ChakraTable.ColumnHeader>
-            ))}
-          </ChakraTable.Row>
-        </ChakraTable.Header>
-        <ChakraTable.Body>
-          {loading ? (
-            <ChakraTable.Row>
-              <ChakraTable.Cell colSpan={columns.length}>
-                <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
-                  <Spinner />
-                  <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
-                    Loading...
-                  </Text>
-                </VStack>
-              </ChakraTable.Cell>
-            </ChakraTable.Row>
-          ) : paginatedData.length === 0 ? (
-            <ChakraTable.Row>
-              <ChakraTable.Cell colSpan={columns.length}>
-                <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
-                  <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
-                    No data
-                  </Text>
-                </VStack>
-              </ChakraTable.Cell>
-            </ChakraTable.Row>
-          ) : (
-            paginatedData.map((item, rowIndex) => (
-              <ChakraTable.Row
-                key={rowIndex}
-                h="80px"
-                _hover={{ bg: 'gray.50' }}
-                borderBottomWidth={rowIndex === paginatedData.length - 1 ? 0 : '1px'}
-                borderColor="gray.200"
-              >
-                {columns.map(col => (
-                  <ChakraTable.Cell
-                    key={String(col.key)}
-                    width={col.width}
-                    textAlign={
+                  <HStack
+                    gap={2}
+                    justifyContent={
                       col.textAlign === 'center'
                         ? 'center'
                         : col.textAlign === 'right'
-                          ? 'right'
-                          : 'left'
+                          ? 'flex-end'
+                          : 'flex-start'
                     }
                   >
-                    {col.render
-                      ? col.render(item, rowIndex)
-                      : ((item as unknown as Record<string, unknown>)[
-                          String(col.key)
-                        ] as React.ReactNode)}
-                  </ChakraTable.Cell>
-                ))}
+                    <Text fontWeight="md">{col.header}</Text>
+                    {col.sortable && (
+                      <IconButton
+                        size="xs"
+                        variant="ghost"
+                        aria-label={`Sort by ${col.header}`}
+                        onClick={() => handleSort(String(col.key))}
+                      >
+                        {getSortIcon(String(col.key))}
+                      </IconButton>
+                    )}
+                  </HStack>
+                </ChakraTable.ColumnHeader>
+              ))}
+            </ChakraTable.Row>
+          </ChakraTable.Header>
+          <ChakraTable.Body>
+            {loading ? (
+              <ChakraTable.Row>
+                <ChakraTable.Cell colSpan={columns.length}>
+                  <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
+                    <Spinner />
+                    <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
+                      Loading...
+                    </Text>
+                  </VStack>
+                </ChakraTable.Cell>
               </ChakraTable.Row>
-            ))
-          )}
-        </ChakraTable.Body>
-      </ChakraTable.Root>
+            ) : paginatedData.length === 0 ? (
+              <ChakraTable.Row>
+                <ChakraTable.Cell colSpan={columns.length}>
+                  <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
+                    <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
+                      No data
+                    </Text>
+                  </VStack>
+                </ChakraTable.Cell>
+              </ChakraTable.Row>
+            ) : (
+              paginatedData.map((item, rowIndex) => (
+                <ChakraTable.Row
+                  key={rowIndex}
+                  h="80px"
+                  _hover={{ bg: 'gray.50' }}
+                  borderBottomWidth={rowIndex === paginatedData.length - 1 ? 0 : '1px'}
+                  borderColor="gray.200"
+                >
+                  {columns.map(col => (
+                    <ChakraTable.Cell
+                      key={String(col.key)}
+                      width={col.width}
+                      verticalAlign="middle"
+                      textAlign={
+                        col.textAlign === 'center'
+                          ? 'center'
+                          : col.textAlign === 'right'
+                            ? 'right'
+                            : 'left'
+                      }
+                    >
+                      {col.render
+                        ? col.render(item, rowIndex)
+                        : ((item as unknown as Record<string, unknown>)[
+                            String(col.key)
+                          ] as React.ReactNode)}
+                    </ChakraTable.Cell>
+                  ))}
+                </ChakraTable.Row>
+              ))
+            )}
+          </ChakraTable.Body>
+        </ChakraTable.Root>
+      </Box>
 
       <TableFooter
         page={page}
