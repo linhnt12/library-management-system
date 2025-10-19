@@ -1,4 +1,5 @@
 import { FileUtils } from '@/lib/server-utils';
+import { errorResponse, handleRouteError } from '@/lib/utils/api-utils';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -48,7 +49,7 @@ export async function GET(
           ? 403
           : 500;
 
-      return NextResponse.json({ error: result.message }, { status: statusCode });
+      return errorResponse(result.message, statusCode);
     }
 
     const fileData = result.data as {
@@ -91,8 +92,7 @@ export async function GET(
 
     return response;
   } catch (error) {
-    console.error('Error serving file:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return handleRouteError(error, 'GET /api/files/[...path]');
   }
 }
 
@@ -147,7 +147,6 @@ export async function HEAD(
 
     return response;
   } catch (error) {
-    console.error('Error getting file metadata:', error);
-    return new NextResponse(null, { status: 500 });
+    return handleRouteError(error, 'HEAD /api/files/[...path]');
   }
 }

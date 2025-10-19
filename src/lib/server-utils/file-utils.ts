@@ -367,64 +367,6 @@ export class FileUtils {
   }
 
   /**
-   * Comprehensive file validation combining size and extension checks
-   * @param file - File path, Buffer, or File object
-   * @param fileName - File name (required if file is Buffer)
-   * @param options - Validation options
-   * @returns Promise<FileOperationResult>
-   */
-  static async validateFile(
-    file: string | Buffer | File,
-    fileName?: string,
-    options?: FileValidationOptions
-  ): Promise<FileOperationResult> {
-    try {
-      // Validate extension
-      let fileNameForValidation: string | File;
-      if (typeof file === 'string') {
-        fileNameForValidation = file;
-      } else if (file instanceof File) {
-        fileNameForValidation = file;
-      } else if (Buffer.isBuffer(file) && fileName) {
-        fileNameForValidation = fileName;
-      } else {
-        return {
-          success: false,
-          message: 'File name is required when validating Buffer',
-        };
-      }
-
-      const extValidation = this.validateFileExt(fileNameForValidation, options);
-      if (!extValidation.success) {
-        return extValidation;
-      }
-
-      // Validate size
-      const sizeValidation = await this.checkFileSize(file, {
-        maxSizeInBytes: options?.maxSizeInBytes,
-        minSizeInBytes: options?.minSizeInBytes,
-      });
-      if (!sizeValidation.success) {
-        return sizeValidation;
-      }
-
-      return {
-        success: true,
-        message: 'File validation passed',
-        data: {
-          extensionValidation: extValidation.data,
-          sizeValidation: sizeValidation.data,
-        },
-      };
-    } catch (error) {
-      return {
-        success: false,
-        message: `File validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      };
-    }
-  }
-
-  /**
    * Get file information
    * @param filePath - Path to the file
    * @returns Promise<FileOperationResult>
@@ -590,7 +532,6 @@ export const {
   deleteFileFromSystem,
   checkFileSize,
   validateFileExt,
-  validateFile,
   getFileInfo,
   getMimeType,
   isPathAllowed,
