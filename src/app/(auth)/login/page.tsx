@@ -50,7 +50,7 @@ export default function LoginPage() {
 
             {/* Forgot Password Link */}
             <Box textAlign="right" mb={4}>
-              <Link href={ROUTES.FORGOT_PASSWORD}>
+              <Link href={ROUTES.AUTH.FORGOT_PASSWORD}>
                 <Text
                   fontSize="sm"
                   color="primary.500"
@@ -78,7 +78,7 @@ export default function LoginPage() {
         <Center mt={4}>
           <Text fontSize="sm" color="secondaryText.500">
             Don&apos;t have an account?{' '}
-            <Link href={ROUTES.REGISTER} style={{ display: 'inline' }}>
+            <Link href={ROUTES.AUTH.REGISTER} style={{ display: 'inline' }}>
               <Text
                 as="span"
                 color="primary.500"

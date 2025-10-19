@@ -1,9 +1,11 @@
 // Route constants for the application
 export const ROUTES = {
   // Auth routes
-  LOGIN: '/login',
-  REGISTER: '/register',
-  FORGOT_PASSWORD: '/forgot-password',
+  AUTH: {
+    LOGIN: '/login',
+    REGISTER: '/register',
+    FORGOT_PASSWORD: '/forgot-password',
+  },
 
   // Dashboard routes
   DASHBOARD: {

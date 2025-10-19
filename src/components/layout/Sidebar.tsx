@@ -59,7 +59,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
     try {
       await AuthApi.logout();
     } finally {
-      router.replace(ROUTES.LOGIN);
+      router.replace(ROUTES.AUTH.LOGIN);
     }
   };
 
@@ -110,6 +110,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
 
       <HStack my={4} h="1px" bg="gray.200" />
 
+      {/* TODO: This will be only displayed for admin and librarian */}
       <Button
         href={ROUTES.SETTINGS}
         label="Settings"
