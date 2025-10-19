@@ -20,6 +20,7 @@ type TableProps<T> = {
   pageSize: number;
   total: number;
   loading?: boolean;
+  maxHeight?: string | number;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   onSort?: (key: string, direction: 'asc' | 'desc' | null) => void;
@@ -32,6 +33,7 @@ export function Table<T>({
   pageSize,
   total,
   loading = false,
+  maxHeight,
   onPageChange,
   onPageSizeChange,
   onSort,
@@ -94,7 +96,7 @@ export function Table<T>({
 
   return (
     <Box height="100%" display="flex" flexDirection="column">
-      <Box flex="1" overflow="auto">
+      <Box flex="1" overflow="auto" maxHeight={maxHeight}>
         <ChakraTable.Root size="sm">
           <ChakraTable.Header>
             <ChakraTable.Row>
@@ -103,6 +105,9 @@ export function Table<T>({
                   key={String(col.key)}
                   bg="layoutBg.500"
                   width={col.width}
+                  position="sticky"
+                  top="0"
+                  zIndex="1"
                   _first={{
                     borderTopLeftRadius: 'lg',
                     borderBottomLeftRadius: 'lg',
