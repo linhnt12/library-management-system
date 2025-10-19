@@ -27,3 +27,24 @@ export interface FileServeOptions {
 export interface MimeTypeMap {
   [key: string]: string;
 }
+
+export interface FileServeData {
+  buffer: Buffer;
+  fileName: string;
+  mimeType: string;
+  size: number;
+  inline: boolean;
+  cacheControl: string;
+  lastModified: Date;
+  extension: string;
+}
+
+export interface FileMetadata {
+  name: string;
+  size: number;
+  extension: string;
+  sizeInMB: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  isFile: boolean;
+}

@@ -1,5 +1,7 @@
+import { DEFAULT_CACHE_CONTROL } from '@/constants/file';
 import { FileUtils } from '@/lib/server-utils';
 import { errorResponse, handleRouteError } from '@/lib/utils/api-utils';
+import { FileMetadata, FileServeData } from '@/types/file';
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -8,7 +10,7 @@ import { NextRequest, NextResponse } from 'next/server';
  * Query parameters:
  * - inline: boolean (default: false) - true for inline display, false for download
  * - filename: string - custom filename for download
- * - cache: string - cache control header (default: 'public, max-age=3600')
+ * - cache: string - cache control header (default: DEFAULT_CACHE_CONTROL)
  *
  * Examples:
  * - GET /api/files/uploads/image.jpg - Download image.jpg
@@ -33,7 +35,7 @@ export async function GET(
     // Parse query parameters
     const inline = searchParams.get('inline') === 'true';
     const customFilename = searchParams.get('filename');
-    const cacheControl = searchParams.get('cache') || 'public, max-age=3600';
+    const cacheControl = searchParams.get('cache') || DEFAULT_CACHE_CONTROL;
 
     // Prepare file for serving
     const result = await FileUtils.prepareFileForServing(filePath, {
@@ -52,16 +54,7 @@ export async function GET(
       return errorResponse(result.message, statusCode);
     }
 
-    const fileData = result.data as {
-      buffer: Buffer;
-      fileName: string;
-      mimeType: string;
-      size: number;
-      inline: boolean;
-      cacheControl: string;
-      lastModified: Date;
-      extension: string;
-    };
+    const fileData = result.data as FileServeData;
 
     // Create response with file content
     // Convert Buffer to Uint8Array for NextResponse compatibility
@@ -120,15 +113,7 @@ export async function HEAD(
       return new NextResponse(null, { status: statusCode });
     }
 
-    const fileData = result.data as {
-      name: string;
-      size: number;
-      extension: string;
-      sizeInMB: string;
-      createdAt: Date;
-      modifiedAt: Date;
-      isFile: boolean;
-    };
+    const fileData = result.data as FileMetadata;
 
     // Security check
     if (!FileUtils.isPathAllowed(filePath)) {

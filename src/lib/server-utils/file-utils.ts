@@ -1,10 +1,12 @@
 import {
-  FileInfo,
-  FileOperationResult,
-  FileServeOptions,
-  FileValidationOptions,
-  MimeTypeMap,
-} from '@/types';
+  DEFAULT_ALLOWED_EXTENSIONS,
+  DEFAULT_ALLOWED_SERVE_PATHS,
+  DEFAULT_CACHE_CONTROL,
+  DEFAULT_MAX_SIZE,
+  DEFAULT_UPLOAD_DIR,
+  MIME_TYPES,
+} from '@/constants';
+import { FileInfo, FileOperationResult, FileServeOptions, FileValidationOptions } from '@/types';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -13,73 +15,6 @@ import path from 'path';
  * including writing, deleting, size checking, and extension validation
  */
 export class FileUtils {
-  private static readonly DEFAULT_UPLOAD_DIR = 'uploads';
-  private static readonly DEFAULT_MAX_SIZE = 10 * 1024 * 1024; // 10MB
-  private static readonly DEFAULT_ALLOWED_EXTENSIONS = [
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.gif',
-    '.pdf',
-    '.doc',
-    '.docx',
-    '.txt',
-  ];
-
-  // MIME type mapping for common file extensions
-  private static readonly MIME_TYPES: MimeTypeMap = {
-    // Images
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png',
-    '.gif': 'image/gif',
-    '.webp': 'image/webp',
-    '.svg': 'image/svg+xml',
-    '.bmp': 'image/bmp',
-    '.ico': 'image/x-icon',
-
-    // Documents
-    '.pdf': 'application/pdf',
-    '.doc': 'application/msword',
-    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    '.xls': 'application/vnd.ms-excel',
-    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    '.ppt': 'application/vnd.ms-powerpoint',
-    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-
-    // Text files
-    '.txt': 'text/plain',
-    '.html': 'text/html',
-    '.css': 'text/css',
-    '.js': 'text/javascript',
-    '.json': 'application/json',
-    '.xml': 'application/xml',
-    '.csv': 'text/csv',
-
-    // Archives
-    '.zip': 'application/zip',
-    '.rar': 'application/vnd.rar',
-    '.7z': 'application/x-7z-compressed',
-    '.tar': 'application/x-tar',
-    '.gz': 'application/gzip',
-
-    // Audio
-    '.mp3': 'audio/mpeg',
-    '.wav': 'audio/wav',
-    '.ogg': 'audio/ogg',
-    '.m4a': 'audio/mp4',
-
-    // Video
-    '.mp4': 'video/mp4',
-    '.avi': 'video/x-msvideo',
-    '.mov': 'video/quicktime',
-    '.wmv': 'video/x-ms-wmv',
-    '.flv': 'video/x-flv',
-    '.webm': 'video/webm',
-  };
-
-  private static readonly DEFAULT_ALLOWED_SERVE_PATHS = ['uploads'];
-
   /**
    * Write a file to the file system
    * @param fileBuffer - The file buffer to write
@@ -98,7 +33,7 @@ export class FileUtils {
   ): Promise<FileOperationResult> {
     try {
       const {
-        directory = this.DEFAULT_UPLOAD_DIR,
+        directory = DEFAULT_UPLOAD_DIR,
         overwrite = false,
         createDirectory = true,
       } = options || {};
@@ -235,7 +170,7 @@ export class FileUtils {
   ): Promise<FileOperationResult> {
     try {
       const {
-        maxSizeInBytes = this.DEFAULT_MAX_SIZE,
+        maxSizeInBytes = DEFAULT_MAX_SIZE,
         minSizeInBytes = 0,
         returnSizeInMB = false,
       } = options || {};
@@ -313,7 +248,7 @@ export class FileUtils {
     options?: FileValidationOptions
   ): FileOperationResult {
     try {
-      const { allowedExtensions = this.DEFAULT_ALLOWED_EXTENSIONS } = options || {};
+      const { allowedExtensions = DEFAULT_ALLOWED_EXTENSIONS } = options || {};
 
       let fileNameStr: string;
       if (typeof fileName === 'string') {
@@ -411,7 +346,7 @@ export class FileUtils {
    */
   static getMimeType(fileName: string): string {
     const extension = path.extname(fileName).toLowerCase();
-    return this.MIME_TYPES[extension] || 'application/octet-stream';
+    return MIME_TYPES[extension] || 'application/octet-stream';
   }
 
   /**
@@ -422,7 +357,7 @@ export class FileUtils {
    */
   static isPathAllowed(
     filePath: string,
-    allowedPaths: string[] = this.DEFAULT_ALLOWED_SERVE_PATHS
+    allowedPaths: string[] = DEFAULT_ALLOWED_SERVE_PATHS
   ): boolean {
     try {
       // Resolve the full path to prevent directory traversal
@@ -462,10 +397,10 @@ export class FileUtils {
   ): Promise<FileOperationResult> {
     try {
       const {
-        allowedPaths = this.DEFAULT_ALLOWED_SERVE_PATHS,
+        allowedPaths = DEFAULT_ALLOWED_SERVE_PATHS,
         filename,
         inline = false,
-        cacheControl = 'public, max-age=3600',
+        cacheControl = DEFAULT_CACHE_CONTROL,
       } = options || {};
 
       // Security check: ensure file path is allowed
