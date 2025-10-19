@@ -1,5 +1,11 @@
 import { getAccessToken, handleJson } from '@/lib/utils';
-import { Book, BookWithAuthorAndItems, CreateBookData, UpdateBookData } from '@/types/book';
+import {
+  Book,
+  BookWithAuthor,
+  BookWithAuthorAndItems,
+  CreateBookData,
+  UpdateBookData,
+} from '@/types/book';
 
 export class BookApi {
   // Create book
@@ -30,7 +36,7 @@ export class BookApi {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     isDeleted?: boolean;
-  }): Promise<{ books: Book[]; pagination: { total: number } }> {
+  }): Promise<{ books: BookWithAuthor[]; pagination: { total: number } }> {
     const searchParams = new URLSearchParams();
 
     if (params?.page) searchParams.set('page', params.page.toString());
@@ -59,7 +65,7 @@ export class BookApi {
       headers,
     });
 
-    return await handleJson<{ books: Book[]; pagination: { total: number } }>(response);
+    return await handleJson<{ books: BookWithAuthor[]; pagination: { total: number } }>(response);
   }
 
   // Get book by id

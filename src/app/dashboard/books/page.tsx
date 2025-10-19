@@ -20,7 +20,8 @@ import { useAuthorOptions } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
 import { HStack, Text, VStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { IoAddSharp, IoFilter } from 'react-icons/io5';
+import { FiFilter } from 'react-icons/fi';
+import { IoAddSharp } from 'react-icons/io5';
 
 export default function BookPage() {
   const authorOptions = useAuthorOptions();
@@ -208,7 +209,7 @@ export default function BookPage() {
             h="40px"
             px={2}
             fontSize="sm"
-            icon={IoFilter}
+            icon={FiFilter}
             onClick={handleOpenFilterDialog}
           />
           <SearchInput

@@ -1,5 +1,5 @@
 import { BookApi } from '@/api';
-import { Book } from '@/types';
+import { Book, BookWithAuthor } from '@/types';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthors } from './useAuthors';
 
@@ -19,7 +19,7 @@ export function useBooks(params?: {
 }) {
   return useQuery({
     queryKey: ['books', params],
-    queryFn: async (): Promise<{ books: Book[]; pagination: { total: number } }> => {
+    queryFn: async (): Promise<{ books: BookWithAuthor[]; pagination: { total: number } }> => {
       return BookApi.getBooks(params);
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
