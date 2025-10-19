@@ -23,7 +23,6 @@ export class BookApi {
     limit?: number;
     search?: string;
     authorIds?: number[];
-    type?: string;
     publishYearFrom?: number;
     publishYearTo?: number;
     publishers?: string[];
@@ -40,7 +39,6 @@ export class BookApi {
     if (params?.authorIds && params.authorIds.length > 0) {
       params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
     }
-    if (params?.type) searchParams.set('type', params.type);
     if (params?.publishYearFrom)
       searchParams.set('publishYearFrom', params.publishYearFrom.toString());
     if (params?.publishYearTo) searchParams.set('publishYearTo', params.publishYearTo.toString());

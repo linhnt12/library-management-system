@@ -28,15 +28,7 @@ export function Layout({ children, sidebar, userName, userRole }: LayoutProps) {
         flexDirection="column"
       >
         <Header userName={userName} userRole={userRole} />
-        <Box
-          p={4}
-          rounded="lg"
-          bg="white"
-          color="text.500"
-          flex="1"
-          display="flex"
-          flexDirection="column"
-        >
+        <Box p={4} rounded="lg" bg="white" flex="1" display="flex" flexDirection="column">
           {children}
         </Box>
         <Footer />
