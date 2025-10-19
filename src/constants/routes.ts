@@ -2,6 +2,8 @@
 export const ROUTES = {
   // Auth routes
   LOGIN: '/login',
+  REGISTER: '/register',
+  FORGOT_PASSWORD: '/forgot-password',
 
   // Dashboard routes
   DASHBOARD: {
@@ -23,6 +25,9 @@ export const ROUTES = {
   },
 
   // Common routes
+  HOME: '/',
+  SEARCH: '/search',
+  MY_SHELF: '/my-shelf',
   PROFILE: '/profile',
   SETTINGS: '/settings',
   LOGOUT: '/logout',
