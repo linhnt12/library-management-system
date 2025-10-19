@@ -14,7 +14,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace(ROUTES.LOGIN);
+      router.replace(ROUTES.AUTH.LOGIN);
     }
   }, [isLoading, user, router]);
 
