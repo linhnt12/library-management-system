@@ -1,3 +1,10 @@
+'use client';
+
+import { BookItemColumns, BookItemsTable } from '@/components';
+
 export default function BookCopiesPage() {
-  return <h1>Book Copies Page</h1>;
+  // Create columns
+  const bookItemColumns = BookItemColumns();
+
+  return <BookItemsTable columns={bookItemColumns} />;
 }

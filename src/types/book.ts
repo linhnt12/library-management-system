@@ -1,5 +1,4 @@
 import { PaginationResponse } from '@/types/api';
-import { BookType } from '@prisma/client';
 
 export interface Book {
   id: number;
@@ -11,7 +10,6 @@ export interface Book {
   pageCount: number | null;
   price: number | null;
   edition: string | null;
-  type: BookType;
   description: string | null;
   coverImageUrl: string | null;
   createdAt: Date;
@@ -19,8 +17,28 @@ export interface Book {
   isDeleted: boolean;
 }
 
+export interface BookWithAuthor extends Book {
+  author: {
+    id: number;
+    fullName: string;
+  };
+}
+
+export interface BookWithAuthorAndItems extends BookWithAuthor {
+  bookItems: {
+    id: number;
+    code: string;
+    condition: string;
+    status: string;
+    acquisitionDate: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
+  }[];
+}
+
 export interface BooksListPayload {
-  books: Book[];
+  books: BookWithAuthor[];
   pagination: PaginationResponse;
 }
 
@@ -33,7 +51,6 @@ export interface CreateBookData {
   pageCount?: number | string | null;
   price?: number | string | null;
   edition?: string | null;
-  type?: BookType;
   description?: string | null;
   coverImageUrl?: string | null;
   isDeleted?: boolean;
@@ -48,7 +65,6 @@ export interface UpdateBookData {
   pageCount?: number | string | null;
   price?: number | string | null;
   edition?: string | null;
-  type?: BookType;
   description?: string | null;
   coverImageUrl?: string | null;
   isDeleted?: boolean;

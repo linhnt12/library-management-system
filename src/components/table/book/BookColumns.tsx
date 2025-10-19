@@ -49,8 +49,7 @@ function ActionsCell({ book }: { book: Book }) {
   };
 
   const handleView = () => {
-    // TODO: Implement view book functionality
-    console.log('View book:', book.id);
+    router.push(`${ROUTES.DASHBOARD.BOOKS}/${book.id}`);
   };
 
   return (
@@ -65,7 +64,6 @@ function ActionsCell({ book }: { book: Book }) {
   );
 }
 
-// TODO: This will be fixed later
 export const BookColumns = (onChangeStatus?: (book: Book) => void) => [
   {
     key: 'id',

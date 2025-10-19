@@ -24,17 +24,35 @@ export async function GET(request: NextRequest) {
     const { page, limit, search } = parsePaginationParams(searchParams);
 
     // Optional filters
+    const authorIdsParam = searchParams.getAll('authorIds');
     const bookIdsParam = searchParams.getAll('bookIds');
-    const conditionParam = searchParams.get('condition') as Condition | null;
-    const statusParam = searchParams.get('status') as ItemStatus | null;
+    const conditionsParam = searchParams.getAll('conditions');
+    const statusesParam = searchParams.getAll('statuses');
     const acquisitionDateFromParam = searchParams.get('acquisitionDateFrom');
     const acquisitionDateToParam = searchParams.get('acquisitionDateTo');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
+    const searchByCodeOnly = searchParams.get('searchByCodeOnly') === 'true';
 
+    const authorIds =
+      authorIdsParam.length > 0
+        ? authorIdsParam.map(id => parseIntParam(id, 0)).filter(id => id > 0)
+        : [];
     const bookIds =
       bookIdsParam.length > 0
         ? bookIdsParam.map(id => parseIntParam(id, 0)).filter(id => id > 0)
+        : [];
+    const conditions =
+      conditionsParam.length > 0
+        ? (conditionsParam.filter(condition =>
+            Object.values(Condition).includes(condition as Condition)
+          ) as Condition[])
+        : [];
+    const statuses =
+      statusesParam.length > 0
+        ? (statusesParam.filter(status =>
+            Object.values(ItemStatus).includes(status as ItemStatus)
+          ) as ItemStatus[])
         : [];
 
     const where: Prisma.BookItemWhereInput = {
@@ -42,11 +60,23 @@ export async function GET(request: NextRequest) {
     };
 
     if (search) {
-      where.OR = [
-        { code: { contains: search } },
-        { book: { title: { contains: search } } },
-        { book: { isbn: { contains: search } } },
-      ];
+      if (searchByCodeOnly) {
+        where.code = { contains: search };
+      } else {
+        where.OR = [
+          { code: { contains: search } },
+          { book: { title: { contains: search } } },
+          { book: { isbn: { contains: search } } },
+          { book: { author: { fullName: { contains: search } } } },
+        ];
+      }
+    }
+
+    // Handle author filter
+    if (authorIds.length > 0) {
+      where.book = {
+        authorId: { in: authorIds },
+      };
     }
 
     // Handle book filter
@@ -54,12 +84,14 @@ export async function GET(request: NextRequest) {
       where.bookId = { in: bookIds };
     }
 
-    if (conditionParam) {
-      where.condition = conditionParam;
+    // Handle condition filter
+    if (conditions.length > 0) {
+      where.condition = { in: conditions };
     }
 
-    if (statusParam) {
-      where.status = statusParam;
+    // Handle status filter
+    if (statuses.length > 0) {
+      where.status = { in: statuses };
     }
 
     // Handle acquisition date range filter
@@ -95,6 +127,7 @@ export async function GET(request: NextRequest) {
         acquisitionDate: 'acquisitionDate',
         createdAt: 'createdAt',
         updatedAt: 'updatedAt',
+        bookId: 'bookId',
       };
 
       const dbField = sortFieldMap[sortBy];

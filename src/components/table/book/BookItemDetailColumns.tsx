@@ -1,0 +1,126 @@
+'use client';
+
+import { IconButton, Tag } from '@/components';
+import { ROUTES } from '@/constants';
+import { HStack, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
+import { LuPencil } from 'react-icons/lu';
+
+// Component to render condition with color coding
+function ConditionCell({ condition }: { condition: string }) {
+  const getConditionColor = (
+    condition: string
+  ): 'active' | 'reserved' | 'borrowed' | 'inactive' | 'lost' => {
+    switch (condition.toUpperCase()) {
+      case 'NEW':
+        return 'active';
+      case 'GOOD':
+        return 'reserved';
+      case 'WORN':
+        return 'borrowed';
+      case 'DAMAGED':
+        return 'inactive';
+      case 'LOST':
+        return 'lost';
+      default:
+        return 'inactive';
+    }
+  };
+
+  return <Tag variantType={getConditionColor(condition)}>{condition}</Tag>;
+}
+
+// Component to render status
+function StatusCell({ status }: { status: string }) {
+  const getStatusColor = (
+    status: string
+  ): 'active' | 'borrowed' | 'reserved' | 'inactive' | 'lost' => {
+    switch (status.toUpperCase()) {
+      case 'AVAILABLE':
+        return 'active';
+      case 'ON_BORROW':
+        return 'borrowed';
+      case 'RESERVED':
+        return 'reserved';
+      case 'MAINTENANCE':
+        return 'borrowed';
+      case 'RETIRED':
+        return 'inactive';
+      case 'LOST':
+        return 'lost';
+      default:
+        return 'inactive';
+    }
+  };
+
+  return <Tag variantType={getStatusColor(status)}>{status}</Tag>;
+}
+
+// Component to render acquisition date
+function AcquisitionDateCell({ date }: { date: Date | null }) {
+  if (!date) return <Text color="gray.500">N/A</Text>;
+
+  const formattedDate = new Date(date).toLocaleDateString('vi-VN');
+  return <Text>{formattedDate}</Text>;
+}
+
+// Component to render action buttons
+function ActionsCell({ bookItem }: { bookItem: { id: number } }) {
+  const router = useRouter();
+
+  const handleEdit = () => {
+    router.push(`${ROUTES.DASHBOARD.BOOKS_COPIES}/edit/${bookItem.id}`);
+  };
+
+  return (
+    <HStack gap={2} justifyContent="center">
+      <IconButton aria-label="Edit book copy" onClick={handleEdit}>
+        <LuPencil />
+      </IconButton>
+    </HStack>
+  );
+}
+
+export const BookItemDetailColumns = () => [
+  {
+    key: 'code',
+    header: 'Code',
+    sortable: true,
+    width: '120px',
+    render: (item: { code: string }) => <Text fontWeight="medium">{item.code}</Text>,
+  },
+  {
+    key: 'condition',
+    header: 'Condition',
+    sortable: true,
+    width: '100px',
+    textAlign: 'center' as const,
+    render: (item: { condition: string }) => <ConditionCell condition={item.condition} />,
+  },
+  {
+    key: 'status',
+    header: 'Status',
+    sortable: true,
+    width: '100px',
+    textAlign: 'center' as const,
+    render: (item: { status: string }) => <StatusCell status={item.status} />,
+  },
+  {
+    key: 'acquisitionDate',
+    header: 'Acquisition Date',
+    sortable: true,
+    width: '120px',
+    textAlign: 'center' as const,
+    render: (item: { acquisitionDate: Date | null }) => (
+      <AcquisitionDateCell date={item.acquisitionDate} />
+    ),
+  },
+  {
+    key: 'actions',
+    header: 'Actions',
+    sortable: false,
+    width: '120px',
+    textAlign: 'center' as const,
+    render: (item: { id: number }) => <ActionsCell bookItem={item} />,
+  },
+];

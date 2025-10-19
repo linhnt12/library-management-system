@@ -6,9 +6,13 @@ export class BookItemApi {
     page?: number;
     limit?: number;
     search?: string;
-    bookId?: number;
-    condition?: string;
-    status?: string;
+    searchByCodeOnly?: boolean;
+    authorIds?: number[];
+    bookIds?: number[];
+    conditions?: string[];
+    statuses?: string[];
+    acquisitionDateFrom?: string;
+    acquisitionDateTo?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
   }): Promise<{
@@ -20,9 +24,23 @@ export class BookItemApi {
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.search) searchParams.set('search', params.search);
-    if (params?.bookId) searchParams.set('bookId', params.bookId.toString());
-    if (params?.condition) searchParams.set('condition', params.condition);
-    if (params?.status) searchParams.set('status', params.status);
+    if (params?.searchByCodeOnly)
+      searchParams.set('searchByCodeOnly', params.searchByCodeOnly.toString());
+    if (params?.authorIds && params.authorIds.length > 0) {
+      params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
+    }
+    if (params?.bookIds && params.bookIds.length > 0) {
+      params.bookIds.forEach(id => searchParams.append('bookIds', id.toString()));
+    }
+    if (params?.conditions && params.conditions.length > 0) {
+      params.conditions.forEach(condition => searchParams.append('conditions', condition));
+    }
+    if (params?.statuses && params.statuses.length > 0) {
+      params.statuses.forEach(status => searchParams.append('statuses', status));
+    }
+    if (params?.acquisitionDateFrom)
+      searchParams.set('acquisitionDateFrom', params.acquisitionDateFrom);
+    if (params?.acquisitionDateTo) searchParams.set('acquisitionDateTo', params.acquisitionDateTo);
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
 

@@ -10,7 +10,6 @@ export type CreateBookFormState = {
   pageCount: string;
   price: string;
   edition: string;
-  type: 'PRINT' | 'EBOOK' | 'BOTH';
   description: string;
   coverImageUrl: string;
   categories?: SelectOption[];
@@ -26,7 +25,6 @@ export type FormErrors = {
   pageCount?: string;
   price?: string;
   edition?: string;
-  type?: string;
   description?: string;
   coverImageUrl?: string;
   categories?: string;

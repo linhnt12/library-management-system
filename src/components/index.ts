@@ -1,3 +1,4 @@
+export * from './book-items';
 export * from './books';
 export * from './buttons';
 export * from './forms';

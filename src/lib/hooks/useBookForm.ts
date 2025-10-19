@@ -16,7 +16,6 @@ const initialState: CreateBookFormState = {
   pageCount: '',
   price: '',
   edition: '',
-  type: 'PRINT',
   description: '',
   coverImageUrl: '',
   categories: [],
@@ -61,7 +60,6 @@ export function useBookForm(bookId?: number) {
           pageCount: book.pageCount ? String(book.pageCount) : '',
           price: book.price ? String(book.price) : '',
           edition: book.edition || '',
-          type: book.type,
           description: book.description || '',
           coverImageUrl: book.coverImageUrl || '',
           categories: [], // TODO: This will be update later
@@ -107,7 +105,6 @@ export function useBookForm(bookId?: number) {
       pageCount: formData.pageCount ? Number(formData.pageCount) : null,
       price: formData.price ? Number(formData.price) : null,
       edition: formData.edition.trim() || null,
-      type: formData.type,
       description: formData.description.trim() || null,
       coverImageUrl: formData.coverImageUrl.trim() || null,
       isDeleted: formData.isDeleted,

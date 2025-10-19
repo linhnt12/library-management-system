@@ -6,9 +6,10 @@ import { ReactNode } from 'react';
 
 interface IconButtonProps extends ChakraIconButtonProps {
   children: ReactNode;
+  borderColor?: string;
 }
 
-export function IconButton({ children, ...props }: IconButtonProps) {
+export function IconButton({ children, borderColor = 'white', ...props }: IconButtonProps) {
   return (
     <ChakraIconButton
       height="42px"
@@ -17,7 +18,7 @@ export function IconButton({ children, ...props }: IconButtonProps) {
       bg="white"
       color="secondary.500"
       border="1px solid"
-      borderColor="white"
+      borderColor={borderColor}
       _hover={{ bg: 'secondary.500', color: 'white' }}
       {...props}
     >
