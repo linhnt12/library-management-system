@@ -59,7 +59,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
     try {
       await AuthApi.logout();
     } finally {
-      router.replace(ROUTES.AUTH.LOGIN);
+      // router.replace(ROUTES.LOGIN);
     }
   };
 
