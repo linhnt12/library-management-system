@@ -1,12 +1,6 @@
 import { getConditionOptions, getStatusOptions } from '@/lib/utils/enum-utils';
 import { Condition, ItemStatus } from '@prisma/client';
 
-export const BOOK_TYPE_OPTIONS = [
-  { value: 'PRINT', label: 'Print' },
-  { value: 'EBOOK', label: 'Ebook' },
-  { value: 'BOTH', label: 'Both' },
-];
-
 // Mock data for categories
 export const CATEGORY_OPTIONS = [
   { value: 1, label: 'Fiction' },

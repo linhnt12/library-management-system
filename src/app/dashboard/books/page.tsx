@@ -212,8 +212,8 @@ export default function BookPage() {
             onClick={handleOpenFilterDialog}
           />
           <SearchInput
-            width="300px"
-            placeholder="Search books"
+            width="400px"
+            placeholder="Search books by title, author, description or ISBN"
             value={query}
             onChange={handleSearch}
           />

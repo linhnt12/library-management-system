@@ -9,6 +9,9 @@ export type SearchInputProps = {
   width?: HTMLChakraProps<'div'>['w'];
   onChange?: (value: string) => void;
   flex?: HTMLChakraProps<'div'>['flex'];
+  bg?: HTMLChakraProps<'div'>['bg'];
+  border?: HTMLChakraProps<'div'>['border'];
+  borderColor?: HTMLChakraProps<'div'>['borderColor'];
 };
 
 export function SearchInput({
@@ -17,16 +20,21 @@ export function SearchInput({
   onChange,
   flex,
   width,
+  bg = 'layoutBg.500',
+  border = 'none',
+  borderColor = 'transparent',
 }: SearchInputProps) {
   return (
     <InputGroup
       flex={flex}
       startElement={<LuSearch />}
       w={width}
-      bg="layoutBg.500"
+      bg={bg}
       rounded="lg"
       height="40px"
       fontSize="sm"
+      border={border}
+      borderColor={borderColor}
     >
       <Input placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} />
     </InputGroup>
