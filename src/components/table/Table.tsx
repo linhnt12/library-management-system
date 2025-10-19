@@ -142,7 +142,7 @@ export function Table<T>({
             {loading ? (
               <ChakraTable.Row>
                 <ChakraTable.Cell colSpan={columns.length}>
-                  <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
+                  <VStack minHeight="150px" alignItems="center" justifyContent="center" gap={4}>
                     <Spinner />
                     <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
                       Loading...
@@ -153,7 +153,7 @@ export function Table<T>({
             ) : paginatedData.length === 0 ? (
               <ChakraTable.Row>
                 <ChakraTable.Cell colSpan={columns.length}>
-                  <VStack minHeight="400px" alignItems="center" justifyContent="center" gap={4}>
+                  <VStack minHeight="150px" alignItems="center" justifyContent="center" gap={4}>
                     <Text fontSize="sm" fontWeight="md" color="secondaryText.500">
                       No data
                     </Text>

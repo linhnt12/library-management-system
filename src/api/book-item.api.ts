@@ -6,6 +6,7 @@ export class BookItemApi {
     page?: number;
     limit?: number;
     search?: string;
+    searchByCodeOnly?: boolean;
     authorIds?: number[];
     bookIds?: number[];
     conditions?: string[];
@@ -23,6 +24,8 @@ export class BookItemApi {
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.search) searchParams.set('search', params.search);
+    if (params?.searchByCodeOnly)
+      searchParams.set('searchByCodeOnly', params.searchByCodeOnly.toString());
     if (params?.authorIds && params.authorIds.length > 0) {
       params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
     }

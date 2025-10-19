@@ -26,6 +26,19 @@ export interface BookWithAuthor extends Book {
   };
 }
 
+export interface BookWithAuthorAndItems extends BookWithAuthor {
+  bookItems: {
+    id: number;
+    code: string;
+    condition: string;
+    status: string;
+    acquisitionDate: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
+  }[];
+}
+
 export interface BooksListPayload {
   books: BookWithAuthor[];
   pagination: PaginationResponse;

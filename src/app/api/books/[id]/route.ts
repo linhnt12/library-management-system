@@ -1,7 +1,7 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
-import { Book, UpdateBookData } from '@/types/book';
+import { Book, BookWithAuthorAndItems, UpdateBookData } from '@/types/book';
 import { BookType, Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       throw new ValidationError('Invalid book ID');
     }
 
-    const book: Book | null = await prisma.book.findFirst({
+    const book = await prisma.book.findFirst({
       where: { id: bookId },
       select: {
         id: true,
@@ -33,6 +33,25 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         createdAt: true,
         updatedAt: true,
         isDeleted: true,
+        author: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+        bookItems: {
+          where: { isDeleted: false },
+          select: {
+            id: true,
+            code: true,
+            condition: true,
+            status: true,
+            acquisitionDate: true,
+            createdAt: true,
+            updatedAt: true,
+            isDeleted: true,
+          },
+        },
       },
     });
 
@@ -40,7 +59,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       throw new NotFoundError('Book not found');
     }
 
-    return successResponse(book);
+    return successResponse<BookWithAuthorAndItems>(book);
   } catch (error) {
     return handleRouteError(error, 'GET /api/books/[id]');
   }

@@ -49,8 +49,7 @@ function ActionsCell({ book }: { book: Book }) {
   };
 
   const handleView = () => {
-    // TODO: Implement view book functionality
-    console.log('View book:', book.id);
+    router.push(`${ROUTES.DASHBOARD.BOOKS}/${book.id}`);
   };
 
   return (

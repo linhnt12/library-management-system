@@ -20,12 +20,14 @@ interface BookItemFormProps {
   bookItemId?: number;
   submitLabel?: string;
   cancelLabel?: string;
+  preselectedBookId?: number;
 }
 
 export function BookItemForm({
   bookItemId,
   submitLabel = 'Save Book Copy',
   cancelLabel = 'Cancel',
+  preselectedBookId,
 }: BookItemFormProps) {
   const bookOptions = useBookOptions();
   const {
@@ -38,7 +40,7 @@ export function BookItemForm({
     dialog,
     handleConfirm,
     handleDialogCancel,
-  } = useBookItemForm(bookItemId);
+  } = useBookItemForm(bookItemId, preselectedBookId);
 
   return (
     <Box

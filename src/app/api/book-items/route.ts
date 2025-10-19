@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
     const acquisitionDateToParam = searchParams.get('acquisitionDateTo');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
+    const searchByCodeOnly = searchParams.get('searchByCodeOnly') === 'true';
 
     const authorIds =
       authorIdsParam.length > 0
@@ -59,12 +60,16 @@ export async function GET(request: NextRequest) {
     };
 
     if (search) {
-      where.OR = [
-        { code: { contains: search } },
-        { book: { title: { contains: search } } },
-        { book: { isbn: { contains: search } } },
-        { book: { author: { fullName: { contains: search } } } },
-      ];
+      if (searchByCodeOnly) {
+        where.code = { contains: search };
+      } else {
+        where.OR = [
+          { code: { contains: search } },
+          { book: { title: { contains: search } } },
+          { book: { isbn: { contains: search } } },
+          { book: { author: { fullName: { contains: search } } } },
+        ];
+      }
     }
 
     // Handle author filter
