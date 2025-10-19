@@ -16,3 +16,14 @@ export interface FileInfo {
   extension: string;
   path: string;
 }
+
+export interface FileServeOptions {
+  inline?: boolean; // true for inline display, false for download
+  filename?: string; // custom filename for download
+  cacheControl?: string; // cache control header
+  allowedPaths?: string[]; // allowed base paths for security
+}
+
+export interface MimeTypeMap {
+  [key: string]: string;
+}

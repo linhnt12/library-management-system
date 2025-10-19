@@ -1,4 +1,10 @@
-import { FileInfo, FileOperationResult, FileValidationOptions } from '@/types';
+import {
+  FileInfo,
+  FileOperationResult,
+  FileServeOptions,
+  FileValidationOptions,
+  MimeTypeMap,
+} from '@/types';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -19,6 +25,60 @@ export class FileUtils {
     '.docx',
     '.txt',
   ];
+
+  // MIME type mapping for common file extensions
+  private static readonly MIME_TYPES: MimeTypeMap = {
+    // Images
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.bmp': 'image/bmp',
+    '.ico': 'image/x-icon',
+
+    // Documents
+    '.pdf': 'application/pdf',
+    '.doc': 'application/msword',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.ppt': 'application/vnd.ms-powerpoint',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+
+    // Text files
+    '.txt': 'text/plain',
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'text/javascript',
+    '.json': 'application/json',
+    '.xml': 'application/xml',
+    '.csv': 'text/csv',
+
+    // Archives
+    '.zip': 'application/zip',
+    '.rar': 'application/vnd.rar',
+    '.7z': 'application/x-7z-compressed',
+    '.tar': 'application/x-tar',
+    '.gz': 'application/gzip',
+
+    // Audio
+    '.mp3': 'audio/mpeg',
+    '.wav': 'audio/wav',
+    '.ogg': 'audio/ogg',
+    '.m4a': 'audio/mp4',
+
+    // Video
+    '.mp4': 'video/mp4',
+    '.avi': 'video/x-msvideo',
+    '.mov': 'video/quicktime',
+    '.wmv': 'video/x-ms-wmv',
+    '.flv': 'video/x-flv',
+    '.webm': 'video/webm',
+  };
+
+  private static readonly DEFAULT_ALLOWED_SERVE_PATHS = ['uploads'];
 
   /**
    * Write a file to the file system
@@ -401,6 +461,127 @@ export class FileUtils {
       };
     }
   }
+
+  /**
+   * Get MIME type for a file based on its extension
+   * @param fileName - The file name or path
+   * @returns string - MIME type
+   */
+  static getMimeType(fileName: string): string {
+    const extension = path.extname(fileName).toLowerCase();
+    return this.MIME_TYPES[extension] || 'application/octet-stream';
+  }
+
+  /**
+   * Check if a file path is allowed to be served (security check)
+   * @param filePath - The file path to check
+   * @param allowedPaths - Array of allowed base paths
+   * @returns boolean
+   */
+  static isPathAllowed(
+    filePath: string,
+    allowedPaths: string[] = this.DEFAULT_ALLOWED_SERVE_PATHS
+  ): boolean {
+    try {
+      // Resolve the full path to prevent directory traversal
+      const fullPath = path.resolve(filePath);
+      const projectRoot = process.cwd();
+
+      // Check if the file is within the project directory
+      if (!fullPath.startsWith(projectRoot)) {
+        return false;
+      }
+
+      // Get relative path from project root
+      const relativePath = path.relative(projectRoot, fullPath);
+
+      // Check if the file is in an allowed directory
+      return allowedPaths.some(allowedPath => {
+        const normalizedAllowedPath = path.normalize(allowedPath);
+        return (
+          relativePath.startsWith(normalizedAllowedPath) ||
+          relativePath.startsWith(normalizedAllowedPath + path.sep)
+        );
+      });
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Prepare file for serving (read file and get metadata)
+   * @param filePath - Path to the file
+   * @param options - Serving options
+   * @returns Promise<FileOperationResult>
+   */
+  static async prepareFileForServing(
+    filePath: string,
+    options?: FileServeOptions
+  ): Promise<FileOperationResult> {
+    try {
+      const {
+        allowedPaths = this.DEFAULT_ALLOWED_SERVE_PATHS,
+        filename,
+        inline = false,
+        cacheControl = 'public, max-age=3600',
+      } = options || {};
+
+      // Security check: ensure file path is allowed
+      if (!this.isPathAllowed(filePath, allowedPaths)) {
+        return {
+          success: false,
+          message: 'Access denied: File path not allowed',
+        };
+      }
+
+      // Resolve full path
+      const fullPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+
+      // Check if file exists
+      try {
+        await fs.access(fullPath);
+      } catch {
+        return {
+          success: false,
+          message: 'File not found',
+        };
+      }
+
+      // Get file stats
+      const stats = await fs.stat(fullPath);
+      if (!stats.isFile()) {
+        return {
+          success: false,
+          message: 'Path is not a file',
+        };
+      }
+
+      // Read file content
+      const fileBuffer = await fs.readFile(fullPath);
+      const fileName = filename || path.basename(fullPath);
+      const mimeType = this.getMimeType(fileName);
+
+      return {
+        success: true,
+        message: 'File prepared for serving',
+        data: {
+          buffer: fileBuffer,
+          fileName,
+          mimeType,
+          size: stats.size,
+          inline,
+          cacheControl,
+          lastModified: stats.mtime,
+          extension: path.extname(fileName),
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to prepare file for serving: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      };
+    }
+  }
 }
 
 // Export utility functions for direct use
@@ -411,4 +592,7 @@ export const {
   validateFileExt,
   validateFile,
   getFileInfo,
+  getMimeType,
+  isPathAllowed,
+  prepareFileForServing,
 } = FileUtils;
