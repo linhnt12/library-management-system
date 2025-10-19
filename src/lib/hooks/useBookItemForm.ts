@@ -19,7 +19,7 @@ const initialState: CreateBookItemFormState = {
   isDeleted: false,
 };
 
-export function useBookItemForm(bookItemId?: number, preselectedBookId?: number) {
+export function useBookItemForm(bookItemId?: number, bookId?: number) {
   const router = useRouter();
   const [form, setForm] = useState<CreateBookItemFormState>(initialState);
   const [errors, setErrors] = useState<BookItemFormErrors>({});
@@ -40,10 +40,10 @@ export function useBookItemForm(bookItemId?: number, preselectedBookId?: number)
 
   // Set preselected book ID when provided
   useEffect(() => {
-    if (preselectedBookId && !bookItemId) {
-      setForm(prev => ({ ...prev, bookId: String(preselectedBookId) }));
+    if (bookId && !bookItemId) {
+      setForm(prev => ({ ...prev, bookId: String(bookId) }));
     }
-  }, [preselectedBookId, bookItemId]);
+  }, [bookId, bookItemId]);
 
   // Load book item data when editing
   useEffect(() => {
@@ -132,14 +132,14 @@ export function useBookItemForm(bookItemId?: number, preselectedBookId?: number)
       confirmText: 'Yes, Cancel',
       cancelText: 'No, Continue',
       onConfirm: () => {
-        if (preselectedBookId) {
-          router.back();
+        if (bookId) {
+          router.push(`${ROUTES.DASHBOARD.BOOKS}/${bookId}`);
         } else {
           router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
         }
       },
     });
-  }, [isEditMode, openDialog, router, preselectedBookId]);
+  }, [isEditMode, openDialog, router, bookId]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -166,8 +166,8 @@ export function useBookItemForm(bookItemId?: number, preselectedBookId?: number)
               transformData: transformDataForUpdate,
               apiCall: (data: UpdateBookItemData) => BookItemApi.updateBookItem(bookItemId!, data),
               onSuccess: () => {
-                if (preselectedBookId) {
-                  router.back();
+                if (bookId) {
+                  router.push(`${ROUTES.DASHBOARD.BOOKS}/${bookId}`);
                 } else {
                   router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
                 }
@@ -181,8 +181,8 @@ export function useBookItemForm(bookItemId?: number, preselectedBookId?: number)
                 BookItemApi.createBookItem(data as CreateBookItemData),
               onSuccess: () => {
                 resetForm();
-                if (preselectedBookId) {
-                  router.back();
+                if (bookId) {
+                  router.push(`${ROUTES.DASHBOARD.BOOKS}/${bookId}`);
                 } else {
                   router.push(ROUTES.DASHBOARD.BOOKS_COPIES);
                 }
@@ -203,7 +203,7 @@ export function useBookItemForm(bookItemId?: number, preselectedBookId?: number)
       bookItemId,
       resetForm,
       router,
-      preselectedBookId,
+      bookId,
     ]
   );
 

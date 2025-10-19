@@ -49,6 +49,8 @@ interface BookItemsTableProps {
   showHeader?: boolean;
   // Custom header title
   headerTitle?: string;
+  // Maximum height for the table
+  maxHeight?: string | number;
   // Callback when data changes
   onDataChange?: (data: BookItemWithBook[], total: number) => void;
 }
@@ -65,6 +67,7 @@ export function BookItemsTable({
   searchByCodeOnly = false,
   showHeader = false,
   headerTitle = 'Book Copies',
+  maxHeight,
   onDataChange,
 }: BookItemsTableProps) {
   const authorOptions = useAuthorOptions();
@@ -363,6 +366,7 @@ export function BookItemsTable({
         pageSize={pageSize}
         total={total}
         loading={loading}
+        maxHeight={maxHeight}
         onPageChange={setPage}
         onPageSizeChange={(size: number) => {
           setPageSize(size);

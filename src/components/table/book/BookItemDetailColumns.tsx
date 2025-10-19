@@ -1,8 +1,9 @@
 'use client';
 
 import { IconButton, Tag } from '@/components';
-import { ROUTES } from '@/constants';
+import { CONDITION_LABELS, ROUTES, STATUS_LABELS } from '@/constants';
 import { HStack, Text } from '@chakra-ui/react';
+import { Condition, ItemStatus } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { LuPencil } from 'react-icons/lu';
 
@@ -27,7 +28,11 @@ function ConditionCell({ condition }: { condition: string }) {
     }
   };
 
-  return <Tag variantType={getConditionColor(condition)}>{condition}</Tag>;
+  return (
+    <Tag variantType={getConditionColor(condition)}>
+      {CONDITION_LABELS[condition as Condition] || condition}
+    </Tag>
+  );
 }
 
 // Component to render status
@@ -53,7 +58,9 @@ function StatusCell({ status }: { status: string }) {
     }
   };
 
-  return <Tag variantType={getStatusColor(status)}>{status}</Tag>;
+  return (
+    <Tag variantType={getStatusColor(status)}>{STATUS_LABELS[status as ItemStatus] || status}</Tag>
+  );
 }
 
 // Component to render acquisition date
@@ -65,11 +72,11 @@ function AcquisitionDateCell({ date }: { date: Date | null }) {
 }
 
 // Component to render action buttons
-function ActionsCell({ bookItem }: { bookItem: { id: number } }) {
+function ActionsCell({ bookItem }: { bookItem: { id: number; bookId: number } }) {
   const router = useRouter();
 
   const handleEdit = () => {
-    router.push(`${ROUTES.DASHBOARD.BOOKS_COPIES}/edit/${bookItem.id}`);
+    router.push(`${ROUTES.DASHBOARD.BOOKS_COPIES}/edit/${bookItem.id}?bookId=${bookItem.bookId}`);
   };
 
   return (
@@ -121,6 +128,6 @@ export const BookItemDetailColumns = () => [
     sortable: false,
     width: '120px',
     textAlign: 'center' as const,
-    render: (item: { id: number }) => <ActionsCell bookItem={item} />,
+    render: (item: { id: number; bookId: number }) => <ActionsCell bookItem={item} />,
   },
 ];

@@ -359,6 +359,7 @@ export default function BookPage() {
                 searchByCodeOnly={true}
                 showHeader={true}
                 headerTitle="Book Copies"
+                maxHeight="400px"
               />
             </Box>
 

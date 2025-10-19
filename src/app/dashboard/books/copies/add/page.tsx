@@ -12,7 +12,7 @@ function AddBookCopyContent() {
     <BookItemForm
       submitLabel="Add Book Copy"
       cancelLabel="Cancel"
-      preselectedBookId={bookId ? Number(bookId) : undefined}
+      bookId={bookId ? Number(bookId) : undefined}
     />
   );
 }
