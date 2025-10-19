@@ -16,7 +16,11 @@ export function useMe() {
           await AuthApi.refresh();
           return await AuthApi.me();
         } catch {
-          await AuthApi.logout();
+          try {
+            await AuthApi.logout();
+          } catch {
+            // ignore logout error
+          }
           return undefined;
         }
       }
