@@ -8,6 +8,7 @@ export type SearchInputProps = {
   value?: string;
   width?: HTMLChakraProps<'div'>['w'];
   onChange?: (value: string) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   flex?: HTMLChakraProps<'div'>['flex'];
   bg?: HTMLChakraProps<'div'>['bg'];
   border?: HTMLChakraProps<'div'>['border'];
@@ -18,6 +19,7 @@ export function SearchInput({
   placeholder = 'Search',
   value,
   onChange,
+  onKeyDown,
   flex,
   width,
   bg = 'layoutBg.500',
@@ -36,7 +38,12 @@ export function SearchInput({
       border={border}
       borderColor={borderColor}
     >
-      <Input placeholder={placeholder} value={value} onChange={e => onChange?.(e.target.value)} />
+      <Input
+        placeholder={placeholder}
+        value={value}
+        onChange={e => onChange?.(e.target.value)}
+        onKeyDown={onKeyDown}
+      />
     </InputGroup>
   );
 }
