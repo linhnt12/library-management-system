@@ -19,7 +19,6 @@ export async function GET() {
         pageCount: true,
         price: true,
         edition: true,
-        type: true,
         description: true,
         coverImageUrl: true,
         isDeleted: true,

@@ -2,7 +2,7 @@ import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
 import { Book, BookWithAuthorAndItems, UpdateBookData } from '@/types/book';
-import { BookType, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // GET /api/books/[id] - Get book by id
@@ -27,7 +27,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         pageCount: true,
         price: true,
         edition: true,
-        type: true,
         description: true,
         coverImageUrl: true,
         createdAt: true,
@@ -85,7 +84,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       pageCount,
       price,
       edition,
-      type,
       description,
       coverImageUrl,
       isDeleted,
@@ -109,7 +107,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (pageCount !== undefined) updateData.pageCount = pageCount ? Number(pageCount) : null;
     if (price !== undefined) updateData.price = price ? Number(price) : null;
     if (edition !== undefined) updateData.edition = edition ? sanitizeString(edition) : null;
-    if (type !== undefined) updateData.type = type as BookType;
     if (description !== undefined)
       updateData.description = description ? sanitizeString(description) : null;
     if (coverImageUrl !== undefined)
@@ -138,7 +135,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         pageCount: true,
         price: true,
         edition: true,
-        type: true,
         description: true,
         coverImageUrl: true,
         createdAt: true,

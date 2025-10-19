@@ -9,7 +9,7 @@ import {
   validateRequiredFields,
 } from '@/lib/utils';
 import { Book, BookWithAuthor, BooksListPayload, CreateBookData } from '@/types/book';
-import { BookType, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
 // GET /api/books - Get books
@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
 
     // Optional filters
     const authorIdsParam = searchParams.getAll('authorIds');
-    const typeParam = searchParams.get('type') as BookType | null;
     const publishYearFromParam = searchParams.get('publishYearFrom');
     const publishYearToParam = searchParams.get('publishYearTo');
     const publishersParam = searchParams.getAll('publishers');
@@ -55,10 +54,6 @@ export async function GET(request: NextRequest) {
     // Handle author filter
     if (authorIds.length > 0) {
       where.authorId = { in: authorIds };
-    }
-
-    if (typeParam) {
-      where.type = typeParam;
     }
 
     // Handle publish year range filter
@@ -96,7 +91,6 @@ export async function GET(request: NextRequest) {
         id: 'id',
         title: 'title',
         publishYear: 'publishYear',
-        type: 'type',
         pageCount: 'pageCount',
         price: 'price',
       };
@@ -123,7 +117,6 @@ export async function GET(request: NextRequest) {
           pageCount: true,
           price: true,
           edition: true,
-          type: true,
           description: true,
           coverImageUrl: true,
           isDeleted: true,
@@ -169,7 +162,6 @@ export async function POST(request: NextRequest) {
       pageCount,
       price,
       edition,
-      type,
       description,
       coverImageUrl,
       isDeleted,
@@ -200,7 +192,6 @@ export async function POST(request: NextRequest) {
       pageCount: pageCount ? Number(pageCount) : null,
       price: price ? Number(price) : null,
       edition: edition ? sanitizeString(edition) : null,
-      type: type || BookType.PRINT,
       description: description ? sanitizeString(description) : null,
       coverImageUrl: coverImageUrl ? sanitizeString(coverImageUrl) : null,
       isDeleted: Boolean(isDeleted),
@@ -218,7 +209,6 @@ export async function POST(request: NextRequest) {
         pageCount: true,
         price: true,
         edition: true,
-        type: true,
         description: true,
         coverImageUrl: true,
         isDeleted: true,

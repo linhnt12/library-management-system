@@ -77,7 +77,7 @@ export const validators = {
   },
 
   positiveInteger: (value: string, fieldName: string) => {
-    if (!value || value.trim() === '') return null; // Optional field
+    if (!value || value.trim() === '') return null;
     if (!/^[0-9]+$/.test(value)) {
       return `${fieldName} must be a positive integer`;
     }
@@ -85,7 +85,7 @@ export const validators = {
   },
 
   numeric: (value: string, fieldName: string) => {
-    if (!value || value.trim() === '') return null; // Optional field
+    if (!value || value.trim() === '') return null;
     if (!/^[-+]?[0-9]+$/.test(value)) {
       return `${fieldName} must be a number`;
     }
@@ -93,7 +93,7 @@ export const validators = {
   },
 
   email: (value: string) => {
-    if (!value || value.trim() === '') return null; // Optional field
+    if (!value || value.trim() === '') return null;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
       return 'Invalid email format';
