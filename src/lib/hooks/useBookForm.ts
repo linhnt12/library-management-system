@@ -1,7 +1,7 @@
 import { BookApi } from '@/api';
 import { SelectOption } from '@/components/forms/FormSelectSearch';
 import { ROUTES } from '@/constants';
-import { useDialog, useFormSubmission } from '@/lib/hooks';
+import { useCategoryOptions, useDialog, useFormSubmission } from '@/lib/hooks';
 import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
 import { Book, CreateBookData, UpdateBookData } from '@/types/book';
 import { useRouter } from 'next/navigation';
@@ -24,6 +24,7 @@ const initialState: CreateBookFormState = {
 
 export function useBookForm(bookId?: number) {
   const router = useRouter();
+  const categoryOptions = useCategoryOptions();
   const [form, setForm] = useState<CreateBookFormState>(initialState);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(!!bookId);
@@ -62,7 +63,11 @@ export function useBookForm(bookId?: number) {
           edition: book.edition || '',
           description: book.description || '',
           coverImageUrl: book.coverImageUrl || '',
-          categories: [], // TODO: This will be update later
+          categories:
+            book.bookCategories?.map(bc => {
+              const category = categoryOptions.find(opt => Number(opt.value) === bc.categoryId);
+              return category || { value: bc.categoryId.toString(), label: `` };
+            }) || [],
           isDeleted: book.isDeleted,
         });
       } catch (error) {
@@ -75,11 +80,12 @@ export function useBookForm(bookId?: number) {
     };
 
     loadBook();
-  }, [bookId, router]);
+  }, [bookId, router, categoryOptions]);
 
   const setField = useCallback(
     (key: keyof CreateBookFormState, value: string | SelectOption[] | boolean) => {
       setForm(prev => ({ ...prev, [key]: value }));
+
       // Clear error when user starts typing
       if (errors[key]) {
         setErrors(prev => ({ ...prev, [key]: undefined }));
@@ -108,6 +114,7 @@ export function useBookForm(bookId?: number) {
       description: formData.description.trim() || null,
       coverImageUrl: formData.coverImageUrl.trim() || null,
       isDeleted: formData.isDeleted,
+      categories: formData.categories?.map(opt => Number(opt.value)) || [],
     }),
     []
   );

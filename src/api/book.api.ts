@@ -1,5 +1,5 @@
 import { fetchWithAuth, getAccessToken, handleJson } from '@/lib/utils';
-import { Book, BookWithAuthorAndItems, CreateBookData, UpdateBookData } from '@/types/book';
+import { Book, BookDetail, BookWithAuthor, CreateBookData, UpdateBookData } from '@/types/book';
 
 export class BookApi {
   // Create book
@@ -23,14 +23,14 @@ export class BookApi {
     limit?: number;
     search?: string;
     authorIds?: number[];
+    categoryIds?: number[];
     publishYearFrom?: number;
     publishYearTo?: number;
-    publishers?: string[];
     status?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     isDeleted?: boolean;
-  }): Promise<{ books: Book[]; pagination: { total: number } }> {
+  }): Promise<{ books: BookWithAuthor[]; pagination: { total: number } }> {
     const searchParams = new URLSearchParams();
 
     if (params?.page) searchParams.set('page', params.page.toString());
@@ -39,12 +39,12 @@ export class BookApi {
     if (params?.authorIds && params.authorIds.length > 0) {
       params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
     }
+    if (params?.categoryIds && params.categoryIds.length > 0) {
+      params.categoryIds.forEach(id => searchParams.append('categoryIds', id.toString()));
+    }
     if (params?.publishYearFrom)
       searchParams.set('publishYearFrom', params.publishYearFrom.toString());
     if (params?.publishYearTo) searchParams.set('publishYearTo', params.publishYearTo.toString());
-    if (params?.publishers && params.publishers.length > 0) {
-      params.publishers.forEach(publisher => searchParams.append('publishers', publisher));
-    }
     if (params?.status) searchParams.set('status', params.status);
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);
@@ -59,11 +59,11 @@ export class BookApi {
       headers,
     });
 
-    return await handleJson<{ books: Book[]; pagination: { total: number } }>(response);
+    return await handleJson<{ books: BookWithAuthor[]; pagination: { total: number } }>(response);
   }
 
   // Get book by id
-  static async getBookById(id: number): Promise<BookWithAuthorAndItems> {
+  static async getBookById(id: number): Promise<BookDetail> {
     const token = getAccessToken();
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -73,7 +73,7 @@ export class BookApi {
       headers,
     });
 
-    return await handleJson<BookWithAuthorAndItems>(response);
+    return await handleJson<BookDetail>(response);
   }
 
   // Update book

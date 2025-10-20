@@ -1,7 +1,7 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
-import { Book, BookWithAuthorAndItems, UpdateBookData } from '@/types/book';
+import { Book, BookDetail, UpdateBookData } from '@/types/book';
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
 
@@ -51,6 +51,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             isDeleted: true,
           },
         },
+        bookCategories: {
+          where: { isDeleted: false },
+          select: {
+            categoryId: true,
+          },
+        },
       },
     });
 
@@ -58,7 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       throw new NotFoundError('Book not found');
     }
 
-    return successResponse<BookWithAuthorAndItems>(book);
+    return successResponse<BookDetail>(book);
   } catch (error) {
     return handleRouteError(error, 'GET /api/books/[id]');
   }
@@ -87,6 +93,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       description,
       coverImageUrl,
       isDeleted,
+      categories,
     } = body;
 
     const updateData: Prisma.BookUncheckedUpdateInput = {};
@@ -112,6 +119,23 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     if (coverImageUrl !== undefined)
       updateData.coverImageUrl = coverImageUrl ? sanitizeString(coverImageUrl) : null;
     if (isDeleted !== undefined) updateData.isDeleted = Boolean(isDeleted);
+
+    // Handle categories update
+    if (categories !== undefined) {
+      // Delete existing book categories
+      await prisma.bookCategory.deleteMany({
+        where: { bookId: bookId },
+      });
+
+      // Create new book categories if categories are provided
+      if (categories && categories.length > 0) {
+        updateData.bookCategories = {
+          create: categories.map(categoryId => ({
+            categoryId: Number(categoryId),
+          })),
+        };
+      }
+    }
 
     // Ensure book exists
     const existing = await prisma.book.findFirst({

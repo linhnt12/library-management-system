@@ -17,7 +17,8 @@ import { useAuthorOptions, useBookOptions } from '@/lib/hooks';
 import { BookItemWithBook, Column } from '@/types';
 import { Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
-import { IoAddSharp, IoFilter } from 'react-icons/io5';
+import { FiFilter } from 'react-icons/fi';
+import { IoAddSharp } from 'react-icons/io5';
 
 interface BookItemsTableProps {
   // Table columns configuration
@@ -332,7 +333,7 @@ export function BookItemsTable({
                 h="40px"
                 px={2}
                 fontSize="sm"
-                icon={IoFilter}
+                icon={FiFilter}
                 onClick={handleOpenFilterDialog}
               />
             )}

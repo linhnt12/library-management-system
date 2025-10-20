@@ -1,14 +1,15 @@
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, successResponse } from '@/lib/utils';
-import { Author } from '@/types';
+import { Category } from '@/types';
 
-// GET /api/authors - Get authors
+// GET /api/categories - Get categories
 export async function GET() {
   try {
-    const authors = await prisma.author.findMany({
+    const categories = await prisma.category.findMany({
       select: {
         id: true,
-        fullName: true,
+        name: true,
+        description: true,
         createdAt: true,
         updatedAt: true,
         isDeleted: true,
@@ -17,12 +18,12 @@ export async function GET() {
         isDeleted: false,
       },
       orderBy: {
-        fullName: 'asc',
+        name: 'asc',
       },
     });
 
-    return successResponse<Author[]>(authors);
+    return successResponse<Category[]>(categories);
   } catch (error) {
-    return handleRouteError(error, 'GET /api/authors');
+    return handleRouteError(error, 'GET /api/categories');
   }
 }
