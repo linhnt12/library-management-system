@@ -10,7 +10,7 @@ import {
   toaster,
 } from '@/components';
 import { ROUTES } from '@/constants';
-import { BookWithAuthorAndItems } from '@/types';
+import { BookDetail } from '@/types';
 import { Badge, Box, Flex, Grid, Heading, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -204,7 +204,7 @@ export default function BookPage() {
   const params = useParams();
   const router = useRouter();
   const bookId = Number(params.id);
-  const [book, setBook] = useState<BookWithAuthorAndItems | null>(null);
+  const [book, setBook] = useState<BookDetail | null>(null);
 
   // Get book item columns for detail view
   const bookItemColumns = BookItemDetailColumns();

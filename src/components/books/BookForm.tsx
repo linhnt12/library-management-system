@@ -12,9 +12,7 @@ import {
   FormTextarea,
   SelectOption,
 } from '@/components';
-import { CATEGORY_OPTIONS } from '@/constants';
-import { useBookForm } from '@/lib/hooks';
-import { useAuthorOptions } from '@/lib/hooks/useAuthors';
+import { useAuthorOptions, useBookForm, useCategoryOptions } from '@/lib/hooks';
 import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
 
 interface BookFormProps {
@@ -29,6 +27,7 @@ export function BookForm({
   cancelLabel = 'Cancel',
 }: BookFormProps) {
   const authorOptions = useAuthorOptions();
+  const categoryOptions = useCategoryOptions();
   const {
     form,
     errors,
@@ -102,7 +101,7 @@ export function BookForm({
             <FormSelectSearch
               value={form.categories || []}
               onChange={val => setField('categories', val as SelectOption[])}
-              options={CATEGORY_OPTIONS}
+              options={categoryOptions}
               placeholder="Select categories"
               multi
             />

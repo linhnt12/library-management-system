@@ -24,7 +24,7 @@ export interface BookWithAuthor extends Book {
   };
 }
 
-export interface BookWithAuthorAndItems extends BookWithAuthor {
+export interface BookDetail extends BookWithAuthor {
   bookItems: {
     id: number;
     code: string;
@@ -34,6 +34,9 @@ export interface BookWithAuthorAndItems extends BookWithAuthor {
     createdAt: Date;
     updatedAt: Date;
     isDeleted: boolean;
+  }[];
+  bookCategories: {
+    categoryId: number;
   }[];
 }
 
@@ -54,6 +57,7 @@ export interface CreateBookData {
   description?: string | null;
   coverImageUrl?: string | null;
   isDeleted?: boolean;
+  categories?: number[];
 }
 
 export interface UpdateBookData {
@@ -68,4 +72,5 @@ export interface UpdateBookData {
   description?: string | null;
   coverImageUrl?: string | null;
   isDeleted?: boolean;
+  categories?: number[];
 }

@@ -165,6 +165,7 @@ export async function POST(request: NextRequest) {
       description,
       coverImageUrl,
       isDeleted,
+      categories,
     } = body;
 
     // Validate required fields
@@ -195,6 +196,14 @@ export async function POST(request: NextRequest) {
       description: description ? sanitizeString(description) : null,
       coverImageUrl: coverImageUrl ? sanitizeString(coverImageUrl) : null,
       isDeleted: Boolean(isDeleted),
+      bookCategories:
+        categories && categories.length > 0
+          ? {
+              create: categories.map(categoryId => ({
+                categoryId: Number(categoryId),
+              })),
+            }
+          : undefined,
     };
 
     const created: Book = await prisma.book.create({

@@ -1,11 +1,5 @@
 import { getAccessToken, handleJson } from '@/lib/utils';
-import {
-  Book,
-  BookWithAuthor,
-  BookWithAuthorAndItems,
-  CreateBookData,
-  UpdateBookData,
-} from '@/types/book';
+import { Book, BookDetail, BookWithAuthor, CreateBookData, UpdateBookData } from '@/types/book';
 
 export class BookApi {
   // Create book
@@ -69,7 +63,7 @@ export class BookApi {
   }
 
   // Get book by id
-  static async getBookById(id: number): Promise<BookWithAuthorAndItems> {
+  static async getBookById(id: number): Promise<BookDetail> {
     const token = getAccessToken();
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
@@ -79,7 +73,7 @@ export class BookApi {
       headers,
     });
 
-    return await handleJson<BookWithAuthorAndItems>(response);
+    return await handleJson<BookDetail>(response);
   }
 
   // Update book
