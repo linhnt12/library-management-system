@@ -1,4 +1,4 @@
-import { getAccessToken, handleJson } from '@/lib/utils';
+import { fetchWithAuth, getAccessToken, handleJson } from '@/lib/utils';
 import { Book, BookDetail, BookWithAuthor, CreateBookData, UpdateBookData } from '@/types/book';
 
 export class BookApi {
@@ -8,7 +8,7 @@ export class BookApi {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch('/api/books', {
+    const response = await fetchWithAuth('/api/books', {
       method: 'POST',
       headers,
       body: JSON.stringify(data),
@@ -54,7 +54,7 @@ export class BookApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/books?${searchParams.toString()}`, {
+    const response = await fetchWithAuth(`/api/books?${searchParams.toString()}`, {
       method: 'GET',
       headers,
     });
@@ -68,7 +68,7 @@ export class BookApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/books/${id}`, {
+    const response = await fetchWithAuth(`/api/books/${id}`, {
       method: 'GET',
       headers,
     });
@@ -82,7 +82,7 @@ export class BookApi {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/books/${id}`, {
+    const response = await fetchWithAuth(`/api/books/${id}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(data),
@@ -97,7 +97,7 @@ export class BookApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch('/api/books/all', {
+    const response = await fetchWithAuth('/api/books/all', {
       method: 'GET',
       headers,
     });
@@ -111,7 +111,7 @@ export class BookApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/books/${id}`, {
+    const response = await fetchWithAuth(`/api/books/${id}`, {
       method: 'DELETE',
       headers,
     });

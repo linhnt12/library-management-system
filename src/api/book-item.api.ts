@@ -1,4 +1,4 @@
-import { getAccessToken, handleJson } from '@/lib/utils';
+import { fetchWithAuth, getAccessToken, handleJson } from '@/lib/utils';
 import { BookItem, CreateBookItemData, UpdateBookItemData } from '@/types/book-item';
 
 export class BookItemApi {
@@ -48,7 +48,7 @@ export class BookItemApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/book-items?${searchParams.toString()}`, {
+    const response = await fetchWithAuth(`/api/book-items?${searchParams.toString()}`, {
       method: 'GET',
       headers,
     });
@@ -64,7 +64,7 @@ export class BookItemApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/book-items/${id}`, {
+    const response = await fetchWithAuth(`/api/book-items/${id}`, {
       method: 'GET',
       headers,
     });
@@ -77,7 +77,7 @@ export class BookItemApi {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch('/api/book-items', {
+    const response = await fetchWithAuth('/api/book-items', {
       method: 'POST',
       headers,
       body: JSON.stringify(data),
@@ -91,7 +91,7 @@ export class BookItemApi {
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/book-items/${id}`, {
+    const response = await fetchWithAuth(`/api/book-items/${id}`, {
       method: 'PUT',
       headers,
       body: JSON.stringify(data),
@@ -105,7 +105,7 @@ export class BookItemApi {
     const headers: Record<string, string> = {};
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`/api/book-items/${id}`, {
+    const response = await fetchWithAuth(`/api/book-items/${id}`, {
       method: 'DELETE',
       headers,
     });
