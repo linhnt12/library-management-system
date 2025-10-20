@@ -63,7 +63,8 @@ export function useLoginForm() {
       onSuccess: async () => {
         resetForm();
         // Fetch current user after login (ensures data and returns it)
-        const user = await queryClient.fetchQuery({ queryKey: meQueryKey, queryFn: AuthApi.me });
+        const user = await AuthApi.me();
+        queryClient.setQueryData(meQueryKey, user);
         const destination = ROUTES.DASHBOARD.HOME;
         router.push(destination);
       },
