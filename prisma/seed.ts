@@ -1,4 +1,4 @@
-import { PrismaClient, Role, UserStatus } from '@prisma/client';
+import { Condition, ItemStatus, PrismaClient, Role, UserStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -120,6 +120,103 @@ async function seedAuthors() {
   });
 
   console.log('✅ Authors seeded successfully!');
+}
+
+async function seedCategories() {
+  console.log('Seeding categories...');
+
+  const count = await prisma.category.count();
+  if (count > 0) {
+    console.log(`Categories already seeded (${count} records). Skipping category seed.`);
+    return;
+  }
+
+  await prisma.category.createMany({
+    data: [
+      {
+        name: 'Fiction',
+        description: 'Fictional works including romance, mystery, science fiction novels.',
+      },
+      {
+        name: 'Science Fiction',
+        description: 'Works about the future, advanced technology, space, and scientific concepts.',
+      },
+      {
+        name: 'Mystery',
+        description: 'Stories about investigation, solving mysteries and crimes.',
+      },
+      {
+        name: 'Romance',
+        description: 'Works focused on love, relationships and emotions.',
+      },
+      {
+        name: 'Classics',
+        description: 'Classic literary works recognized through time.',
+      },
+      {
+        name: 'History',
+        description: 'Books about historical events, figures and periods.',
+      },
+      {
+        name: 'Philosophy',
+        description: 'Works about thought, ethics, logic and fundamental life issues.',
+      },
+      {
+        name: 'Psychology',
+        description: 'Books about human behavior, emotions and mind.',
+      },
+      {
+        name: 'Economics',
+        description: 'Works about economic systems, finance and commerce.',
+      },
+      {
+        name: 'Technology',
+        description: 'Books about computers, programming, information technology.',
+      },
+      {
+        name: 'Medicine',
+        description: 'Materials about health, diseases and treatment.',
+      },
+      {
+        name: 'Education',
+        description: 'Books about teaching methods, learning and development.',
+      },
+      {
+        name: 'Arts',
+        description: 'Works about painting, music, sculpture and other art forms.',
+      },
+      {
+        name: 'Travel',
+        description: 'Travel guide books, exploring destinations around the world.',
+      },
+      {
+        name: 'Cooking',
+        description: 'Cookbooks, cooking techniques and culinary arts.',
+      },
+      {
+        name: 'Sports',
+        description: 'Materials about sports, training and fitness.',
+      },
+      {
+        name: 'Nature',
+        description: 'Books about animals, plants, environment and nature.',
+      },
+      {
+        name: 'Religion',
+        description: 'Works about religions, beliefs and spirituality.',
+      },
+      {
+        name: 'Children',
+        description: 'Books for children, including comics and educational books.',
+      },
+      {
+        name: 'Young Adult',
+        description: 'Works for teenagers and young adults, about youth and development.',
+      },
+    ],
+  });
+
+  console.log('✅ Categories seeded successfully!');
 }
 
 async function seedBooks() {
@@ -362,6 +459,59 @@ async function seedBooks() {
   console.log('✅ Books seeded successfully!');
 }
 
+async function seedBookItems() {
+  console.log('Seeding book items...');
+
+  const count = await prisma.bookItem.count();
+  if (count > 0) {
+    console.log(`Book items already seeded (${count} records). Skipping book item seed.`);
+    return;
+  }
+
+  // Check how many books exist
+  const bookCount = await prisma.book.count();
+  console.log(`Found ${bookCount} books in database`);
+
+  const bookItems = [];
+
+  // Generate 5 book items for each book (bookId 1 to actual book count)
+  for (let bookId = 1; bookId <= bookCount; bookId++) {
+    for (let itemNumber = 1; itemNumber <= 5; itemNumber++) {
+      const code = `BK${bookId.toString().padStart(3, '0')}-${itemNumber.toString().padStart(2, '0')}`;
+
+      // Random condition and status
+      const conditions = [Condition.NEW, Condition.GOOD, Condition.WORN, Condition.DAMAGED];
+      const statuses = [
+        ItemStatus.AVAILABLE,
+        ItemStatus.ON_BORROW,
+        ItemStatus.RESERVED,
+        ItemStatus.MAINTENANCE,
+      ];
+
+      const condition = conditions[Math.floor(Math.random() * conditions.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+      // Random acquisition date within the last 2 years
+      const acquisitionDate = new Date();
+      acquisitionDate.setDate(acquisitionDate.getDate() - Math.floor(Math.random() * 730));
+
+      bookItems.push({
+        bookId,
+        code,
+        condition,
+        status,
+        acquisitionDate,
+      });
+    }
+  }
+
+  await prisma.bookItem.createMany({
+    data: bookItems,
+  });
+
+  console.log('✅ Book items seeded successfully!');
+}
+
 async function main() {
   console.log('Starting seed...');
   if (!DEFAULT_ADMIN_EMAIL || !DEFAULT_ADMIN_PASSWORD || !DEFAULT_ADMIN_FULLNAME) {
@@ -370,7 +520,9 @@ async function main() {
 
   await seedAdmin();
   await seedAuthors();
+  await seedCategories();
   await seedBooks();
+  await seedBookItems();
 }
 
 main()

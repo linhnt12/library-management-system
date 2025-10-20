@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { handleRouteError, successResponse } from '@/lib/utils';
+import { Author } from '@/types';
 
 // GET /api/authors - Get authors
 export async function GET() {
@@ -8,15 +9,20 @@ export async function GET() {
       select: {
         id: true,
         fullName: true,
+        createdAt: true,
+        updatedAt: true,
+        isDeleted: true,
+      },
+      where: {
+        isDeleted: false,
       },
       orderBy: {
         fullName: 'asc',
       },
     });
 
-    return NextResponse.json(authors);
+    return successResponse<Author[]>(authors);
   } catch (error) {
-    console.error('Error fetching authors:', error);
-    return NextResponse.json({ error: 'Failed to fetch authors' }, { status: 500 });
+    return handleRouteError(error, 'GET /api/authors');
   }
 }
