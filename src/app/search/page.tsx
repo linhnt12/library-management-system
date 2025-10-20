@@ -1,10 +1,11 @@
 'use client';
 
-import { BookCard, Button, FormSelect } from '@/components';
-import { useBooks } from '@/lib/hooks';
+import { BookCard, BookFilterDialog, Button, FormSelect, PaginationControls } from '@/components';
+import { BOOK_SORT_OPTIONS } from '@/constants';
+import { useBookFilters, useBooks } from '@/lib/hooks';
 import { Box, Stack, Text } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
 
 function SearchContent() {
@@ -12,12 +13,47 @@ function SearchContent() {
   const router = useRouter();
   const searchQuery = searchParams.get('q') || '';
   const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || 'newest');
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+
+  const {
+    isFilterDialogOpen,
+    openFilterDialog,
+    closeFilterDialog,
+    filterState,
+    updateFilterState,
+    appliedFilters,
+    applyFilters,
+    clearFilters,
+  } = useBookFilters();
+
+  const getSortParams = (sortValue: string) => {
+    const sortMapping: Record<string, { sortBy: string; sortOrder: 'asc' | 'desc' }> = {
+      newest: { sortBy: 'createdAt', sortOrder: 'desc' },
+      oldest: { sortBy: 'createdAt', sortOrder: 'asc' },
+      'title-asc': { sortBy: 'title', sortOrder: 'asc' },
+      'title-desc': { sortBy: 'title', sortOrder: 'desc' },
+      'year-newest': { sortBy: 'publishYear', sortOrder: 'desc' },
+      'year-oldest': { sortBy: 'publishYear', sortOrder: 'asc' },
+    };
+
+    return sortMapping[sortValue] || sortMapping['newest'];
+  };
+
+  const { sortBy: apiSortBy, sortOrder } = getSortParams(sortBy);
 
   const { data } = useBooks({
     search: searchQuery,
-    sortBy: sortBy === 'newest' ? 'createdAt' : 'title',
-    sortOrder: sortBy === 'newest' ? 'desc' : 'asc',
-    limit: 50,
+    sortBy: apiSortBy,
+    sortOrder,
+    page,
+    limit: pageSize,
+    authorIds: appliedFilters.authorIds,
+    categoryIds: appliedFilters.categoryIds,
+    publishYearFrom: appliedFilters.publishYearFrom,
+    publishYearTo: appliedFilters.publishYearTo,
+    status: appliedFilters.status,
+    isDeleted: false,
   });
 
   const books = useMemo(() => {
@@ -30,24 +66,40 @@ function SearchContent() {
       author: book.author.fullName,
       year: book.publishYear || 0,
       edition: book.edition || undefined,
-      rating: 4.5, // Mock rating
-      categories: book.publisher ? [book.publisher] : ['General'], // Mock
+      rating: 4.5,
+      categories: book.categories && book.categories.length > 0 ? book.categories : ['General'],
       coverImage: book.coverImageUrl || '',
       availability: {
-        hardCopy: true, // Mock availability
-        eBook: false,
-        audioBook: false,
+        hardCopy: (book.bookItemsCount ?? 0) > 0,
+        eBook: (book.bookEbookCount ?? 0) > 0,
+        audioBook: (book.bookAudioCount ?? 0) > 0,
       },
-      isFavorite: false, // Mock favorite status
+      isFavorite: false,
     }));
   }, [data?.books]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, sortBy, appliedFilters]);
+
+  const totalCount = data?.pagination?.total ?? books.length;
+
   const handleSortChange = (value: string) => {
     setSortBy(value);
-    // Update URL using Next.js router
     const params = new URLSearchParams(searchParams.toString());
     params.set('sortBy', value);
     router.push(`/search?${params.toString()}`);
+  };
+
+  // Handle filter actions
+  const handleApplyFilter = () => {
+    setPage(1);
+    applyFilters();
+  };
+
+  const handleClearFilter = () => {
+    setPage(1);
+    clearFilters();
   };
 
   return (
@@ -61,21 +113,19 @@ function SearchContent() {
           px={2}
           fontSize="sm"
           icon={FiFilter}
-          onClick={() => {}}
+          onClick={openFilterDialog}
         />
-        <Box display="flex" gap={2} alignItems="center">
+        <Box display="flex" alignItems="center">
           <Text fontSize="sm" w="80px">
             Sort by:
           </Text>
           <FormSelect
-            items={[
-              { label: 'Newest', value: 'newest' },
-              { label: 'Oldest', value: 'oldest' },
-            ]}
+            items={BOOK_SORT_OPTIONS}
             fontSize="sm"
             value={sortBy}
             bg="white"
             onChange={handleSortChange}
+            width="150px"
           />
         </Box>
       </Box>
@@ -84,8 +134,8 @@ function SearchContent() {
       <Box mt={4}>
         <Text fontSize="sm" color="secondaryText.500">
           {searchQuery
-            ? `Search results for "${searchQuery}": ${books.length} books`
-            : `All books: ${books.length} books`}
+            ? `Search results for "${searchQuery}": ${totalCount} books`
+            : `All books: ${totalCount} books`}
         </Text>
       </Box>
 
@@ -94,6 +144,25 @@ function SearchContent() {
           <BookCard key={book.id} book={book} />
         ))}
       </Stack>
+
+      <Box mt={6} display="flex" justifyContent="center">
+        <PaginationControls
+          page={page}
+          pageSize={pageSize}
+          total={totalCount}
+          onPageChange={setPage}
+        />
+      </Box>
+
+      {/* Filter Dialog */}
+      <BookFilterDialog
+        isOpen={isFilterDialogOpen}
+        onClose={closeFilterDialog}
+        onApply={handleApplyFilter}
+        onClear={handleClearFilter}
+        filterState={filterState}
+        onFilterStateChange={updateFilterState}
+      />
     </Box>
   );
 }

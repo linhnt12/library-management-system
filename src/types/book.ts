@@ -22,6 +22,10 @@ export interface BookWithAuthor extends Book {
     id: number;
     fullName: string;
   };
+  categories?: string[];
+  bookItemsCount?: number;
+  bookEbookCount?: number;
+  bookAudioCount?: number;
 }
 
 export interface BookDetail extends BookWithAuthor {

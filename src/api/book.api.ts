@@ -23,9 +23,9 @@ export class BookApi {
     limit?: number;
     search?: string;
     authorIds?: number[];
+    categoryIds?: number[];
     publishYearFrom?: number;
     publishYearTo?: number;
-    publishers?: string[];
     status?: string;
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
@@ -39,12 +39,12 @@ export class BookApi {
     if (params?.authorIds && params.authorIds.length > 0) {
       params.authorIds.forEach(id => searchParams.append('authorIds', id.toString()));
     }
+    if (params?.categoryIds && params.categoryIds.length > 0) {
+      params.categoryIds.forEach(id => searchParams.append('categoryIds', id.toString()));
+    }
     if (params?.publishYearFrom)
       searchParams.set('publishYearFrom', params.publishYearFrom.toString());
     if (params?.publishYearTo) searchParams.set('publishYearTo', params.publishYearTo.toString());
-    if (params?.publishers && params.publishers.length > 0) {
-      params.publishers.forEach(publisher => searchParams.append('publishers', publisher));
-    }
     if (params?.status) searchParams.set('status', params.status);
     if (params?.sortBy) searchParams.set('sortBy', params.sortBy);
     if (params?.sortOrder) searchParams.set('sortOrder', params.sortOrder);

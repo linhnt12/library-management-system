@@ -1,4 +1,5 @@
 export * from './useAuthors';
+export * from './useBookFilters';
 export * from './useBookForm';
 export * from './useBookItemForm';
 export * from './useBookItems';
@@ -8,3 +9,4 @@ export * from './useDialog';
 export * from './useFormSubmission';
 export * from './useLoginForm';
 export * from './useMe';
+export * from './useRegisterForm';

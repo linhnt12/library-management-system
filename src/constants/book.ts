@@ -1,20 +1,6 @@
 import { getConditionOptions, getStatusOptions } from '@/lib/utils/enum-utils';
 import { Condition, ItemStatus } from '@prisma/client';
 
-// Mock data for publishers
-export const PUBLISHER_OPTIONS = [
-  { value: '1', label: 'Penguin Random House' },
-  { value: '2', label: 'HarperCollins' },
-  { value: '3', label: 'Simon & Schuster' },
-  { value: '4', label: 'Macmillan Publishers' },
-  { value: '5', label: 'Hachette Book Group' },
-  { value: '6', label: 'Scholastic' },
-  { value: '7', label: 'Oxford University Press' },
-  { value: '8', label: 'Cambridge University Press' },
-  { value: '9', label: 'Wiley' },
-  { value: '10', label: 'Pearson' },
-];
-
 // Custom labels for condition
 export const CONDITION_LABELS: Partial<Record<Condition, string>> = {
   NEW: 'New',
@@ -45,4 +31,14 @@ export const BOOK_STATUS_OPTIONS = [
   { value: 'MAINTENANCE', label: 'Maintenance' },
   { value: 'LOST', label: 'Lost' },
   { value: 'DAMAGED', label: 'Damaged' },
+];
+
+// Book sort options for user search
+export const BOOK_SORT_OPTIONS = [
+  { label: 'Newest', value: 'newest' },
+  { label: 'Oldest', value: 'oldest' },
+  { label: 'Title A-Z', value: 'title-asc' },
+  { label: 'Title Z-A', value: 'title-desc' },
+  { label: 'Year Newest', value: 'year-newest' },
+  { label: 'Year Oldest', value: 'year-oldest' },
 ];

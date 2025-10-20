@@ -20,9 +20,9 @@ export async function GET(request: NextRequest) {
 
     // Optional filters
     const authorIdsParam = searchParams.getAll('authorIds');
+    const categoryIdsParam = searchParams.getAll('categoryIds');
     const publishYearFromParam = searchParams.get('publishYearFrom');
     const publishYearToParam = searchParams.get('publishYearTo');
-    const publishersParam = searchParams.getAll('publishers');
     const statusParam = searchParams.get('status');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
@@ -32,13 +32,17 @@ export async function GET(request: NextRequest) {
       authorIdsParam.length > 0
         ? authorIdsParam.map(id => parseIntParam(id, 0)).filter(id => id > 0)
         : [];
+    const categoryIds =
+      categoryIdsParam.length > 0
+        ? categoryIdsParam.map(id => parseIntParam(id, 0)).filter(id => id > 0)
+        : [];
     const publishYearFrom = publishYearFromParam
       ? parseIntParam(publishYearFromParam, 0)
       : undefined;
     const publishYearTo = publishYearToParam ? parseIntParam(publishYearToParam, 0) : undefined;
 
     const where: Prisma.BookWhereInput = {
-      ...(isDeletedParam === 'false' && { isDeleted: false }),
+      ...(isDeletedParam === null || isDeletedParam === 'false' ? { isDeleted: false } : {}),
     };
 
     if (search) {
@@ -56,6 +60,15 @@ export async function GET(request: NextRequest) {
       where.authorId = { in: authorIds };
     }
 
+    // Handle category filter
+    if (categoryIds.length > 0) {
+      where.bookCategories = {
+        some: {
+          categoryId: { in: categoryIds },
+        },
+      };
+    }
+
     // Handle publish year range filter
     if (publishYearFrom && publishYearFrom > 0) {
       where.publishYear = { gte: publishYearFrom };
@@ -66,11 +79,6 @@ export async function GET(request: NextRequest) {
         ...existingPublishYear,
         lte: publishYearTo,
       };
-    }
-
-    // Handle publisher filter
-    if (publishersParam.length > 0) {
-      where.publisher = { in: publishersParam };
     }
 
     // TODO: This will be update later
@@ -93,6 +101,7 @@ export async function GET(request: NextRequest) {
         publishYear: 'publishYear',
         pageCount: 'pageCount',
         price: 'price',
+        createdAt: 'createdAt',
       };
 
       const dbField = sortFieldMap[sortBy];
@@ -128,12 +137,48 @@ export async function GET(request: NextRequest) {
               fullName: true,
             },
           },
+          bookCategories: {
+            select: {
+              category: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          bookEditions: {
+            select: {
+              format: true,
+              id: true,
+            },
+          },
+          _count: {
+            select: {
+              bookItems: true,
+            },
+          },
         },
       }),
       prisma.book.count({ where }),
     ]);
 
-    const books = booksRaw as unknown as BookWithAuthor[];
+    const books = (
+      booksRaw as (BookWithAuthor & {
+        bookCategories?: { category: { name: string } }[];
+        bookEditions?: { id: number; format: 'EBOOK' | 'AUDIO' }[];
+        _count?: { bookItems: number };
+      })[]
+    ).map(b => {
+      const ebookCount = b.bookEditions?.filter(e => e.format === 'EBOOK').length ?? 0;
+      const audioCount = b.bookEditions?.filter(e => e.format === 'AUDIO').length ?? 0;
+      return {
+        ...b,
+        categories: b.bookCategories?.map(x => x.category.name) ?? [],
+        bookItemsCount: b._count?.bookItems ?? 0,
+        bookEbookCount: ebookCount,
+        bookAudioCount: audioCount,
+      };
+    });
 
     return successResponse<BooksListPayload>({
       books,

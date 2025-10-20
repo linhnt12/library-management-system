@@ -24,6 +24,19 @@ interface BookCardProps {
   };
 }
 
+function AvailabilityItem({ isAvailable, label }: { isAvailable: boolean; label: string }) {
+  return (
+    <Box display="flex" alignItems="center" gap="2">
+      {isAvailable ? (
+        <FaCircleCheck color="green" size="16" />
+      ) : (
+        <FaCircleXmark color="gray" size="16" />
+      )}
+      <Text fontSize="sm">{label}</Text>
+    </Box>
+  );
+}
+
 export const BookCard = ({ book }: BookCardProps) => {
   return (
     <Box
@@ -86,7 +99,7 @@ export const BookCard = ({ book }: BookCardProps) => {
         </Box>
 
         {/* Categories */}
-        <Box width="35%" display="flex" flexDirection="column" gap={2}>
+        <Box width="25%" display="flex" flexDirection="column" gap={2}>
           <Text fontSize="sm" fontWeight="semibold">
             Categories
           </Text>
@@ -106,22 +119,9 @@ export const BookCard = ({ book }: BookCardProps) => {
           </Text>
           {/* Format Availability */}
           <VStack align="start" gap="2">
-            <Box display="flex" alignItems="center" gap="2">
-              {book.availability.hardCopy ? (
-                <FaCircleCheck color="green" size="16" />
-              ) : (
-                <FaCircleXmark color="red" size="16" />
-              )}
-              <Text fontSize="sm">Hard Copy</Text>
-            </Box>
-            <Box display="flex" alignItems="center" gap="2">
-              {book.availability.eBook ? (
-                <FaCircleCheck color="green" size="16" />
-              ) : (
-                <FaCircleXmark color="gray" size="16" />
-              )}
-              <Text fontSize="sm">E-Book</Text>
-            </Box>
+            <AvailabilityItem isAvailable={book.availability.hardCopy} label="Hard Copy" />
+            <AvailabilityItem isAvailable={book.availability.eBook} label="E-Book" />
+            <AvailabilityItem isAvailable={book.availability.audioBook} label="Audio Book" />
           </VStack>
         </Box>
 

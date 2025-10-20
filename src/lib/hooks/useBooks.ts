@@ -8,10 +8,9 @@ export function useBooks(params?: {
   limit?: number;
   search?: string;
   authorIds?: number[];
-  type?: string;
+  categoryIds?: number[];
   publishYearFrom?: number;
   publishYearTo?: number;
-  publishers?: string[];
   status?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
