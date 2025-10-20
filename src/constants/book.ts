@@ -1,20 +1,6 @@
 import { getConditionOptions, getStatusOptions } from '@/lib/utils/enum-utils';
 import { Condition, ItemStatus } from '@prisma/client';
 
-// Mock data for categories
-export const CATEGORY_OPTIONS = [
-  { value: 1, label: 'Fiction' },
-  { value: 2, label: 'Non-Fiction' },
-  { value: 3, label: 'Science Fiction' },
-  { value: 4, label: 'Mystery' },
-  { value: 5, label: 'Romance' },
-  { value: 6, label: 'Thriller' },
-  { value: 7, label: 'Biography' },
-  { value: 8, label: 'History' },
-  { value: 9, label: 'Science' },
-  { value: 10, label: 'Technology' },
-];
-
 // Mock data for publishers
 export const PUBLISHER_OPTIONS = [
   { value: '1', label: 'Penguin Random House' },

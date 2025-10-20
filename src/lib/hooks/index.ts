@@ -3,6 +3,7 @@ export * from './useBookForm';
 export * from './useBookItemForm';
 export * from './useBookItems';
 export * from './useBooks';
+export * from './useCategories';
 export * from './useDialog';
 export * from './useFormSubmission';
 export * from './useLoginForm';
