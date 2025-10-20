@@ -2,9 +2,8 @@
 
 import { FormSelect } from '@/components';
 import { tablePageSizeOptions } from '@/constants';
-import { Box, ButtonGroup, HStack, IconButton, Pagination, Text } from '@chakra-ui/react';
-import { HiOutlineDotsHorizontal } from 'react-icons/hi';
-import { LuChevronLeft, LuChevronRight } from 'react-icons/lu';
+import { Box, HStack, Text } from '@chakra-ui/react';
+import { PaginationControls } from './PaginationControls';
 
 export type TableFooterProps = {
   page: number;
@@ -53,68 +52,12 @@ export function TableFooter({
           of {total} results
         </Text>
       </HStack>
-      <Pagination.Root
-        id="table-pagination"
-        count={total}
-        pageSize={pageSize}
+      <PaginationControls
         page={page}
-        siblingCount={2}
-        onPageChange={e => onPageChange?.(e.page)}
-      >
-        <ButtonGroup size="xs" wrap="wrap">
-          <Pagination.PrevTrigger asChild>
-            <IconButton
-              aria-label="Previous page"
-              bg="paginationBg.500"
-              _hover={{ bg: 'primary.200' }}
-              color="primaryText.500"
-              borderRadius="md"
-            >
-              <LuChevronLeft />
-            </IconButton>
-          </Pagination.PrevTrigger>
-
-          <Pagination.Items
-            render={p => (
-              <IconButton
-                bg={p.value === page ? 'primary.500' : 'paginationBg.500'}
-                color={p.value === page ? 'white' : 'primaryText.500'}
-                _hover={{ bg: p.value === page ? 'primary.500' : 'primary.200' }}
-                borderRadius="md"
-                fontSize="xs"
-                onClick={() => onPageChange?.(p.value)}
-                aria-label={`Page ${p.value}`}
-              >
-                {p.value}
-              </IconButton>
-            )}
-            ellipsis={
-              <IconButton
-                bg="paginationBg.500"
-                color="primaryText.500"
-                _hover={{ bg: 'primary.200' }}
-                borderRadius="md"
-                fontSize="xs"
-                aria-label="Ellipsis"
-              >
-                <HiOutlineDotsHorizontal />
-              </IconButton>
-            }
-          />
-
-          <Pagination.NextTrigger asChild>
-            <IconButton
-              aria-label="Next page"
-              bg="paginationBg.500"
-              _hover={{ bg: 'primary.200' }}
-              color="primaryText.500"
-              borderRadius="md"
-            >
-              <LuChevronRight />
-            </IconButton>
-          </Pagination.NextTrigger>
-        </ButtonGroup>
-      </Pagination.Root>
+        pageSize={pageSize}
+        total={total}
+        onPageChange={onPageChange}
+      />
     </Box>
   );
 }
