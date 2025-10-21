@@ -9,10 +9,10 @@ export interface SelectOption {
   label: string;
 }
 
-export interface FormSelectSearchProps {
-  value?: SelectOption | SelectOption[];
-  onChange: (value: SelectOption | SelectOption[]) => void;
-  options: SelectOption[];
+export interface FormSelectSearchProps<T = SelectOption> {
+  value?: T | T[];
+  onChange: (value: T | T[]) => void;
+  options: T[];
   placeholder?: string;
   isDisabled?: boolean;
   isLoading?: boolean;
@@ -28,9 +28,11 @@ export interface FormSelectSearchProps {
   height?: string;
   width?: string;
   fontSize?: string;
+  formatOptionLabel?: (option: T, context: { context: 'menu' | 'value' }) => React.ReactNode;
+  isOptionSelected?: (option: T) => boolean;
 }
 
-export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
+export const FormSelectSearch = <T extends SelectOption>({
   value,
   onChange,
   options,
@@ -49,7 +51,9 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
   height = '50px',
   width = '100%',
   fontSize = '16px',
-}) => {
+  formatOptionLabel,
+  isOptionSelected,
+}: FormSelectSearchProps<T>) => {
   /* Chakra UI colors
 		primary.200: #ff7b424d
 		primary.500: #ff7b42
@@ -73,20 +77,37 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
 
   const style = variantStyles[variantType];
 
-  const handleChange = (newValue: MultiValue<SelectOption> | SingleValue<SelectOption>) => {
+  const handleChange = (newValue: MultiValue<T> | SingleValue<T>) => {
     if (multi) {
-      onChange([...(newValue as MultiValue<SelectOption>)]);
+      onChange([...(newValue as MultiValue<T>)]);
     } else {
-      onChange(newValue as SelectOption);
+      onChange(newValue as T);
     }
   };
 
-  const isOptionSelected = (option: SelectOption) => {
+  const defaultIsOptionSelected = (option: T) => {
     if (multi) {
       return Array.isArray(value) && value.some(selected => selected.value === option.value);
     } else {
       return !Array.isArray(value) && value?.value === option.value;
     }
+  };
+
+  const defaultFormatOptionLabel = (option: T, { context }: { context: 'menu' | 'value' }) => {
+    if (context === 'menu' && multi) {
+      const selected = isOptionSelected
+        ? isOptionSelected(option)
+        : defaultIsOptionSelected(option);
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
+            {selected && <FaCheck style={{ color: '#ff7b42', fontSize: '14px' }} />}
+          </div>
+          <span style={{ marginLeft: '6px' }}>{option.label}</span>
+        </div>
+      );
+    }
+    return option.label;
   };
 
   return (
@@ -106,20 +127,7 @@ export const FormSelectSearch: React.FC<FormSelectSearchProps> = ({
       placeholder={placeholder}
       hideSelectedOptions={hideSelectedOptions}
       closeMenuOnSelect={!multi}
-      formatOptionLabel={(option, { context }) => {
-        if (context === 'menu' && multi) {
-          const isSelected = isOptionSelected(option);
-          return (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
-                {isSelected && <FaCheck style={{ color: '#ff7b42', fontSize: '14px' }} />}
-              </div>
-              <span style={{ marginLeft: '6px' }}>{option.label}</span>
-            </div>
-          );
-        }
-        return option.label;
-      }}
+      formatOptionLabel={formatOptionLabel || defaultFormatOptionLabel}
       styles={{
         control: baseStyles => ({
           ...baseStyles,
