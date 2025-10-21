@@ -21,6 +21,7 @@ model User {
   password    String
   phoneNumber String?
   address     String? @db.Text
+  avatarUrl   String?
   role        Role
   status      UserStatus
 
