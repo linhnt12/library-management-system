@@ -3,22 +3,12 @@
 import { Layout, Sidebar } from '@/components';
 import { ROUTES } from '@/constants';
 import { useMe } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { LuBook, LuTrendingUp, LuUsers } from 'react-icons/lu';
 import { SlGrid } from 'react-icons/sl';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const { data: user, isLoading } = useMe();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace(ROUTES.AUTH.LOGIN);
-    }
-  }, [isLoading, user, router]);
-
-  if (isLoading) return null;
+  const { data: user } = useMe();
 
   // TODO: This will be updated later
   // Base sidebar items for all users

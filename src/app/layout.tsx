@@ -1,4 +1,4 @@
-import { Provider, QueryProvider, Toaster } from '@/components';
+import { Provider, QueryProvider, SessionExpiredHandler, Toaster } from '@/components';
 import { ClientLayoutWrapper } from '@/components/user-layout';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -31,6 +31,7 @@ export default function RootLayout({
           <Provider>
             <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
             <Toaster />
+            <SessionExpiredHandler />
           </Provider>
         </QueryProvider>
       </body>

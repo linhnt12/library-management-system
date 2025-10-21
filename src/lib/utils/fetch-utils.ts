@@ -1,6 +1,5 @@
-import { meQueryKey } from '@/lib/hooks/useMe';
-import { queryClient } from '@/lib/query-client';
-import { clearAuthSession, getAccessToken, setAuthSession } from '@/lib/utils/auth-utils';
+import { UnauthorizedError } from '@/lib/errors';
+import { getAccessToken, setAuthSession } from '@/lib/utils/auth-utils';
 
 export type JsonResponse<T = unknown> = {
   success: boolean;
@@ -18,14 +17,16 @@ export async function handleJson<T>(response: Response): Promise<T> {
   return json.data as T;
 }
 
-// Helper function to clear authentication and invalidate user query
-function clearAuthAndInvalidateUser(): void {
-  clearAuthSession();
-  // Invalidate the user query to force it to return undefined
-  if (typeof window !== 'undefined') {
-    queryClient.setQueryData(meQueryKey, null);
-    queryClient.invalidateQueries({ queryKey: meQueryKey });
-  }
+// Event emitter for session expiry
+const sessionExpiredCallbacks = new Set<() => void>();
+
+export function onSessionExpired(callback: () => void) {
+  sessionExpiredCallbacks.add(callback);
+  return () => sessionExpiredCallbacks.delete(callback);
+}
+
+function emitSessionExpired() {
+  sessionExpiredCallbacks.forEach(callback => callback());
 }
 
 // A lightweight fetch helper that retries once after attempting token refresh on 401
@@ -44,17 +45,24 @@ export async function fetchWithAuth(
       credentials: 'include',
     });
 
-    // If refresh response is not ok, call logout API to clear server-side session
+    // If refresh response is not ok, throw UnauthorizedError
     if (!refreshResponse.ok) {
+      // Call logout API to clear server-side session
       try {
         await fetch('/api/auth/logout', {
           method: 'POST',
           credentials: 'include',
         });
-      } finally {
-        clearAuthAndInvalidateUser();
+      } catch {
+        // Ignore logout errors
       }
-      return response;
+
+      // Emit session expired event for UI to handle
+      if (typeof window !== 'undefined') {
+        emitSessionExpired();
+      }
+
+      throw new UnauthorizedError('Your session has expired. Please login again.');
     }
 
     // If refresh succeeds, we expect { accessToken }
@@ -72,16 +80,27 @@ export async function fetchWithAuth(
 
     const retryInit: RequestInit = { ...init, headers };
     return await fetch(input, retryInit);
-  } catch {
+  } catch (error) {
+    // If it's already an UnauthorizedError, re-throw it
+    if (error instanceof UnauthorizedError) {
+      throw error;
+    }
+
     // On any other refresh failure (network error, etc.), call logout API
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
-    } finally {
-      clearAuthAndInvalidateUser();
+    } catch {
+      // Ignore logout errors
     }
-    return response;
+
+    // Emit session expired event for UI to handle
+    if (typeof window !== 'undefined') {
+      emitSessionExpired();
+    }
+
+    throw new UnauthorizedError('Your session has expired. Please login again.');
   }
 }
