@@ -1,6 +1,7 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
+import { requireLibrarian } from '@/middleware/auth.middleware';
 import { Book, BookDetail, UpdateBookData } from '@/types/book';
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
@@ -71,7 +72,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 // PUT /api/books/[id] - Update book
-export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export const PUT = requireLibrarian(async (request, context) => {
+  const { params } = context as { params: Promise<{ id: string }> };
   try {
     const { id } = await params;
     const bookId = parseIntParam(id);
@@ -171,13 +173,11 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     return handleRouteError(error, 'PUT /api/books/[id]');
   }
-}
+});
 
 // DELETE /api/books/[id] - Delete book (soft delete)
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export const DELETE = requireLibrarian(async (request, context) => {
+  const { params } = context as { params: Promise<{ id: string }> };
   try {
     const { id } = await params;
     const bookId = parseIntParam(id);
@@ -203,4 +203,4 @@ export async function DELETE(
   } catch (error) {
     return handleRouteError(error, 'DELETE /api/books/[id]');
   }
-}
+});

@@ -8,6 +8,7 @@ import {
   successResponse,
   validateRequiredFields,
 } from '@/lib/utils';
+import { requireLibrarian } from '@/middleware/auth.middleware';
 import { Book, BookWithAuthor, BooksListPayload, CreateBookData } from '@/types/book';
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
@@ -195,7 +196,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/books - Create book
-export async function POST(request: NextRequest) {
+export const POST = requireLibrarian(async request => {
   try {
     const body: CreateBookData = await request.json();
     const {
@@ -275,4 +276,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return handleRouteError(error, 'POST /api/books');
   }
-}
+});

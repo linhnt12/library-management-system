@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookSelectSearch,
   Dialog,
   FormButtons,
   FormDivider,
@@ -8,11 +9,9 @@ import {
   FormInput,
   FormSection,
   FormSelect,
-  FormSelectSearch,
-  SelectOption,
 } from '@/components';
 import { useBookItemForm } from '@/lib/hooks';
-import { useBookOptions } from '@/lib/hooks/useBooks';
+import { BookOption, useBookOptions } from '@/lib/hooks/useBooks';
 import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
 import { Condition, ItemStatus } from '@prisma/client';
 
@@ -58,9 +57,12 @@ export function BookItemForm({
         <FormSection title="Basic Information">
           {/* Book Selection */}
           <FormField label="Book" error={errors.bookId}>
-            <FormSelectSearch
+            <BookSelectSearch
               value={form.bookId ? bookOptions.find(opt => opt.value === form.bookId) : undefined}
-              onChange={val => setField('bookId', String((val as SelectOption)?.value || ''))}
+              onChange={val => {
+                const bookOption = val as BookOption;
+                setField('bookId', String(bookOption?.value || ''));
+              }}
               options={bookOptions}
               placeholder="Select book"
               fontSize="md"

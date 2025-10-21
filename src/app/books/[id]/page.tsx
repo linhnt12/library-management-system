@@ -2,12 +2,12 @@
 
 import { BookApi } from '@/api';
 import { BookDetail, toaster } from '@/components';
-import { ROUTES } from '@/constants';
 import { BookDetail as BookDetailType } from '@/types';
+import { Box } from '@chakra-ui/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function BookPage() {
+export default function PublicBookPage() {
   const params = useParams();
   const router = useRouter();
   const bookId = Number(params.id);
@@ -17,7 +17,7 @@ export default function BookPage() {
   useEffect(() => {
     const fetchBook = async () => {
       if (!bookId || bookId <= 0) {
-        router.push(ROUTES.DASHBOARD.BOOKS);
+        router.push('/');
         return;
       }
 
@@ -31,7 +31,7 @@ export default function BookPage() {
           description: 'Book not found',
           type: 'error',
         });
-        router.push(ROUTES.DASHBOARD.BOOKS);
+        router.push('/');
       }
     };
 
@@ -43,12 +43,18 @@ export default function BookPage() {
   }
 
   return (
-    <BookDetail
-      book={book}
-      onEditClick={() => router.push(`${ROUTES.DASHBOARD.BOOKS_EDIT}/${book.id}`)}
-      onAddBookCopyClick={() =>
-        router.push(`${ROUTES.DASHBOARD.BOOKS_COPIES_ADD}?bookId=${book.id}`)
-      }
-    />
+    <Box bg="white" rounded="lg" p={4}>
+      <BookDetail
+        book={book}
+        onBorrowClick={() => {
+          // TODO: Implement borrow functionality
+          console.log('Borrow book:', book.id);
+        }}
+        onAddToFavouriteClick={() => {
+          // TODO: Implement add to favourite functionality
+          console.log('Add to favourite:', book.id);
+        }}
+      />
+    </Box>
   );
 }

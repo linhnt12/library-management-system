@@ -1,5 +1,9 @@
+'use client';
+
 import { Button } from '@/components/buttons';
+import { ROUTES } from '@/constants';
 import { Box, Button as ChakraButton, Image, Text, VStack } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { FaCircleCheck, FaCircleXmark } from 'react-icons/fa6';
 import { LuHeart } from 'react-icons/lu';
 
@@ -38,6 +42,12 @@ function AvailabilityItem({ isAvailable, label }: { isAvailable: boolean; label:
 }
 
 export const BookCard = ({ book }: BookCardProps) => {
+  const router = useRouter();
+
+  const handlePreviewClick = () => {
+    router.push(`${ROUTES.BOOK_DETAIL.replace(':id', book.id)}`);
+  };
+
   return (
     <Box
       display="flex"
@@ -140,7 +150,12 @@ export const BookCard = ({ book }: BookCardProps) => {
 
         <Box width="200px" display="flex" justifyContent="center">
           {/* Preview Button */}
-          <Button label="Preview" variantType="primaryOutline" height="40px" />
+          <Button
+            label="Preview"
+            variantType="primaryOutline"
+            height="40px"
+            onClick={handlePreviewClick}
+          />
         </Box>
       </Box>
     </Box>

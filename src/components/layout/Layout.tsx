@@ -7,11 +7,9 @@ import { ReactNode } from 'react';
 type LayoutProps = {
   children: ReactNode;
   sidebar: ReactNode;
-  userName?: string;
-  userRole?: string;
 };
 
-export function Layout({ children, sidebar, userName, userRole }: LayoutProps) {
+export function Layout({ children, sidebar }: LayoutProps) {
   return (
     <Flex minH="100vh">
       <Box w="280px" bg="white" position="fixed" top={0} left={0} h="100vh" overflowY="auto">
@@ -27,7 +25,7 @@ export function Layout({ children, sidebar, userName, userRole }: LayoutProps) {
         display="flex"
         flexDirection="column"
       >
-        <Header userName={userName} userRole={userRole} />
+        <Header />
         <Box p={4} rounded="lg" bg="white" flex="1" display="flex" flexDirection="column">
           {children}
         </Box>
