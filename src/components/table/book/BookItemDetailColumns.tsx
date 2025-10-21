@@ -2,6 +2,7 @@
 
 import { IconButton, Tag } from '@/components';
 import { CONDITION_LABELS, ROUTES, STATUS_LABELS } from '@/constants';
+import { useMe } from '@/lib/hooks';
 import { HStack, Text } from '@chakra-ui/react';
 import { Condition, ItemStatus } from '@prisma/client';
 import { useRouter } from 'next/navigation';
@@ -88,46 +89,60 @@ function ActionsCell({ bookItem }: { bookItem: { id: number; bookId: number } })
   );
 }
 
-export const BookItemDetailColumns = () => [
-  {
-    key: 'code',
-    header: 'Code',
-    sortable: true,
-    width: '120px',
-    render: (item: { code: string }) => <Text fontWeight="medium">{item.code}</Text>,
-  },
-  {
-    key: 'condition',
-    header: 'Condition',
-    sortable: true,
-    width: '100px',
-    textAlign: 'center' as const,
-    render: (item: { condition: string }) => <ConditionCell condition={item.condition} />,
-  },
-  {
-    key: 'status',
-    header: 'Status',
-    sortable: true,
-    width: '100px',
-    textAlign: 'center' as const,
-    render: (item: { status: string }) => <StatusCell status={item.status} />,
-  },
-  {
-    key: 'acquisitionDate',
-    header: 'Acquisition Date',
-    sortable: true,
-    width: '120px',
-    textAlign: 'center' as const,
-    render: (item: { acquisitionDate: Date | null }) => (
-      <AcquisitionDateCell date={item.acquisitionDate} />
-    ),
-  },
-  {
-    key: 'actions',
-    header: 'Actions',
-    sortable: false,
-    width: '120px',
-    textAlign: 'center' as const,
-    render: (item: { id: number; bookId: number }) => <ActionsCell bookItem={item} />,
-  },
-];
+export const BookItemDetailColumns = () => {
+  const { data: user } = useMe();
+  const isAdminOrLibrarian = user?.role === 'ADMIN' || user?.role === 'LIBRARIAN';
+
+  const baseColumns = [
+    {
+      key: 'code',
+      header: 'Code',
+      sortable: true,
+      width: '120px',
+      render: (item: { code: string }) => <Text fontWeight="medium">{item.code}</Text>,
+    },
+    {
+      key: 'condition',
+      header: 'Condition',
+      sortable: true,
+      width: '100px',
+      textAlign: 'center' as const,
+      render: (item: { condition: string }) => <ConditionCell condition={item.condition} />,
+    },
+    {
+      key: 'status',
+      header: 'Status',
+      sortable: true,
+      width: '100px',
+      textAlign: 'center' as const,
+      render: (item: { status: string }) => <StatusCell status={item.status} />,
+    },
+    {
+      key: 'acquisitionDate',
+      header: 'Acquisition Date',
+      sortable: true,
+      width: '120px',
+      textAlign: 'center' as const,
+      render: (item: { acquisitionDate: Date | null }) => (
+        <AcquisitionDateCell date={item.acquisitionDate} />
+      ),
+    },
+  ];
+
+  // Add actions column for admin and librarian
+  if (isAdminOrLibrarian) {
+    return [
+      ...baseColumns,
+      {
+        key: 'actions',
+        header: 'Actions',
+        sortable: false,
+        width: '120px',
+        textAlign: 'center' as const,
+        render: (item: { id: number; bookId: number }) => <ActionsCell bookItem={item} />,
+      },
+    ];
+  }
+
+  return baseColumns;
+};

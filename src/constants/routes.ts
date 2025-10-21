@@ -29,6 +29,7 @@ export const ROUTES = {
   // Common routes
   HOME: '/',
   SEARCH: '/search',
+  BOOK_DETAIL: '/books/:id',
   MY_SHELF: '/my-shelf',
   PROFILE: '/profile',
   SETTINGS: '/settings',
