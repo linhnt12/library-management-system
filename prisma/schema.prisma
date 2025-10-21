@@ -20,9 +20,10 @@ model User {
   email       String     @unique
   password    String
   phoneNumber String?
-  address     String?
+  address     String? @db.Text
   role        Role
   status      UserStatus
+
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   inactiveAt  DateTime?

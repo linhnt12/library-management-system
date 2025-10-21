@@ -7,6 +7,7 @@ export const pageHeadings: Record<string, string> = {
 
   // Dashboard routes
   [ROUTES.DASHBOARD.HOME]: 'Dashboard',
+  [ROUTES.DASHBOARD.PROFILE]: 'My Profile',
   [ROUTES.DASHBOARD.BOOKS]: 'Books Management',
   [ROUTES.DASHBOARD.BOOKS_ADD]: 'Add New Book',
   [ROUTES.DASHBOARD.BOOKS_EDIT]: 'Edit Book',

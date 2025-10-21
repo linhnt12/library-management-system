@@ -11,6 +11,7 @@ export const ROUTES = {
   DASHBOARD: {
     // Common routes
     HOME: '/dashboard',
+    PROFILE: '/dashboard/profile',
     BOOKS: '/dashboard/books',
     BOOKS_ADD: '/dashboard/books/add',
     BOOKS_EDIT: '/dashboard/books/edit',
