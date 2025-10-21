@@ -1,18 +1,16 @@
 'use client';
 
-import { IconButton, Breadcrumbs } from '@/components';
+import { Breadcrumbs, IconButton } from '@/components';
 import { pageHeadings } from '@/constants';
+import { USER_ROLES } from '@/constants/user';
+import { useMe } from '@/lib/hooks';
 import { Box, Flex, HStack, Heading, Image, Stack, Text } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { FiBell } from 'react-icons/fi';
 
-type HeaderProps = {
-  userName?: string;
-  userRole?: string;
-};
-
-export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderProps) {
+export function Header() {
   const pathname = usePathname();
+  const { data: user } = useMe();
 
   // Find heading for dynamic routes
   const heading =
@@ -37,16 +35,16 @@ export function Header({ userName = 'Noah Tanaka', userRole = 'Admin' }: HeaderP
         <HStack gap={3} pl={2}>
           <Image
             src="https://i.pravatar.cc/100?img=13"
-            alt={userName}
+            alt={user?.fullName || ''}
             boxSize="42px"
             borderRadius="full"
           />
           <Stack gap={0}>
             <Text fontSize="lg" fontWeight="semibold">
-              {userName}
+              {user?.fullName || ''}
             </Text>
             <Text color="secondaryText.500" fontSize="md">
-              {userRole}
+              {user?.role ? USER_ROLES[user.role] : ''}
             </Text>
           </Stack>
         </HStack>

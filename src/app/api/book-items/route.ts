@@ -8,6 +8,7 @@ import {
   successResponse,
   validateRequiredFields,
 } from '@/lib/utils';
+import { requireLibrarian } from '@/middleware/auth.middleware';
 import {
   BookItem,
   BookItemWithBook,
@@ -187,7 +188,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/book-items - Create book item
-export async function POST(request: NextRequest) {
+export const POST = requireLibrarian(async request => {
   try {
     const body: CreateBookItemData = await request.json();
     const { bookId, code, condition, status, acquisitionDate, isDeleted } = body;
@@ -254,4 +255,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return handleRouteError(error, 'POST /api/book-items');
   }
-}
+});
