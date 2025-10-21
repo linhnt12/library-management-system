@@ -30,6 +30,11 @@ export interface FormSelectSearchProps<T = SelectOption> {
   fontSize?: string;
   formatOptionLabel?: (option: T, context: { context: 'menu' | 'value' }) => React.ReactNode;
   isOptionSelected?: (option: T) => boolean;
+  getOptionLabel?: (option: T) => string;
+  filterOption?: (
+    option: { data: T; label: string; value: string | number },
+    inputValue: string
+  ) => boolean;
 }
 
 export const FormSelectSearch = <T extends SelectOption>({
@@ -53,6 +58,8 @@ export const FormSelectSearch = <T extends SelectOption>({
   fontSize = '16px',
   formatOptionLabel,
   isOptionSelected,
+  getOptionLabel,
+  filterOption,
 }: FormSelectSearchProps<T>) => {
   /* Chakra UI colors
 		primary.200: #ff7b424d
@@ -128,6 +135,8 @@ export const FormSelectSearch = <T extends SelectOption>({
       hideSelectedOptions={hideSelectedOptions}
       closeMenuOnSelect={!multi}
       formatOptionLabel={formatOptionLabel || defaultFormatOptionLabel}
+      getOptionLabel={getOptionLabel}
+      filterOption={filterOption}
       styles={{
         control: baseStyles => ({
           ...baseStyles,

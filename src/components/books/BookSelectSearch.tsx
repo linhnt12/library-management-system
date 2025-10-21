@@ -2,7 +2,7 @@
 
 import { FormSelectSearch } from '@/components/forms';
 import type { BookOption } from '@/lib/hooks/useBooks';
-import { Image } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import React from 'react';
 
 // BookOption component for displaying individual book option
@@ -11,12 +11,12 @@ interface BookOptionProps {
 }
 
 export function BookOption({ option }: BookOptionProps) {
-  const { title, coverImageUrl, authorName, publishYear } = option;
+  const { title, coverImageUrl, authorName, publishYear, isbn } = option;
 
   return (
-    <div className="flex items-center gap-3 p-2">
+    <Flex align="center" gap={3} p={2}>
       {/* Cover Image */}
-      <div className="flex-shrink-0">
+      <Box flexShrink={0}>
         {coverImageUrl ? (
           <Image
             src={coverImageUrl}
@@ -27,19 +27,37 @@ export function BookOption({ option }: BookOptionProps) {
             borderRadius="md"
           />
         ) : (
-          <div className="w-10 h-15 bg-gray-200 rounded flex items-center justify-center">
-            <span className="text-xs text-gray-500">No Image</span>
-          </div>
+          <Box
+            width="40px"
+            height="60px"
+            bg="layoutBg.500"
+            borderRadius="md"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text fontSize="sm" color="secondaryText.500">
+              No Image
+            </Text>
+          </Box>
         )}
-      </div>
+      </Box>
 
       {/* Book Info */}
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{title}</div>
-        <div className="text-xs text-gray-600 truncate">{authorName}</div>
-        {publishYear && <div className="text-xs text-gray-500">{publishYear}</div>}
-      </div>
-    </div>
+      <Box flex={1} minWidth={0}>
+        <Text fontWeight="medium" fontSize="sm" truncate>
+          {title}
+        </Text>
+        <Text fontSize="sm" color="secondaryText.500" truncate>
+          {authorName}, {publishYear ? `(${publishYear})` : ''}
+        </Text>
+        {isbn && (
+          <Text fontSize="sm" color="secondaryText.500">
+            ISBN: {isbn}
+          </Text>
+        )}
+      </Box>
+    </Flex>
   );
 }
 
@@ -103,6 +121,30 @@ export const BookSelectSearch: React.FC<BookSelectSearchProps> = ({
     return <BookOption option={option} />;
   };
 
+  // Function to get searchable text for each option
+  const getOptionLabel = (option: BookOption) => {
+    const searchText = [
+      option.title,
+      option.authorName,
+      option.publishYear?.toString() || '',
+      option.isbn || '',
+    ].join(' ');
+    return searchText;
+  };
+
+  // Custom filter function to search across multiple fields
+  const filterOption = (
+    option: { data: BookOption; label: string; value: string | number },
+    inputValue: string
+  ) => {
+    if (!inputValue) return true;
+
+    const searchText = getOptionLabel(option.data).toLowerCase();
+    const searchValue = inputValue.toLowerCase();
+
+    return searchText.includes(searchValue);
+  };
+
   return (
     <FormSelectSearch<BookOption>
       value={value}
@@ -124,6 +166,8 @@ export const BookSelectSearch: React.FC<BookSelectSearchProps> = ({
       width={width}
       fontSize={fontSize}
       formatOptionLabel={formatOptionLabel}
+      getOptionLabel={getOptionLabel}
+      filterOption={filterOption}
     />
   );
 };

@@ -33,6 +33,7 @@ export interface BookOption {
   coverImageUrl: string | null;
   authorName: string;
   publishYear: number | null;
+  isbn: string | null;
 }
 
 // Hook to get all books for options
@@ -63,5 +64,6 @@ export function useBookOptions(): BookOption[] {
     coverImageUrl: book.coverImageUrl,
     authorName: authorMap.get(book.authorId)?.fullName || 'Unknown Author',
     publishYear: book.publishYear,
+    isbn: book.isbn,
   }));
 }
