@@ -5,7 +5,13 @@ import {
   handleJson,
   setAuthSession,
 } from '@/lib/utils';
-import { AuthUser, ChangePasswordRequest, LoginRequest, RegisterRequest } from '@/types/auth';
+import {
+  AuthUser,
+  ChangePasswordRequest,
+  LoginRequest,
+  RegisterRequest,
+  UpdateMeData,
+} from '@/types';
 
 export class AuthApi {
   // Login and persist tokens + userId
@@ -45,6 +51,28 @@ export class AuthApi {
     const response = await fetchWithAuth('/api/auth/me', {
       method: 'GET',
       headers,
+    });
+    return await handleJson<AuthUser>(response);
+  }
+
+  // Update current user profile with optional avatar
+  static async updateMe(data: UpdateMeData): Promise<AuthUser> {
+    const token = getAccessToken();
+    const formData = new FormData();
+
+    formData.append('fullName', data.fullName);
+    if (data.phoneNumber) formData.append('phoneNumber', data.phoneNumber);
+    if (data.address) formData.append('address', data.address);
+    if (data.avatar) formData.append('avatar', data.avatar);
+    if (data.removeAvatar) formData.append('removeAvatar', 'true');
+
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth('/api/auth/me', {
+      method: 'PUT',
+      headers,
+      body: formData,
     });
     return await handleJson<AuthUser>(response);
   }

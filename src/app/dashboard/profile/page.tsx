@@ -1,8 +1,9 @@
 'use client';
 
 import { Button } from '@/components';
+import { toaster } from '@/components/ui/Toaster';
 import { USER_ROLES } from '@/constants/user';
-import { useMe } from '@/lib/hooks';
+import { useMe, useUpdateMe } from '@/lib/hooks';
 import {
   Box,
   Card,
@@ -19,11 +20,23 @@ import {
   Textarea,
 } from '@chakra-ui/react';
 import { UserStatus } from '@prisma/client';
-import { useEffect, useState } from 'react';
-import { FiCalendar, FiEdit, FiMail, FiMapPin, FiPhone, FiUser, FiX } from 'react-icons/fi';
+import { useEffect, useRef, useState } from 'react';
+import {
+  FiCalendar,
+  FiEdit,
+  FiMail,
+  FiMapPin,
+  FiPhone,
+  FiUpload,
+  FiUser,
+  FiX,
+} from 'react-icons/fi';
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useMe();
+  const { updateProfile, isLoading: isUpdating } = useUpdateMe();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
@@ -32,6 +45,8 @@ export default function ProfilePage() {
     address: '',
     avatarRemoved: false,
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
   // Initialize form data when user data is loaded
   useEffect(() => {
@@ -43,6 +58,9 @@ export default function ProfilePage() {
         address: user.address || '',
         avatarRemoved: false,
       });
+      // Clear avatar preview when user data changes
+      setAvatarPreview(null);
+      setAvatarFile(null);
     }
   }, [user]);
 
@@ -103,12 +121,58 @@ export default function ProfilePage() {
         avatarRemoved: false,
       });
     }
+    // Clear avatar file and preview
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
-  const handleSave = () => {
-    // TODO: Integrate API call here
-    console.log('Save profile data:', formData);
-    setIsEditMode(false);
+  const handleSave = async () => {
+    const result = await updateProfile(
+      {
+        fullName: formData.fullName,
+        phoneNumber: formData.phoneNumber || undefined,
+        address: formData.address || undefined,
+        avatar: avatarFile,
+        removeAvatar: formData.avatarRemoved,
+      },
+      {
+        onSuccess: () => {
+          toaster.create({
+            title: 'Profile updated',
+            description: 'Your profile has been updated successfully',
+            type: 'success',
+            duration: 3000,
+          });
+
+          setIsEditMode(false);
+          // Clear avatar file and preview after successful save
+          setAvatarFile(null);
+          setAvatarPreview(null);
+          // Reset file input
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+        },
+        onError: error => {
+          toaster.create({
+            title: 'Update failed',
+            description: error.message || 'Failed to update profile',
+            type: 'error',
+            duration: 5000,
+          });
+        },
+      }
+    );
+
+    // You can also check result.success if needed
+    if (!result.success && result.error) {
+      // Additional error handling if needed
+      console.error('Profile update error:', result.error);
+    }
   };
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
@@ -123,6 +187,65 @@ export default function ProfilePage() {
       ...prev,
       avatarRemoved: true,
     }));
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    // Reset file input value so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toaster.create({
+          title: 'Invalid file type',
+          description: 'Please upload a valid image file (JPG, PNG, GIF, or WebP)',
+          type: 'error',
+          duration: 5000,
+        });
+        // Reset file input on validation error
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        toaster.create({
+          title: 'File too large',
+          description: 'Please upload an image smaller than 5MB',
+          type: 'error',
+          duration: 5000,
+        });
+        // Reset file input on validation error
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+
+      setAvatarFile(file);
+      setFormData(prev => ({ ...prev, avatarRemoved: false }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAvatarClick = () => {
+    if (isEditMode) {
+      fileInputRef.current?.click();
+    }
   };
 
   return (
@@ -134,21 +257,51 @@ export default function ProfilePage() {
             <Flex gap={6} align="start" flexDirection={{ base: 'column', md: 'row' }}>
               {/* Avatar */}
               <Box flexShrink={0} position="relative">
-                <Image
-                  src={
-                    formData.avatarRemoved
-                      ? 'https://via.placeholder.com/150?text=No+Avatar'
-                      : 'https://i.pravatar.cc/150?img=13'
-                  }
-                  alt={user.fullName}
-                  boxSize="150px"
-                  borderRadius="full"
-                  objectFit="cover"
-                  border="4px solid"
-                  borderColor="gray.100"
-                  opacity={formData.avatarRemoved ? 0.5 : 1}
-                />
-                {isEditMode && !formData.avatarRemoved && (
+                <Box
+                  position="relative"
+                  onClick={handleAvatarClick}
+                  cursor={isEditMode ? 'pointer' : 'default'}
+                  _hover={isEditMode ? { opacity: 0.8 } : {}}
+                  transition="opacity 0.2s"
+                >
+                  <Image
+                    src={
+                      formData.avatarRemoved
+                        ? 'https://via.placeholder.com/150?text=No+Avatar'
+                        : avatarPreview ||
+                          user.avatarUrl ||
+                          'https://via.placeholder.com/150?text=' + user.fullName.charAt(0)
+                    }
+                    alt={user.fullName}
+                    boxSize="150px"
+                    borderRadius="full"
+                    objectFit="cover"
+                    border="4px solid"
+                    borderColor="gray.100"
+                    opacity={formData.avatarRemoved ? 0.5 : 1}
+                  />
+                  {isEditMode && (
+                    <Box
+                      position="absolute"
+                      bottom="0"
+                      left="0"
+                      right="0"
+                      bg="blackAlpha.600"
+                      color="white"
+                      py={2}
+                      textAlign="center"
+                      borderBottomRadius="full"
+                      fontSize="sm"
+                      fontWeight="medium"
+                    >
+                      <Flex align="center" justify="center" gap={1}>
+                        <FiUpload size={14} />
+                        <Text fontSize="xs">Upload</Text>
+                      </Flex>
+                    </Box>
+                  )}
+                </Box>
+                {isEditMode && !formData.avatarRemoved && (user.avatarUrl || avatarPreview) && (
                   <Box
                     as="button"
                     position="absolute"
@@ -167,6 +320,13 @@ export default function ProfilePage() {
                     <FiX size={20} />
                   </Box>
                 )}
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  onChange={handleAvatarChange}
+                  display="none"
+                />
               </Box>
 
               {/* User Info */}
@@ -225,8 +385,18 @@ export default function ProfilePage() {
                 <HStack gap={3} mt={2}>
                   {isEditMode ? (
                     <>
-                      <Button variantType="primary" label="Save Changes" onClick={handleSave} />
-                      <Button variantType="secondary" label="Cancel" onClick={handleCancelEdit} />
+                      <Button
+                        variantType="primary"
+                        label={isUpdating ? 'Saving...' : 'Save Changes'}
+                        onClick={handleSave}
+                        disabled={isUpdating}
+                      />
+                      <Button
+                        variantType="secondary"
+                        label="Cancel"
+                        onClick={handleCancelEdit}
+                        disabled={isUpdating}
+                      />
                     </>
                   ) : (
                     <>
@@ -263,21 +433,9 @@ export default function ProfilePage() {
                   <Text fontSize="sm" color="gray.500" fontWeight="medium">
                     Email Address
                   </Text>
-                  <Input
-                    value={formData.email}
-                    onChange={e => handleInputChange('email', e.target.value)}
-                    type="email"
-                    placeholder="Enter your email"
-                    size="md"
-                    disabled={!isEditMode}
-                    _disabled={{
-                      opacity: 1,
-                      cursor: 'default',
-                      bg: 'transparent',
-                      border: 'none',
-                      px: 0,
-                    }}
-                  />
+                  <Text fontSize="md" fontWeight="medium" color="gray.700">
+                    {user.email}
+                  </Text>
                 </Stack>
               </HStack>
 

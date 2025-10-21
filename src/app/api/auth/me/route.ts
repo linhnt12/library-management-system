@@ -28,38 +28,43 @@ export const PUT = requireAuth(async request => {
 
     // Extract form fields
     const fullName = formData.get('fullName')?.toString();
-    const email = formData.get('email')?.toString();
     const phoneNumber = formData.get('phoneNumber')?.toString() || undefined;
     const address = formData.get('address')?.toString() || undefined;
     const avatar = formData.get('avatar') as File | null;
+    const removeAvatar = formData.get('removeAvatar') === 'true';
 
     // Validate required fields
-    if (!fullName || !email) {
-      throw new ValidationError('Full name and email are required');
+    if (!fullName) {
+      throw new ValidationError('Full name is required');
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new ValidationError('Invalid email format');
-    }
-
-    // Prepare update data
+    // Prepare update data (email is not editable)
     const updateData: {
       fullName: string;
-      email: string;
       phoneNumber: string | null;
       address: string | null;
-      avatarUrl?: string;
+      avatarUrl?: string | null;
     } = {
       fullName,
-      email,
       phoneNumber: phoneNumber || null,
       address: address || null,
     };
 
+    // Handle avatar removal
+    if (removeAvatar) {
+      // Delete old avatar if exists
+      if (request.user.avatarUrl) {
+        const oldAvatarPath = request.user.avatarUrl.replace('/api/files/', '');
+        await FileUtils.deleteFileFromSystem(oldAvatarPath, {
+          force: true,
+          checkExists: true,
+        });
+      }
+      // Set avatarUrl to null to remove from database
+      updateData.avatarUrl = null;
+    }
     // Handle avatar upload (optional)
-    if (avatar && avatar.size > 0) {
+    else if (avatar && avatar.size > 0) {
       // Validate file is an image
       const allowedImageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
       const fileExtension = path.extname(avatar.name).toLowerCase();
@@ -72,12 +77,12 @@ export const PUT = requireAuth(async request => {
 
       // Check file size (max 5MB for avatars)
       const maxAvatarSize = 5 * 1024 * 1024; // 5MB
-      const sizeCheckResult = await FileUtils.checkFileSize(avatar, {
-        maxSizeInBytes: maxAvatarSize,
-      });
-
-      if (!sizeCheckResult.success) {
-        throw new ValidationError(sizeCheckResult.message);
+      if (avatar.size > maxAvatarSize) {
+        const sizeInMB = (avatar.size / (1024 * 1024)).toFixed(2);
+        const maxSizeInMB = (maxAvatarSize / (1024 * 1024)).toFixed(2);
+        throw new ValidationError(
+          `File ${avatar.name} is too large. Size: ${sizeInMB}MB, Max allowed: ${maxSizeInMB}MB`
+        );
       }
 
       // Generate unique filename

@@ -52,6 +52,15 @@ export interface UpdateUserData {
   status?: UserStatus;
 }
 
+// Update current user profile data (for self-update)
+export interface UpdateMeData {
+  fullName: string;
+  phoneNumber?: string;
+  address?: string;
+  avatar?: File | null;
+  removeAvatar?: boolean;
+}
+
 // User query filters
 export interface UserQueryFilters {
   search?: string;
