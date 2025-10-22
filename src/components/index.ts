@@ -1,4 +1,5 @@
 export * from './book-items';
+export * from './book-reviews';
 export * from './books';
 export * from './buttons';
 export * from './forms';

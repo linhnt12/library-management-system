@@ -4,3 +4,4 @@ export * from './author.api';
 export * from './book-item.api';
 export * from './book.api';
 export * from './category.api';
+export * from './review.api';

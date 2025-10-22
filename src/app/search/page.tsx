@@ -66,7 +66,7 @@ function SearchContent() {
       author: book.author.fullName,
       year: book.publishYear || 0,
       edition: book.edition || undefined,
-      rating: 4.5,
+      rating: book.averageRating || 0,
       categories: book.categories && book.categories.length > 0 ? book.categories : ['General'],
       coverImage: book.coverImageUrl || '',
       availability: {

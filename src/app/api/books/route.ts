@@ -158,6 +158,14 @@ export async function GET(request: NextRequest) {
               bookItems: true,
             },
           },
+          reviews: {
+            where: {
+              isDeleted: false,
+            },
+            select: {
+              rating: true,
+            },
+          },
         },
       }),
       prisma.book.count({ where }),
@@ -168,16 +176,28 @@ export async function GET(request: NextRequest) {
         bookCategories?: { category: { name: string } }[];
         bookEditions?: { id: number; format: 'EBOOK' | 'AUDIO' }[];
         _count?: { bookItems: number };
+        reviews?: { rating: number }[];
       })[]
     ).map(b => {
       const ebookCount = b.bookEditions?.filter(e => e.format === 'EBOOK').length ?? 0;
       const audioCount = b.bookEditions?.filter(e => e.format === 'AUDIO').length ?? 0;
+
+      // Calculate rating from reviews
+      const reviews = b.reviews || [];
+      const averageRating =
+        reviews.length > 0
+          ? Math.round(
+              (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length) * 10
+            ) / 10
+          : 0;
+
       return {
         ...b,
         categories: b.bookCategories?.map(x => x.category.name) ?? [],
         bookItemsCount: b._count?.bookItems ?? 0,
         bookEbookCount: ebookCount,
         bookAudioCount: audioCount,
+        averageRating,
       };
     });
 
