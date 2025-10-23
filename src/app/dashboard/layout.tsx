@@ -2,17 +2,12 @@
 
 import { Layout, Sidebar } from '@/components';
 import { ROUTES } from '@/constants';
-import { useMe } from '@/lib/hooks';
 import { ReactNode } from 'react';
-import { LuBook, LuTrendingUp, LuUsers } from 'react-icons/lu';
+import { LuBook, LuTags, LuUserPen } from 'react-icons/lu';
 import { SlGrid } from 'react-icons/sl';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const { data: user } = useMe();
-
-  // TODO: This will be updated later
-  // Base sidebar items for all users
-  const baseSidebarItems = [
+  const sidebarItems = [
     { label: 'Dashboard', href: ROUTES.DASHBOARD.HOME, icon: SlGrid },
     {
       label: 'Books',
@@ -27,20 +22,26 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         { label: 'Add Book Edition', href: ROUTES.DASHBOARD.BOOKS_EDITIONS_ADD },
       ],
     },
+    {
+      label: 'Authors',
+      href: '',
+      icon: LuUserPen,
+      children: [
+        { label: 'All Authors', href: ROUTES.DASHBOARD.AUTHORS },
+        { label: 'Add Author', href: ROUTES.DASHBOARD.AUTHORS_ADD },
+      ],
+    },
+    {
+      label: 'Categories',
+      href: '',
+      icon: LuTags,
+      children: [
+        { label: 'All Categories', href: ROUTES.DASHBOARD.CATEGORIES },
+        { label: 'Add Category', href: ROUTES.DASHBOARD.CATEGORIES_ADD },
+      ],
+    },
     { label: 'Borrowers', href: ROUTES.DASHBOARD.BORROWERS },
   ];
-
-  //  TODO: This will be updated later
-  // Admin-only sidebar items
-  const adminSidebarItems = [
-    { label: 'Users', href: ROUTES.DASHBOARD.USERS, icon: LuUsers },
-    { label: 'Reports', href: ROUTES.DASHBOARD.REPORTS, icon: LuTrendingUp },
-  ];
-
-  // TODO: This will be updated later
-  // Combine sidebar items based on user role
-  const sidebarItems =
-    user?.role === 'ADMIN' ? [...baseSidebarItems, ...adminSidebarItems] : baseSidebarItems;
 
   return <Layout sidebar={<Sidebar items={sidebarItems} />}>{children}</Layout>;
 }

@@ -1,3 +1,4 @@
+export * from './authors';
 export * from './book-items';
 export * from './book-reviews';
 export * from './books';

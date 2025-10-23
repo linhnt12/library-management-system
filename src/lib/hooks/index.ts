@@ -1,3 +1,4 @@
+export * from './useAuthorForm';
 export * from './useAuthors';
 export * from './useBookFilters';
 export * from './useBookForm';

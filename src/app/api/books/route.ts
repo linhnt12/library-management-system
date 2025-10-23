@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
     const categoryIdsParam = searchParams.getAll('categoryIds');
     const publishYearFromParam = searchParams.get('publishYearFrom');
     const publishYearToParam = searchParams.get('publishYearTo');
-    const statusParam = searchParams.get('status');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
     const isDeletedParam = searchParams.get('isDeleted');
@@ -80,13 +79,6 @@ export async function GET(request: NextRequest) {
         ...existingPublishYear,
         lte: publishYearTo,
       };
-    }
-
-    // TODO: This will be update later
-    // Handle status filter
-    if (statusParam) {
-      // This is a placeholder - adjust based on your actual status field
-      // where.status = statusParam;
     }
 
     const skip = (page - 1) * limit;
