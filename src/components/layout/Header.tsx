@@ -4,7 +4,7 @@ import { Breadcrumbs, IconButton } from '@/components';
 import { pageHeadings } from '@/constants';
 import { USER_ROLES } from '@/constants/user';
 import { useMe } from '@/lib/hooks';
-import { Box, Flex, HStack, Heading, Image, Stack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, HStack, Image, Stack, Text } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 import { FiBell } from 'react-icons/fi';
 

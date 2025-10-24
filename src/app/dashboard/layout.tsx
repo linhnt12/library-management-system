@@ -42,5 +42,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const sidebarItems =
     user?.role === 'ADMIN' ? [...baseSidebarItems, ...adminSidebarItems] : baseSidebarItems;
 
-  return <Layout sidebar={<Sidebar items={sidebarItems} />}>{children}</Layout>;
+  return (
+    <Layout sidebar={<Sidebar items={sidebarItems} showProfileInSettings={true} />}>
+      {children}
+    </Layout>
+  );
 }

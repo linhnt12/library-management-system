@@ -9,4 +9,5 @@ export * from './useDialog';
 export * from './useFormSubmission';
 export * from './useLoginForm';
 export * from './useMe';
+export * from './useProfileForm';
 export * from './useRegisterForm';
