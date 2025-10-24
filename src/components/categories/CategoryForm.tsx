@@ -10,20 +10,20 @@ import {
   FormSelect,
   FormTextarea,
 } from '@/components';
-import { useAuthorForm } from '@/lib/hooks';
-import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
+import { useCategoryForm } from '@/lib/hooks';
+import { Box, Stack } from '@chakra-ui/react';
 
-interface AuthorFormProps {
-  authorId?: number;
+interface CategoryFormProps {
+  categoryId?: number;
   submitLabel?: string;
   cancelLabel?: string;
 }
 
-export function AuthorForm({
-  authorId,
-  submitLabel = 'Save Author',
+export function CategoryForm({
+  categoryId,
+  submitLabel = 'Save Category',
   cancelLabel = 'Cancel',
-}: AuthorFormProps) {
+}: CategoryFormProps) {
   const {
     form,
     errors,
@@ -34,7 +34,7 @@ export function AuthorForm({
     dialog,
     handleConfirm,
     handleDialogCancel,
-  } = useAuthorForm(authorId);
+  } = useCategoryForm(categoryId);
 
   return (
     <Box
@@ -50,39 +50,14 @@ export function AuthorForm({
       <Stack gap={3} flex="1">
         {/* Section 1: Basic Information */}
         <FormSection title="Basic Information">
-          {/* Full Name */}
-          <FormField label="Full Name" error={errors.fullName}>
+          {/* Name */}
+          <FormField label="Category Name" error={errors.name}>
             <FormInput
-              value={form.fullName}
-              onChange={e => setField('fullName', e.target.value)}
-              placeholder="Enter full name"
+              value={form.name}
+              onChange={e => setField('name', e.target.value)}
+              placeholder="Enter category name"
             />
           </FormField>
-
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
-            <GridItem>
-              {/* Birth Date */}
-              <FormField label="Birth Date" error={errors.birthDate}>
-                <FormInput
-                  type="date"
-                  value={form.birthDate}
-                  onChange={e => setField('birthDate', e.target.value)}
-                  placeholder="Select birth date"
-                />
-              </FormField>
-            </GridItem>
-
-            <GridItem>
-              {/* Nationality */}
-              <FormField label="Nationality" error={errors.nationality}>
-                <FormInput
-                  value={form.nationality}
-                  onChange={e => setField('nationality', e.target.value)}
-                  placeholder="Enter nationality"
-                />
-              </FormField>
-            </GridItem>
-          </Grid>
 
           {/* Status */}
           <FormField label="Status">
@@ -103,12 +78,12 @@ export function AuthorForm({
 
         {/* Section 2: Additional Information */}
         <FormSection title="Additional Information">
-          {/* Bio */}
-          <FormField label="Bio" error={errors.bio}>
+          {/* Description */}
+          <FormField label="Description" error={errors.description}>
             <FormTextarea
-              value={form.bio}
-              onChange={e => setField('bio', e.target.value)}
-              placeholder="Enter author biography"
+              value={form.description}
+              onChange={e => setField('description', e.target.value)}
+              placeholder="Enter category description"
               rows={4}
             />
           </FormField>

@@ -6,6 +6,7 @@ export * from './useBookItemForm';
 export * from './useBookItems';
 export * from './useBooks';
 export * from './useCategories';
+export * from './useCategoryForm';
 export * from './useDialog';
 export * from './useFormSubmission';
 export * from './useLoginForm';
