@@ -78,7 +78,7 @@ export function Sidebar({ items = [] }: SidebarProps) {
         const isExpanded = expandedItems.includes(item.label);
 
         return (
-          <VStack key={item.href} gap={0} align="stretch">
+          <VStack key={item.label} gap={0} align="stretch">
             {/* Main item */}
             <Button
               href={hasChildren || !item.href ? undefined : item.href}
@@ -93,9 +93,9 @@ export function Sidebar({ items = [] }: SidebarProps) {
             {/* Submenu items */}
             {hasChildren && isExpanded && item.children && (
               <VStack gap={1} align="stretch" pl={8} mt={1}>
-                {item.children.map(child => (
+                {item.children.map((child, index) => (
                   <Button
-                    key={child.href}
+                    key={`${item.label}-${child.label}-${index}`}
                     href={child.href}
                     label={child.label}
                     isActive={pathname === child.href}

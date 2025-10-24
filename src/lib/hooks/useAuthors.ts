@@ -7,7 +7,7 @@ export function useAuthors() {
   return useQuery({
     queryKey: ['authors'],
     queryFn: async (): Promise<Author[]> => {
-      return AuthorApi.getAuthors();
+      return AuthorApi.getAllAuthors();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

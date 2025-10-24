@@ -1,15 +1,17 @@
 'use client';
 
 import {
+  Avatar,
   BookItemDetailColumns,
   BookItemsTable,
+  BookReview,
   Button,
   IconButton,
   Table,
   Tag,
 } from '@/components';
 import { ROUTES } from '@/constants';
-import { useMe } from '@/lib/hooks';
+import { useMe, useReviewStats } from '@/lib/hooks';
 import { BookDetail as BookDetailType } from '@/types';
 import { Badge, Box, Flex, Grid, Heading, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
@@ -157,28 +159,6 @@ const borrowingHistoryColumns = [
   },
 ];
 
-// Simple Avatar component
-const Avatar = ({
-  size = 'md',
-  src,
-  ...props
-}: {
-  size?: string;
-  src?: string;
-  [key: string]: unknown;
-}) => (
-  <Box
-    width={size === 'sm' ? '32px' : '40px'}
-    height={size === 'sm' ? '32px' : '40px'}
-    borderRadius="full"
-    bg="gray.200"
-    backgroundImage={src ? `url(${src})` : undefined}
-    backgroundSize="cover"
-    backgroundPosition="center"
-    {...props}
-  />
-);
-
 // Reusable components for book details
 const MetadataRow = ({ label, value }: { label: string; value: string | number }) => (
   <HStack align="start">
@@ -220,6 +200,9 @@ export function BookDetail({
   // Get current user info
   const { data: user } = useMe();
 
+  // Get review stats for the book
+  const { data: reviewStats } = useReviewStats(book.id);
+
   // Determine what to show based on user role
   const isAdminOrLibrarian = user?.role === 'ADMIN' || user?.role === 'LIBRARIAN';
   const isReader = user?.role === 'READER' || !user;
@@ -228,7 +211,13 @@ export function BookDetail({
   const bookItemColumns = BookItemDetailColumns();
 
   const bookStats = [
-    { label: 'Rating', value: '4.9/5' }, // TODO: Replace with real data
+    {
+      label: 'Rating',
+      value:
+        reviewStats?.totalReviews && reviewStats.totalReviews > 0
+          ? `${reviewStats.averageRating.toFixed(1)} / 5`
+          : 'No ratings yet',
+    },
     { label: 'Total Pages', value: book?.pageCount ? `${book.pageCount} pages` : 'N/A' },
     { label: 'Price', value: book?.price ? `$${book.price}` : 'N/A' },
   ];
@@ -401,6 +390,9 @@ export function BookDetail({
               </Box>
             </Box>
           )}
+
+          {/* Book Reviews */}
+          <BookReview bookId={book.id} isReader={isReader} user={user} />
         </Box>
 
         {/* Right Column - Analytics and Related Books */}

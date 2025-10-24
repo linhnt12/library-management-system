@@ -8,7 +8,7 @@ export function useCategories() {
   return useQuery({
     queryKey: ['categories'],
     queryFn: async (): Promise<Category[]> => {
-      return CategoryApi.getCategories();
+      return CategoryApi.getAllCategories();
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

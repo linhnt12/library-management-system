@@ -26,6 +26,7 @@ export interface BookWithAuthor extends Book {
   bookItemsCount?: number;
   bookEbookCount?: number;
   bookAudioCount?: number;
+  averageRating?: number;
 }
 
 export interface BookDetail extends BookWithAuthor {

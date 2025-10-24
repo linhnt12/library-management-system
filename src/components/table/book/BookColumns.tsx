@@ -1,6 +1,6 @@
 'use client';
 
-import { IconButton, Tag } from '@/components';
+import { IconButton, StatusCell } from '@/components';
 import { ROUTES } from '@/constants';
 import { useAuthors } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
@@ -14,30 +14,6 @@ function AuthorCell({ authorId }: { authorId: number }) {
   const author = authors?.find(a => a.id === authorId);
 
   return <Text>{author?.fullName || `Author ID: ${authorId}`}</Text>;
-}
-
-// Component to render status with click handler
-function StatusCell({
-  book,
-  onChangeStatus,
-}: {
-  book: Book;
-  onChangeStatus: (book: Book) => void;
-}) {
-  const handleStatusClick = () => {
-    onChangeStatus(book);
-  };
-
-  return (
-    <Tag
-      variantType={book.isDeleted ? 'inactive' : 'active'}
-      onClick={handleStatusClick}
-      cursor="pointer"
-      _hover={{ opacity: 0.8 }}
-    >
-      {book.isDeleted ? 'Inactive' : 'Active'}
-    </Tag>
-  );
 }
 
 // Component to render action buttons
@@ -147,7 +123,7 @@ export const BookColumns = (onChangeStatus?: (book: Book) => void) => [
     sortable: true,
     width: '100px',
     render: (book: Book) => (
-      <StatusCell book={book} onChangeStatus={onChangeStatus || (() => {})} />
+      <StatusCell item={book} onChangeStatus={onChangeStatus || (() => {})} />
     ),
   },
   {

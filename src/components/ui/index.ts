@@ -1,3 +1,4 @@
+export * from './Avatar';
 export * from './ColorMode';
 export * from './Dialog';
 export * from './Provider';
