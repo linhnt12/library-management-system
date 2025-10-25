@@ -51,3 +51,28 @@ export const DIGITAL_LICENSE_MODEL_OPTIONS = [
   { label: 'Owned', value: 'OWNED' },
   { label: 'Subscription', value: 'SUBSCRIPTION' },
 ];
+
+// Book Edition Format options
+export const EDITION_FORMAT_OPTIONS = [
+  { label: 'E-Book', value: 'EBOOK' },
+  { label: 'Audio Book', value: 'AUDIO' },
+];
+
+// Book Edition File Format options
+export const FILE_FORMAT_OPTIONS = [
+  { label: 'EPUB', value: 'EPUB' },
+  { label: 'PDF', value: 'PDF' },
+  { label: 'MOBI', value: 'MOBI' },
+  { label: 'MP3 Audio', value: 'AUDIO_MP3' },
+  { label: 'M4B Audio', value: 'AUDIO_M4B' },
+  { label: 'Other', value: 'OTHER' },
+];
+
+// DRM Type options
+export const DRM_TYPE_OPTIONS = [
+  { label: 'None', value: 'NONE' },
+  { label: 'Watermark', value: 'WATERMARK' },
+  { label: 'Adobe DRM', value: 'ADOBE_DRM' },
+  { label: 'LCP (Licensed Content Protection)', value: 'LCP' },
+  { label: 'Custom', value: 'CUSTOM' },
+];

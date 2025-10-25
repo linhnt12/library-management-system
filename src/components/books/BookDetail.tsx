@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  BookEditionsTable,
   BookItemDetailColumns,
   BookItemsTable,
   Button,
@@ -375,6 +376,25 @@ export function BookDetail({
 
           {/* Digital Licenses */}
           {isAdminOrLibrarian && <DigitalLicensesTable bookId={book.id} />}
+
+          {/* Book Editions */}
+          {isAdminOrLibrarian && (
+            <Box borderRadius="lg" border="1px solid #e5e7eb !important" mt={6} p={6}>
+              <BookEditionsTable
+                bookId={book.id}
+                searchPlaceholder="Search by ISBN, ID, or status..."
+                showFilter={false}
+                showAddButton={!book.isDeleted}
+                addButtonHref={`${ROUTES.DASHBOARD.BOOKS_EDITIONS_ADD}?bookId=${book.id}`}
+                addButtonLabel="Add Edition"
+                showHeader={true}
+                headerTitle="Book Editions"
+                maxHeight="400px"
+                showBookName={false}
+                showId={false}
+              />
+            </Box>
+          )}
 
           {/* Borrowing History */}
           {isAdminOrLibrarian && (

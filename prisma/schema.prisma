@@ -319,11 +319,11 @@ model BookEdition {
   bookId         Int
   format         EditionFormat
   isbn13         String?
-  fileFormat     FileFormat?
+  fileFormat     FileFormat    @default(OTHER)
   fileSizeBytes  BigInt?
   checksumSha256 String?
-  storageUrl     String?
-  drmType        DRMType?
+  storageUrl     String
+  drmType        DRMType       @default(NONE)
   status         String?       @default("ACTIVE")
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt

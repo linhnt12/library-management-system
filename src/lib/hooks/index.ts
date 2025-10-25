@@ -1,4 +1,5 @@
 export * from './useAuthors';
+export * from './useBookEditionForm';
 export * from './useBookFilters';
 export * from './useBookForm';
 export * from './useBookItemForm';

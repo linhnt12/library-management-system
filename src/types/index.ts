@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './author';
 export * from './book';
+export * from './book-edition';
 export * from './book-item';
 export * from './category';
 export * from './digital-license';
