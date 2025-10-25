@@ -10,6 +10,9 @@ export const DEFAULT_UPLOAD_DIR = 'uploads';
 // Default maximum file size (10MB)
 export const DEFAULT_MAX_SIZE = 10 * 1024 * 1024;
 
+// Maximum file size for ebooks and audiobooks (100MB)
+export const MAX_EBOOK_SIZE = 100 * 1024 * 1024;
+
 // Default allowed file extensions
 export const DEFAULT_ALLOWED_EXTENSIONS = [
   '.jpg',
@@ -20,10 +23,20 @@ export const DEFAULT_ALLOWED_EXTENSIONS = [
   '.doc',
   '.docx',
   '.txt',
+  '.epub',
+  '.mobi',
+  '.mp3',
+  '.m4b',
+  '.m4a',
 ];
 
 // Default allowed paths for serving files
-export const DEFAULT_ALLOWED_SERVE_PATHS = ['uploads'];
+export const DEFAULT_ALLOWED_SERVE_PATHS = [
+  'uploads',
+  'uploads/avatars',
+  'uploads/ebooks',
+  'uploads/audiobooks',
+];
 
 // Default cache control header
 export const DEFAULT_CACHE_CONTROL = 'public, max-age=3600';
@@ -70,6 +83,13 @@ export const MIME_TYPES: MimeTypeMap = {
   '.wav': 'audio/wav',
   '.ogg': 'audio/ogg',
   '.m4a': 'audio/mp4',
+  '.m4b': 'audio/mp4',
+
+  // Ebooks
+  '.epub': 'application/epub+zip',
+  '.mobi': 'application/x-mobipocket-ebook',
+  '.azw': 'application/vnd.amazon.ebook',
+  '.azw3': 'application/vnd.amazon.ebook',
 
   // Video
   '.mp4': 'video/mp4',
