@@ -1,6 +1,7 @@
 export * from './book-items';
 export * from './books';
 export * from './buttons';
+export * from './digital-licenses';
 export * from './forms';
 export * from './layout';
 export * from './providers';

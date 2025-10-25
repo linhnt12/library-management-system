@@ -20,15 +20,15 @@ model User {
   email       String     @unique
   password    String
   phoneNumber String?
-  address     String? @db.Text
+  address     String?    @db.Text
   avatarUrl   String?
   role        Role
   status      UserStatus
 
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  inactiveAt  DateTime?
-  isDeleted   Boolean    @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  inactiveAt DateTime?
+  isDeleted  Boolean   @default(false)
 
   notifications     Notification[]
   reviews           Review[]
@@ -92,7 +92,7 @@ model Book {
   pageCount     Int?
   price         Int?
   edition       String?
-  description   String? @db.Text
+  description   String?  @db.Text
   coverImageUrl String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -314,19 +314,6 @@ model Payment {
 // =========================
 // DIGITAL PROVIDERS / EBOOKS
 // =========================
-model DigitalProvider {
-  id        Int      @id @default(autoincrement())
-  code      String   @unique
-  name      String
-  contact   String?
-  meta      Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false)
-
-  digitalLicenses DigitalLicense[]
-}
-
 model BookEdition {
   id             Int           @id @default(autoincrement())
   bookId         Int
@@ -348,23 +335,18 @@ model BookEdition {
 }
 
 model DigitalLicense {
-  id              Int                 @id @default(autoincrement())
-  bookId          Int
-  providerId      Int
-  licenseModel    DigitalLicenseModel
-  totalCopies     Int
-  availableCopies Int
-  expiresAt       DateTime?
-  notes           String?
-  createdAt       DateTime            @default(now())
-  updatedAt       DateTime            @updatedAt
-  isDeleted       Boolean             @default(false)
+  id           Int                 @id @default(autoincrement())
+  bookId       Int
+  licenseModel DigitalLicenseModel
+  totalCopies  Int?
+  notes        String?
 
-  book         Book            @relation(fields: [bookId], references: [id])
-  provider     DigitalProvider @relation(fields: [providerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  book         Book          @relation(fields: [bookId], references: [id])
   borrowEbooks BorrowEbook[]
-
-  @@unique([bookId, providerId])
 }
 
 model BorrowEbook {

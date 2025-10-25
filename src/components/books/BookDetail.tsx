@@ -4,6 +4,7 @@ import {
   BookItemDetailColumns,
   BookItemsTable,
   Button,
+  DigitalLicensesTable,
   IconButton,
   Table,
   Tag,
@@ -371,6 +372,9 @@ export function BookDetail({
               maxHeight="400px"
             />
           </Box>
+
+          {/* Digital Licenses */}
+          {isAdminOrLibrarian && <DigitalLicensesTable bookId={book.id} />}
 
           {/* Borrowing History */}
           {isAdminOrLibrarian && (

@@ -3,6 +3,7 @@ export * from './author';
 export * from './book';
 export * from './book-item';
 export * from './category';
+export * from './digital-license';
 export * from './file';
 export * from './table';
 export * from './user';
