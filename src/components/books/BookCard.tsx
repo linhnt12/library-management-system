@@ -26,6 +26,7 @@ interface BookCardProps {
     borrower?: string;
     isFavorite: boolean;
   };
+  onToggleFavorite?: (bookId: string) => void;
 }
 
 function AvailabilityItem({ isAvailable, label }: { isAvailable: boolean; label: string }) {
@@ -41,11 +42,17 @@ function AvailabilityItem({ isAvailable, label }: { isAvailable: boolean; label:
   );
 }
 
-export const BookCard = ({ book }: BookCardProps) => {
+export const BookCard = ({ book, onToggleFavorite }: BookCardProps) => {
   const router = useRouter();
 
   const handlePreviewClick = () => {
     router.push(`${ROUTES.BOOK_DETAIL.replace(':id', book.id)}`);
+  };
+
+  const handleFavoriteClick = () => {
+    if (onToggleFavorite) {
+      onToggleFavorite(book.id);
+    }
   };
 
   return (
@@ -143,6 +150,8 @@ export const BookCard = ({ book }: BookCardProps) => {
             p="2"
             color={book.isFavorite ? 'red.500' : 'gray.400'}
             _hover={{ bg: 'gray.100' }}
+            onClick={handleFavoriteClick}
+            disabled={!onToggleFavorite}
           >
             <LuHeart size="20" fill={book.isFavorite ? 'currentColor' : 'none'} />
           </ChakraButton>

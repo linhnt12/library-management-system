@@ -44,6 +44,7 @@ export const ROUTES = {
   HOME: '/',
   SEARCH: '/search',
   BOOK_DETAIL: '/books/:id',
+  FAVORITE: '/favorite',
   MY_SHELF: '/my-shelf',
   PROFILE: '/profile',
   SETTINGS: '/settings',

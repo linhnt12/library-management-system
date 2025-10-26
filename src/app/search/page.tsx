@@ -1,8 +1,17 @@
 'use client';
 
-import { BookCard, BookFilterDialog, Button, FormSelect, PaginationControls } from '@/components';
+import { FavoriteBookApi } from '@/api';
+import {
+  BookCard,
+  BookFilterDialog,
+  Button,
+  FormSelect,
+  PaginationControls,
+  toaster,
+} from '@/components';
 import { BOOK_SORT_OPTIONS } from '@/constants';
 import { useBookFilters, useBooks } from '@/lib/hooks';
+import { FavoriteBooksListPayload } from '@/types';
 import { Box, Stack, Text } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
@@ -15,6 +24,7 @@ function SearchContent() {
   const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || 'newest');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
+  const [favoriteBooks, setFavoriteBooks] = useState<FavoriteBooksListPayload | null>(null);
 
   const {
     isFilterDialogOpen,
@@ -56,8 +66,26 @@ function SearchContent() {
     isDeleted: false,
   });
 
+  // Fetch user's favorite books
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const favorites = await FavoriteBookApi.getFavoriteBooks({ limit: 1000 });
+        setFavoriteBooks(favorites);
+      } catch (err) {
+        // Silently fail - user might not be logged in or have no favorites
+        console.log('Could not fetch favorites:', err);
+      }
+    };
+
+    fetchFavorites();
+  }, []);
+
   const books = useMemo(() => {
     if (!data?.books) return [];
+
+    // Create a Set of favorite book IDs for quick lookup
+    const favoriteBookIds = new Set(favoriteBooks?.favoriteBooks?.map(fav => fav.bookId) || []);
 
     return data.books.map(book => ({
       id: book.id.toString(),
@@ -74,9 +102,9 @@ function SearchContent() {
         eBook: (book.bookEbookCount ?? 0) > 0,
         audioBook: (book.bookAudioCount ?? 0) > 0,
       },
-      isFavorite: false,
+      isFavorite: favoriteBookIds.has(book.id),
     }));
-  }, [data?.books]);
+  }, [data?.books, favoriteBooks]);
 
   useEffect(() => {
     setPage(1);
@@ -100,6 +128,30 @@ function SearchContent() {
   const handleClearFilter = () => {
     setPage(1);
     clearFilters();
+  };
+
+  // Handle toggle favorite
+  const handleToggleFavorite = async (bookId: string) => {
+    try {
+      await FavoriteBookApi.createFavoriteBook({ bookId: Number(bookId) });
+
+      // Refetch favorites to update the UI
+      const favorites = await FavoriteBookApi.getFavoriteBooks({ limit: 1000 });
+      setFavoriteBooks(favorites);
+
+      toaster.create({
+        title: 'Success',
+        description: 'Book added to favorites',
+        type: 'success',
+      });
+    } catch (err) {
+      console.error('Error adding favorite:', err);
+      toaster.create({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to add book to favorites',
+        type: 'error',
+      });
+    }
   };
 
   return (
@@ -141,7 +193,7 @@ function SearchContent() {
 
       <Stack gap={6} mt={4}>
         {books.map(book => (
-          <BookCard key={book.id} book={book} />
+          <BookCard key={book.id} book={book} onToggleFavorite={handleToggleFavorite} />
         ))}
       </Stack>
 

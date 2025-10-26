@@ -1,7 +1,7 @@
 'use client';
 
 import { ROUTES } from '@/constants';
-import { IoHomeOutline, IoSearchOutline } from 'react-icons/io5';
+import { IoHeartOutline, IoHomeOutline, IoSearchOutline } from 'react-icons/io5';
 import { RiBookShelfLine } from 'react-icons/ri';
 import { ConditionalLayout } from './ConditionalLayout';
 
@@ -21,6 +21,11 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
       label: 'Search',
       href: ROUTES.SEARCH,
       icon: IoSearchOutline,
+    },
+    {
+      label: 'Favorites',
+      href: ROUTES.FAVORITE,
+      icon: IoHeartOutline,
     },
     {
       label: 'My Shelf',
