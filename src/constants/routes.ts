@@ -13,6 +13,7 @@ export const ROUTES = {
     HOME: '/dashboard',
 
     // Books routes
+    PROFILE: '/dashboard/profile',
     BOOKS: '/dashboard/books',
     BOOKS_ADD: '/dashboard/books/add',
     BOOKS_EDIT: '/dashboard/books/edit',

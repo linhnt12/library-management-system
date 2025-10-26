@@ -43,5 +43,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     { label: 'Borrowers', href: ROUTES.DASHBOARD.BORROWERS },
   ];
 
-  return <Layout sidebar={<Sidebar items={sidebarItems} />}>{children}</Layout>;
+  return (
+    <Layout sidebar={<Sidebar items={sidebarItems} showProfileInSettings={true} />}>
+      {children}
+    </Layout>
+  );
 }

@@ -78,8 +78,7 @@ export function UserHeader() {
   };
 
   const handleProfile = () => {
-    // TODO: Navigate to profile page
-    console.log('Navigate to profile');
+    router.push(ROUTES.PROFILE);
   };
 
   const handleChangePassword = () => {
