@@ -170,7 +170,7 @@ export const PATCH = requireAdmin(async (request: NextRequest, context?: unknown
       // Clear file metadata
       updateData.fileSizeBytes = null;
       updateData.checksumSha256 = null;
-      updateData.storageUrl = null;
+      updateData.storageUrl = '';
     }
     // Handle file upload (new file or replacement)
     else if (file && file.size > 0) {
