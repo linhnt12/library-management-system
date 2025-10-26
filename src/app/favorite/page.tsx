@@ -104,8 +104,8 @@ export default function FavoritePage() {
         author: favorite.book.author.fullName,
         year: favorite.book.publishYear || 0,
         edition: favorite.book.edition || undefined,
-        rating: 4.5,
-        categories: ['General'],
+        rating: favorite.book.averageRating || 0,
+        categories: favorite.book.categories && favorite.book.categories.length > 0 ? favorite.book.categories : ['General'],
         coverImage: favorite.book.coverImageUrl || '',
         availability: {
           hardCopy: bookItemsCount > 0,
