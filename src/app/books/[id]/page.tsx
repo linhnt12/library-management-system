@@ -1,6 +1,6 @@
 'use client';
 
-import { BookApi } from '@/api';
+import { BookApi, FavoriteBookApi } from '@/api';
 import { BookDetail, toaster } from '@/components';
 import { BookDetail as BookDetailType } from '@/types';
 import { Box } from '@chakra-ui/react';
@@ -38,6 +38,25 @@ export default function PublicBookPage() {
     fetchBook();
   }, [bookId, router]);
 
+  const handleAddToFavorite = async () => {
+    try {
+      await FavoriteBookApi.createFavoriteBook({ bookId });
+
+      toaster.create({
+        title: 'Success',
+        description: 'Book added to favorites',
+        type: 'success',
+      });
+    } catch (err) {
+      console.error('Error adding favorite:', err);
+      toaster.create({
+        title: 'Error',
+        description: err instanceof Error ? err.message : 'Failed to add book to favorites',
+        type: 'error',
+      });
+    }
+  };
+
   if (!book) {
     return null;
   }
@@ -50,10 +69,7 @@ export default function PublicBookPage() {
           // TODO: Implement borrow functionality
           console.log('Borrow book:', book.id);
         }}
-        onAddToFavouriteClick={() => {
-          // TODO: Implement add to favourite functionality
-          console.log('Add to favourite:', book.id);
-        }}
+        onAddToFavouriteClick={handleAddToFavorite}
       />
     </Box>
   );
