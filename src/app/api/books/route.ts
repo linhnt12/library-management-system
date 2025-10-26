@@ -1,5 +1,6 @@
 import { ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
+import { FileUtils } from '@/lib/server-utils';
 import {
   handleRouteError,
   parseIntParam,
@@ -12,6 +13,7 @@ import { requireLibrarian } from '@/middleware/auth.middleware';
 import { Book, BookWithAuthor, BooksListPayload, CreateBookData } from '@/types/book';
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
+import path from 'path';
 
 // GET /api/books - Get books
 export async function GET(request: NextRequest) {
@@ -210,7 +212,54 @@ export async function GET(request: NextRequest) {
 // POST /api/books - Create book
 export const POST = requireLibrarian(async request => {
   try {
-    const body: CreateBookData = await request.json();
+    const contentType = request.headers.get('content-type');
+    let body: Partial<CreateBookData> = {};
+    let bookIdForCover = null;
+
+    // Check if it's multipart/form-data
+    if (contentType?.includes('multipart/form-data')) {
+      const formData = await request.formData();
+
+      // Extract form fields
+      const authorId = formData.get('authorId')?.toString();
+      const title = formData.get('title')?.toString();
+      const isbn = formData.get('isbn')?.toString();
+      const publishYear = formData.get('publishYear')?.toString();
+      const publisher = formData.get('publisher')?.toString();
+      const pageCount = formData.get('pageCount')?.toString();
+      const price = formData.get('price')?.toString();
+      const edition = formData.get('edition')?.toString();
+      const description = formData.get('description')?.toString();
+      const isDeleted = formData.get('isDeleted')?.toString();
+      const categories = formData.get('categories')?.toString();
+
+      // Build body object
+      body = {
+        authorId: authorId || '',
+        title: title || '',
+        isbn: isbn || null,
+        publishYear: publishYear || null,
+        publisher: publisher || null,
+        pageCount: pageCount || null,
+        price: price || null,
+        edition: edition || null,
+        description: description || null,
+        coverImageUrl: null,
+        isDeleted: isDeleted === 'true',
+        categories: categories ? JSON.parse(categories) : [],
+      };
+
+      // Handle cover image file upload - need to create book first to get ID
+      const coverImageFile = formData.get('coverImage') as File | null;
+      if (coverImageFile && coverImageFile.size > 0) {
+        // Will handle after book creation
+        bookIdForCover = coverImageFile;
+      }
+    } else {
+      // Handle JSON request
+      body = await request.json();
+    }
+
     const {
       authorId,
       title,
@@ -227,10 +276,10 @@ export const POST = requireLibrarian(async request => {
     } = body;
 
     // Validate required fields
-    const validationError = validateRequiredFields(body as unknown as Record<string, unknown>, [
-      'authorId',
-      'title',
-    ]);
+    const validationError = validateRequiredFields(
+      body as CreateBookData & Record<string, unknown>,
+      ['authorId', 'title']
+    );
     if (validationError) {
       throw new ValidationError(validationError);
     }
@@ -244,7 +293,7 @@ export const POST = requireLibrarian(async request => {
     // Prepare data
     const data: Prisma.BookUncheckedCreateInput = {
       authorId: authorIdNum,
-      title: sanitizeString(title),
+      title: sanitizeString(title || ''),
       isbn: isbn ? sanitizeString(isbn) : null,
       publishYear: publishYear ? Number(publishYear) : null,
       publisher: publisher ? sanitizeString(publisher) : null,
@@ -283,6 +332,63 @@ export const POST = requireLibrarian(async request => {
         updatedAt: true,
       },
     });
+
+    // Handle cover image file upload if exists
+    if (bookIdForCover && created) {
+      const coverImageFile = bookIdForCover as File;
+
+      // Validate file type
+      const allowedImageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+      const fileExtension = path.extname(coverImageFile.name).toLowerCase();
+
+      if (allowedImageExtensions.includes(fileExtension)) {
+        // Check file size (max 5MB)
+        const maxImageSize = 5 * 1024 * 1024;
+        if (coverImageFile.size <= maxImageSize) {
+          // Generate unique filename
+          const timestamp = Date.now();
+          const sanitizedFileName = `cover-${created.id}-${timestamp}${fileExtension}`;
+
+          // Convert File to Buffer
+          const arrayBuffer = await coverImageFile.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+
+          // Write file to uploads/book-covers directory
+          const uploadResult = await FileUtils.writeFileToSystem(buffer, sanitizedFileName, {
+            directory: 'uploads/book-covers',
+            overwrite: true,
+            createDirectory: true,
+          });
+
+          if (uploadResult.success) {
+            // Update book with cover image URL
+            const updatedBook = await prisma.book.update({
+              where: { id: created.id },
+              data: {
+                coverImageUrl: `/api/files/uploads/book-covers/${sanitizedFileName}`,
+              },
+              select: {
+                id: true,
+                authorId: true,
+                title: true,
+                isbn: true,
+                publishYear: true,
+                publisher: true,
+                pageCount: true,
+                price: true,
+                edition: true,
+                description: true,
+                coverImageUrl: true,
+                isDeleted: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            });
+            return successResponse<Book>(updatedBook, 'Book created successfully', 201);
+          }
+        }
+      }
+    }
 
     return successResponse<Book>(created, 'Book created successfully', 201);
   } catch (error) {

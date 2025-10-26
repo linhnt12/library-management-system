@@ -105,6 +105,82 @@ export class BookApi {
     return await handleJson<Book[]>(response);
   }
 
+  // Create book with file upload
+  static async createBookWithFile(data: CreateBookData, coverImageFile: File): Promise<Book> {
+    const token = getAccessToken();
+    const formData = new FormData();
+
+    // Add text fields
+    formData.append('authorId', String(data.authorId));
+    formData.append('title', data.title);
+    if (data.isbn) formData.append('isbn', data.isbn);
+    if (data.publishYear) formData.append('publishYear', String(data.publishYear));
+    if (data.publisher) formData.append('publisher', data.publisher);
+    if (data.pageCount) formData.append('pageCount', String(data.pageCount));
+    if (data.price) formData.append('price', String(data.price));
+    if (data.edition) formData.append('edition', data.edition);
+    if (data.description) formData.append('description', data.description);
+    formData.append('isDeleted', String(data.isDeleted || false));
+    if (data.categories && data.categories.length > 0) {
+      formData.append('categories', JSON.stringify(data.categories));
+    }
+
+    // Add file
+    formData.append('coverImage', coverImageFile);
+
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth('/api/books', {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    return await handleJson<Book>(response);
+  }
+
+  // Update book with file upload
+  static async updateBookWithFile(
+    id: number,
+    data: UpdateBookData,
+    coverImageFile: File
+  ): Promise<Book> {
+    const token = getAccessToken();
+    const formData = new FormData();
+
+    // Add text fields
+    if (data.authorId !== undefined) formData.append('authorId', String(data.authorId));
+    if (data.title) formData.append('title', data.title);
+    if (data.isbn !== undefined) formData.append('isbn', data.isbn || '');
+    if (data.publishYear !== undefined)
+      formData.append('publishYear', data.publishYear ? String(data.publishYear) : '');
+    if (data.publisher !== undefined) formData.append('publisher', data.publisher || '');
+    if (data.pageCount !== undefined)
+      formData.append('pageCount', data.pageCount ? String(data.pageCount) : '');
+    if (data.price !== undefined) formData.append('price', data.price ? String(data.price) : '');
+    if (data.edition !== undefined) formData.append('edition', data.edition || '');
+    if (data.description !== undefined) formData.append('description', data.description || '');
+    if (data.isDeleted !== undefined) formData.append('isDeleted', String(data.isDeleted));
+    if (data.categories) {
+      formData.append('categories', JSON.stringify(data.categories));
+    }
+
+    // Add file
+    formData.append('coverImage', coverImageFile);
+
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/books/${id}`, {
+      method: 'PUT',
+      headers,
+      body: formData,
+    });
+
+    return await handleJson<Book>(response);
+  }
+
   // Delete book (soft delete)
   static async deleteBook(id: number): Promise<void> {
     const token = getAccessToken();

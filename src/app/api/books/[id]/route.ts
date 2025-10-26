@@ -1,10 +1,12 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
+import { FileUtils } from '@/lib/server-utils';
 import { handleRouteError, parseIntParam, sanitizeString, successResponse } from '@/lib/utils';
 import { requireLibrarian } from '@/middleware/auth.middleware';
 import { Book, BookDetail, UpdateBookData } from '@/types/book';
 import { Prisma } from '@prisma/client';
 import { NextRequest } from 'next/server';
+import path from 'path';
 
 // GET /api/books/[id] - Get book by id
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -82,7 +84,106 @@ export const PUT = requireLibrarian(async (request, context) => {
       throw new ValidationError('Invalid book ID');
     }
 
-    const body: UpdateBookData = await request.json();
+    const contentType = request.headers.get('content-type');
+    let body: Partial<UpdateBookData> = {};
+
+    // Check if it's multipart/form-data
+    if (contentType?.includes('multipart/form-data')) {
+      const formData = await request.formData();
+
+      // Handle cover image file upload
+      const coverImageFile = formData.get('coverImage') as File | null;
+      if (coverImageFile && coverImageFile.size > 0) {
+        // Validate file type
+        const allowedImageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const fileExtension = path.extname(coverImageFile.name).toLowerCase();
+
+        if (!allowedImageExtensions.includes(fileExtension)) {
+          throw new ValidationError(
+            `Invalid file type. Allowed types: ${allowedImageExtensions.join(', ')}`
+          );
+        }
+
+        // Check file size (max 5MB)
+        const maxImageSize = 5 * 1024 * 1024;
+        if (coverImageFile.size > maxImageSize) {
+          throw new ValidationError(`File too large. Max allowed: 5MB`);
+        }
+
+        // Generate unique filename
+        const timestamp = Date.now();
+        const sanitizedFileName = `cover-${bookId}-${timestamp}${fileExtension}`;
+
+        // Convert File to Buffer
+        const arrayBuffer = await coverImageFile.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        // Write file to uploads/book-covers directory
+        const uploadResult = await FileUtils.writeFileToSystem(buffer, sanitizedFileName, {
+          directory: 'uploads/book-covers',
+          overwrite: true,
+          createDirectory: true,
+        });
+
+        if (!uploadResult.success) {
+          throw new Error(`Failed to upload cover image: ${uploadResult.message}`);
+        }
+
+        // Delete old cover image if exists
+        const existingBook = await prisma.book.findFirst({
+          where: { id: bookId },
+          select: { coverImageUrl: true },
+        });
+
+        if (existingBook?.coverImageUrl) {
+          const oldImagePath = existingBook.coverImageUrl.replace('/api/files/', '');
+          await FileUtils.deleteFileFromSystem(oldImagePath, {
+            force: true,
+            checkExists: true,
+          });
+        }
+
+        // Set cover image URL
+        body.coverImageUrl = `/api/files/uploads/book-covers/${sanitizedFileName}`;
+      }
+
+      // Extract other form fields
+      const authorId = formData.get('authorId')?.toString();
+      const title = formData.get('title')?.toString();
+      const isbn = formData.get('isbn')?.toString();
+      const publishYear = formData.get('publishYear')?.toString();
+      const publisher = formData.get('publisher')?.toString();
+      const pageCount = formData.get('pageCount')?.toString();
+      const price = formData.get('price')?.toString();
+      const edition = formData.get('edition')?.toString();
+      const description = formData.get('description')?.toString();
+      const isDeleted = formData.get('isDeleted')?.toString();
+      const categories = formData.get('categories')?.toString();
+
+      // Build body object
+      if (authorId) body.authorId = authorId;
+      if (title) body.title = title;
+      if (isbn !== undefined) body.isbn = isbn;
+      if (publishYear) body.publishYear = publishYear;
+      if (publisher !== undefined) body.publisher = publisher;
+      if (pageCount) body.pageCount = pageCount;
+      if (price) body.price = price;
+      if (edition !== undefined) body.edition = edition;
+      if (description !== undefined) body.description = description;
+      if (isDeleted !== undefined) body.isDeleted = isDeleted === 'true';
+      if (categories) {
+        try {
+          body.categories = JSON.parse(categories);
+        } catch {
+          // Invalid JSON, ignore
+        }
+      }
+    } else {
+      // Handle JSON request
+      body = await request.json();
+    }
+
+    // Extract fields from body
     const {
       authorId,
       title,

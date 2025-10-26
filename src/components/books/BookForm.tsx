@@ -13,7 +13,8 @@ import {
   SelectOption,
 } from '@/components';
 import { useAuthorOptions, useBookForm, useCategoryOptions } from '@/lib/hooks';
-import { Box, Grid, GridItem, Stack } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Image, Input, Stack, Text } from '@chakra-ui/react';
+import { FiUpload, FiX } from 'react-icons/fi';
 
 interface BookFormProps {
   bookId?: number;
@@ -38,6 +39,11 @@ export function BookForm({
     dialog,
     handleConfirm,
     handleDialogCancel,
+    coverImagePreview,
+    fileInputRef,
+    handleCoverImageChange,
+    handleRemoveCoverImage,
+    handleCoverImageClick,
   } = useBookForm(bookId);
 
   return (
@@ -110,7 +116,96 @@ export function BookForm({
 
         <FormDivider />
 
-        {/* Section 2: Publication Information */}
+        {/* Section 2: Book Cover & Description */}
+        <FormSection title="Book Cover & Description">
+          {/* Cover image upload */}
+          <FormField label="Cover Image">
+            <Stack gap={3}>
+              {/* Image Preview */}
+              {(coverImagePreview || form.coverImageUrl) && (
+                <Box position="relative" w="150px" h="200px">
+                  <Image
+                    src={coverImagePreview || form.coverImageUrl || ''}
+                    alt="Cover preview"
+                    w="100%"
+                    h="100%"
+                    objectFit="cover"
+                    borderRadius="md"
+                    border="2px solid"
+                    borderColor="gray.200"
+                  />
+                  <Box
+                    position="absolute"
+                    top="-8px"
+                    right="-8px"
+                    bg="secondary.500"
+                    color="white"
+                    borderRadius="full"
+                    border="2px solid"
+                    borderColor="white"
+                    w="24px"
+                    h="24px"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    cursor="pointer"
+                    onClick={handleRemoveCoverImage}
+                    _hover={{ bg: 'secondary.600' }}
+                    transition="background 0.2s"
+                  >
+                    <FiX size={14} />
+                  </Box>
+                </Box>
+              )}
+
+              {/* Upload Button */}
+              {!coverImagePreview && !form.coverImageUrl && (
+                <Box
+                  onClick={handleCoverImageClick}
+                  p={6}
+                  border="2px dashed"
+                  borderColor="gray.300"
+                  borderRadius="md"
+                  cursor="pointer"
+                  _hover={{ borderColor: 'secondary.500', bg: 'gray.50' }}
+                  transition="all 0.2s"
+                >
+                  <Flex direction="column" align="center" gap={2}>
+                    <FiUpload size={32} color="gray.400" />
+                    <Text color="gray.500" fontSize="sm">
+                      Click to upload cover image
+                    </Text>
+                    <Text color="gray.400" fontSize="xs">
+                      JPG, PNG, GIF or WebP (max 5MB)
+                    </Text>
+                  </Flex>
+                </Box>
+              )}
+
+              {/* Hidden file input */}
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                onChange={handleCoverImageChange}
+                display="none"
+              />
+            </Stack>
+          </FormField>
+
+          {/* Description */}
+          <FormField label="Description">
+            <FormTextarea
+              value={form.description}
+              onChange={e => setField('description', e.target.value)}
+              placeholder="Enter description"
+            />
+          </FormField>
+        </FormSection>
+
+        <FormDivider />
+
+        {/* Section 3: Publication Information */}
         <FormSection title="Publication Information">
           <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} gap={4}>
             <GridItem>
@@ -151,7 +246,7 @@ export function BookForm({
 
         <FormDivider />
 
-        {/* Section 3: Physical & Pricing Information */}
+        {/* Section 4: Physical & Pricing Information */}
         <FormSection title="Physical & Pricing Information">
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={4}>
             {/* Page count */}
@@ -178,29 +273,6 @@ export function BookForm({
               </FormField>
             </GridItem>
           </Grid>
-        </FormSection>
-
-        <FormDivider />
-
-        {/* Section 4: Additional Information */}
-        <FormSection title="Additional Information">
-          {/* Cover image (URL) */}
-          <FormField label="Cover image (URL)">
-            <FormInput
-              value={form.coverImageUrl}
-              onChange={e => setField('coverImageUrl', e.target.value)}
-              placeholder="https://..."
-            />
-          </FormField>
-
-          {/* Description */}
-          <FormField label="Description">
-            <FormTextarea
-              value={form.description}
-              onChange={e => setField('description', e.target.value)}
-              placeholder="Enter description"
-            />
-          </FormField>
         </FormSection>
 
         {/* Buttons */}
