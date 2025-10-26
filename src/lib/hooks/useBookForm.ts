@@ -1,11 +1,12 @@
 import { BookApi } from '@/api';
 import { SelectOption } from '@/components/forms/FormSelectSearch';
+import { toaster } from '@/components/ui/Toaster';
 import { ROUTES } from '@/constants';
 import { useCategoryOptions, useDialog, useFormSubmission } from '@/lib/hooks';
 import { CreateBookFormState, FormErrors, validateCreateBook } from '@/lib/validators';
 import { Book, CreateBookData, UpdateBookData } from '@/types/book';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const initialState: CreateBookFormState = {
   authorId: '',
@@ -29,6 +30,9 @@ export function useBookForm(bookId?: number) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(!!bookId);
   const isEditMode = !!bookId;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
 
   // Single form submission hook with dynamic messages
   const { submit, isSubmitting } = useFormSubmission<
@@ -70,6 +74,9 @@ export function useBookForm(bookId?: number) {
             }) || [],
           isDeleted: book.isDeleted,
         });
+        // Clear cover image preview when loading book data
+        setCoverImagePreview(null);
+        setCoverImageFile(null);
       } catch (error) {
         console.error('Failed to load book:', error);
         // Redirect to books list if book not found
@@ -134,6 +141,148 @@ export function useBookForm(bookId?: number) {
   const resetForm = useCallback(() => {
     setForm(initialState);
     setErrors({});
+    setCoverImageFile(null);
+    setCoverImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
+
+  // Helper function to resize image to 3:4 aspect ratio
+  const resizeImage = useCallback(
+    (file: File, targetWidth: number, targetHeight: number): Promise<File> => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = e => {
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            if (!ctx) {
+              reject(new Error('Could not get canvas context'));
+              return;
+            }
+
+            // Calculate dimensions to maintain aspect ratio
+            const imgWidth = img.width;
+            const imgHeight = img.height;
+            const imgAspectRatio = imgWidth / imgHeight;
+            const targetAspectRatio = targetWidth / targetHeight;
+
+            let newWidth: number;
+            let newHeight: number;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            // Determine dimensions and cropping
+            if (imgAspectRatio > targetAspectRatio) {
+              // Image is wider than target ratio, crop sides
+              newHeight = targetHeight;
+              newWidth = targetHeight * imgAspectRatio;
+              offsetX = (newWidth - targetWidth) / 2;
+            } else {
+              // Image is taller than target ratio, crop top/bottom
+              newWidth = targetWidth;
+              newHeight = targetWidth / imgAspectRatio;
+              offsetY = (newHeight - targetHeight) / 2;
+            }
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            // Draw image with cropping (object-fit: cover)
+            ctx.drawImage(img, -offsetX, -offsetY, newWidth, newHeight);
+
+            canvas.toBlob(
+              blob => {
+                if (blob) {
+                  const resizedFile = new File([blob], file.name, {
+                    type: file.type,
+                    lastModified: Date.now(),
+                  });
+                  resolve(resizedFile);
+                } else {
+                  reject(new Error('Failed to create blob'));
+                }
+              },
+              file.type,
+              0.9 // Quality for JPEG
+            );
+          };
+
+          img.src = e.target?.result as string;
+        };
+
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsDataURL(file);
+      });
+    },
+    []
+  );
+
+  const handleCoverImageChange = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+          console.error('Invalid file type');
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          return;
+        }
+
+        // Validate file size (5MB max)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+          console.error('File too large');
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
+          return;
+        }
+
+        // Resize image to 3:4 aspect ratio (book cover standard size)
+        try {
+          const resizedFile = await resizeImage(file, 600, 800); // 3:4 aspect ratio
+          setCoverImageFile(resizedFile);
+
+          // Create preview
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setCoverImagePreview(reader.result as string);
+          };
+          reader.readAsDataURL(resizedFile);
+        } catch (error) {
+          console.error('Failed to resize image:', error);
+          // Fallback to original file if resize fails
+          setCoverImageFile(file);
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setCoverImagePreview(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    },
+    [resizeImage]
+  );
+
+  const handleRemoveCoverImage = useCallback(() => {
+    setCoverImageFile(null);
+    setCoverImagePreview(null);
+    setForm(prev => ({ ...prev, coverImageUrl: '' }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
+
+  const handleCoverImageClick = useCallback(() => {
+    fileInputRef.current?.click();
   }, []);
 
   const handleCancel = useCallback(() => {
@@ -168,26 +317,57 @@ export function useBookForm(bookId?: number) {
         confirmText: `${actionText} Book`,
         cancelText: 'Cancel',
         onConfirm: async () => {
-          if (isEditMode) {
-            await submit(form, {
-              validate,
-              transformData: transformDataForUpdate,
-              apiCall: (data: UpdateBookData) => BookApi.updateBook(bookId!, data),
-              onSuccess: () => {
+          try {
+            if (isEditMode) {
+              // For edit mode, send multipart/form-data if cover image is uploaded
+              if (coverImageFile) {
+                const transformedData = transformDataForUpdate(form);
+                await BookApi.updateBookWithFile(bookId!, transformedData, coverImageFile);
+                toaster.create({
+                  title: 'Book updated successfully',
+                  description: 'Your book has been updated',
+                  type: 'success',
+                  duration: 3000,
+                });
                 router.push(ROUTES.DASHBOARD.BOOKS);
-              },
-            });
-          } else {
-            await submit(form, {
-              validate,
-              transformData: transformDataForCreate,
-              apiCall: (data: CreateBookData | UpdateBookData) =>
-                BookApi.createBook(data as CreateBookData),
-              onSuccess: () => {
+              } else {
+                await submit(form, {
+                  validate,
+                  transformData: transformDataForUpdate,
+                  apiCall: (data: UpdateBookData) => BookApi.updateBook(bookId!, data),
+                  onSuccess: () => {
+                    router.push(ROUTES.DASHBOARD.BOOKS);
+                  },
+                });
+              }
+            } else {
+              // For create mode, send multipart/form-data if cover image is uploaded
+              if (coverImageFile) {
+                const transformedData = transformDataForCreate(form);
+                await BookApi.createBookWithFile(transformedData, coverImageFile);
+                toaster.create({
+                  title: 'Book added successfully',
+                  description: 'Your book has been added',
+                  type: 'success',
+                  duration: 3000,
+                });
                 resetForm();
                 router.push(ROUTES.DASHBOARD.BOOKS);
-              },
-            });
+              } else {
+                await submit(form, {
+                  validate,
+                  transformData: transformDataForCreate,
+                  apiCall: (data: CreateBookData | UpdateBookData) =>
+                    BookApi.createBook(data as CreateBookData),
+                  onSuccess: () => {
+                    resetForm();
+                    router.push(ROUTES.DASHBOARD.BOOKS);
+                  },
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Failed to save book:', error);
           }
         },
       });
@@ -203,6 +383,7 @@ export function useBookForm(bookId?: number) {
       bookId,
       resetForm,
       router,
+      coverImageFile,
     ]
   );
 
@@ -219,5 +400,11 @@ export function useBookForm(bookId?: number) {
     dialog,
     handleConfirm,
     handleDialogCancel,
+    coverImageFile,
+    coverImagePreview,
+    fileInputRef,
+    handleCoverImageChange,
+    handleRemoveCoverImage,
+    handleCoverImageClick,
   };
 }
