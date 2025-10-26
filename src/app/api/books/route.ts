@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
     const categoryIdsParam = searchParams.getAll('categoryIds');
     const publishYearFromParam = searchParams.get('publishYearFrom');
     const publishYearToParam = searchParams.get('publishYearTo');
-    const statusParam = searchParams.get('status');
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | null;
     const isDeletedParam = searchParams.get('isDeleted');
@@ -80,13 +79,6 @@ export async function GET(request: NextRequest) {
         ...existingPublishYear,
         lte: publishYearTo,
       };
-    }
-
-    // TODO: This will be update later
-    // Handle status filter
-    if (statusParam) {
-      // This is a placeholder - adjust based on your actual status field
-      // where.status = statusParam;
     }
 
     const skip = (page - 1) * limit;
@@ -158,6 +150,14 @@ export async function GET(request: NextRequest) {
               bookItems: true,
             },
           },
+          reviews: {
+            where: {
+              isDeleted: false,
+            },
+            select: {
+              rating: true,
+            },
+          },
         },
       }),
       prisma.book.count({ where }),
@@ -168,16 +168,28 @@ export async function GET(request: NextRequest) {
         bookCategories?: { category: { name: string } }[];
         bookEditions?: { id: number; format: 'EBOOK' | 'AUDIO' }[];
         _count?: { bookItems: number };
+        reviews?: { rating: number }[];
       })[]
     ).map(b => {
       const ebookCount = b.bookEditions?.filter(e => e.format === 'EBOOK').length ?? 0;
       const audioCount = b.bookEditions?.filter(e => e.format === 'AUDIO').length ?? 0;
+
+      // Calculate rating from reviews
+      const reviews = b.reviews || [];
+      const averageRating =
+        reviews.length > 0
+          ? Math.round(
+              (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length) * 10
+            ) / 10
+          : 0;
+
       return {
         ...b,
         categories: b.bookCategories?.map(x => x.category.name) ?? [],
         bookItemsCount: b._count?.bookItems ?? 0,
         bookEbookCount: ebookCount,
         bookAudioCount: audioCount,
+        averageRating,
       };
     });
 

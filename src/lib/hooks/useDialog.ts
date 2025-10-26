@@ -31,7 +31,7 @@ export function useDialog() {
   };
 
   const closeDialog = () => {
-    setDialog(prev => ({ ...prev, isOpen: false }));
+    setDialog(initialState);
   };
 
   const handleConfirm = () => {

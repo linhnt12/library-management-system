@@ -6,5 +6,6 @@ export * from './book-item';
 export * from './category';
 export * from './digital-license';
 export * from './file';
+export * from './review';
 export * from './table';
 export * from './user';

@@ -11,6 +11,8 @@ export const ROUTES = {
   DASHBOARD: {
     // Common routes
     HOME: '/dashboard',
+
+    // Books routes
     PROFILE: '/dashboard/profile',
     BOOKS: '/dashboard/books',
     BOOKS_ADD: '/dashboard/books/add',
@@ -19,10 +21,21 @@ export const ROUTES = {
     BOOKS_COPIES_ADD: '/dashboard/books/copies/add',
     BOOKS_EDITIONS: '/dashboard/books/editions',
     BOOKS_EDITIONS_ADD: '/dashboard/books/editions/add',
+
+    // Borrowers routes
     BORROWERS: '/dashboard/borrowers',
 
-    // TODO: This will be updated later
-    // Admin routes
+    // Authors routes
+    AUTHORS: '/dashboard/authors',
+    AUTHORS_ADD: '/dashboard/authors/add',
+    AUTHORS_EDIT: '/dashboard/authors/edit',
+
+    // Categories routes
+    CATEGORIES: '/dashboard/categories',
+    CATEGORIES_ADD: '/dashboard/categories/add',
+    CATEGORIES_EDIT: '/dashboard/categories/edit',
+
+    // Users routes
     USERS: '/dashboard/users',
     REPORTS: '/dashboard/reports',
   },
