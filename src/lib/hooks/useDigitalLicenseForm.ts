@@ -1,4 +1,4 @@
-import { BookApi } from '@/api';
+import { DigitalLicenseApi } from '@/api';
 import { toaster } from '@/components';
 import { DigitalLicenseModel } from '@prisma/client';
 import { FormEvent, useState } from 'react';
@@ -68,7 +68,7 @@ export function useDigitalLicenseForm(bookId: number, onSuccess?: () => void) {
     setIsSubmitting(true);
 
     try {
-      await BookApi.createDigitalLicense(bookId, {
+      await DigitalLicenseApi.createDigitalLicense(bookId, {
         licenseModel: form.licenseModel as DigitalLicenseModel,
         totalCopies: form.totalCopies ? Number(form.totalCopies) : null,
         notes: form.notes || null,

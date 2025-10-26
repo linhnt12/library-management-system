@@ -1,6 +1,6 @@
 'use client';
 
-import { BookApi } from '@/api';
+import { BookEditionApi } from '@/api';
 import {
   BookEditionColumns,
   Button,
@@ -93,7 +93,7 @@ export function BookEditionsTable({
       const finalBookIds =
         bookId && !filterBookIds.includes(bookId) ? [...filterBookIds, bookId] : filterBookIds;
 
-      const response = await BookApi.getBookEditions({
+      const response = await BookEditionApi.getBookEditions({
         bookIds: finalBookIds.length > 0 ? finalBookIds : undefined,
         page,
         limit: pageSize,
@@ -195,7 +195,7 @@ export function BookEditionsTable({
     setIsDeleting(true);
     try {
       // Use bulk delete API with single ID
-      await BookApi.bulkDeleteBookEditions([editionToDelete.id]);
+      await BookEditionApi.bulkDeleteBookEditions([editionToDelete.id]);
 
       toaster.create({
         title: 'Success',

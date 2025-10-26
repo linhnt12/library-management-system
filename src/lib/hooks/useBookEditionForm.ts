@@ -1,4 +1,4 @@
-import { BookApi } from '@/api';
+import { BookEditionApi } from '@/api';
 import { MAX_EBOOK_SIZE, ROUTES } from '@/constants';
 import { useDialog } from '@/lib/hooks';
 import { BookEdition } from '@/types';
@@ -49,7 +49,7 @@ export function useBookEditionForm(initialBookId?: number, editionId?: number) {
     const loadEdition = async () => {
       try {
         setIsLoading(true);
-        const edition = await BookApi.getBookEditionById(editionId);
+        const edition = await BookEditionApi.getBookEditionById(editionId);
 
         // Store the complete edition data for display
         setExistingEdition(edition);
@@ -162,10 +162,10 @@ export function useBookEditionForm(initialBookId?: number, editionId?: number) {
 
       if (isEditMode && editionId) {
         // Update existing edition
-        await BookApi.updateBookEdition(editionId, formData);
+        await BookEditionApi.updateBookEdition(editionId, formData);
       } else {
         // Create new edition
-        await BookApi.createBookEdition(form.bookId!, formData);
+        await BookEditionApi.createBookEdition(form.bookId!, formData);
       }
 
       // On success, navigate back to book detail or editions list

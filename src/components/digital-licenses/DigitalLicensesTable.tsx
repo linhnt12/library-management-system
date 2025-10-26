@@ -1,6 +1,6 @@
 'use client';
 
-import { BookApi } from '@/api';
+import { DigitalLicenseApi } from '@/api';
 import {
   Button,
   Dialog,
@@ -57,7 +57,7 @@ export function DigitalLicensesTable({ bookId }: DigitalLicensesTableProps) {
     const fetchLicenses = async () => {
       try {
         setLoading(true);
-        const data = await BookApi.getDigitalLicensesByBookId(bookId, {
+        const data = await DigitalLicenseApi.getDigitalLicensesByBookId(bookId, {
           page,
           limit: pageSize,
           search: searchQuery || undefined,
@@ -213,7 +213,7 @@ export function DigitalLicensesTable({ bookId }: DigitalLicensesTableProps) {
     setIsDeleting(true);
     try {
       // Call bulk delete API with single ID
-      await BookApi.bulkDeleteDigitalLicenses([licenseToDelete.id]);
+      await DigitalLicenseApi.bulkDeleteDigitalLicenses([licenseToDelete.id]);
 
       toaster.create({
         title: 'Success',
