@@ -1,3 +1,4 @@
+export * from './api';
 export * from './auth';
 export * from './author';
 export * from './book';
@@ -7,6 +8,9 @@ export * from './category';
 export * from './digital-license';
 export * from './favorite-book';
 export * from './file';
+export * from './mail';
+export * from './otp';
+export * from './queue';
 export * from './review';
 export * from './table';
 export * from './user';

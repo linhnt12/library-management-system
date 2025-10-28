@@ -178,53 +178,6 @@ export class ValidationUtils {
   }
 }
 
-// Rate limiting utilities
-export class RateLimitUtils {
-  private static attempts: Map<string, { count: number; resetTime: number }> = new Map();
-
-  static checkRateLimit(
-    identifier: string,
-    maxAttempts: number = 5,
-    windowMs: number = 15 * 60 * 1000 // 15 minutes
-  ): { allowed: boolean; remainingAttempts: number; resetTime: number } {
-    const now = Date.now();
-    const key = identifier.toLowerCase();
-    const record = this.attempts.get(key);
-
-    if (!record || now > record.resetTime) {
-      // Reset or create new record
-      this.attempts.set(key, { count: 1, resetTime: now + windowMs });
-      return {
-        allowed: true,
-        remainingAttempts: maxAttempts - 1,
-        resetTime: now + windowMs,
-      };
-    }
-
-    if (record.count >= maxAttempts) {
-      return {
-        allowed: false,
-        remainingAttempts: 0,
-        resetTime: record.resetTime,
-      };
-    }
-
-    // Increment attempt count
-    record.count++;
-    this.attempts.set(key, record);
-
-    return {
-      allowed: true,
-      remainingAttempts: maxAttempts - record.count,
-      resetTime: record.resetTime,
-    };
-  }
-
-  static resetRateLimit(identifier: string): void {
-    this.attempts.delete(identifier.toLowerCase());
-  }
-}
-
 // (Server-side Edge runtime)
 export function getAccessTokenFromRequest(req: NextRequest): string | null {
   return req.cookies.get('accessToken')?.value ?? null;

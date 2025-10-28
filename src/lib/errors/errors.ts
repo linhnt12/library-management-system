@@ -25,13 +25,6 @@ export class ConflictError extends ApiError {
   }
 }
 
-export class RateLimitError extends ApiError {
-  constructor(message: string) {
-    super(message, 429);
-    this.name = 'RateLimitError';
-  }
-}
-
 export class UnauthorizedError extends ApiError {
   constructor(message: string) {
     super(message, 401);
