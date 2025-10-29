@@ -24,6 +24,12 @@ export interface ChangePasswordRequest {
 
 export interface ResetPasswordRequest {
   email: string;
+  newPassword: string;
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface ConfirmResetPasswordRequest {

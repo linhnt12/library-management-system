@@ -66,6 +66,19 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id])
 }
 
+model OTP {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  type      OTPType
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  verifiedAt DateTime?
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // =========================
 // AUTHORS & BOOKS
 // =========================
@@ -473,4 +486,11 @@ enum ActionType {
   PUT
   PATCH
   DELETE
+}
+
+enum OTPType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  LOGIN_2FA
+  PHONE_VERIFICATION
 }

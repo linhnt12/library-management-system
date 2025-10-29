@@ -1,13 +1,14 @@
-import {
-  ConflictError,
-  NotFoundError,
-  RateLimitError,
-  UnauthorizedError,
-  ValidationError,
-} from '@/lib/errors';
+import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
-import { EmailUtils, JWTUtils, PasswordUtils, RateLimitUtils, ValidationUtils } from '@/lib/utils';
-import { AuthUser, ChangePasswordRequest, LoginRequest, LoginResponse, RegisterRequest, RegisterResponse } from '@/types/auth';
+import { EmailUtils, JWTUtils, PasswordUtils, ValidationUtils } from '@/lib/utils';
+import {
+  AuthUser,
+  ChangePasswordRequest,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from '@/types/auth';
 import { Role, UserStatus } from '@prisma/client';
 import { randomBytes } from 'crypto';
 
@@ -53,16 +54,8 @@ export class AuthService {
       throw new ValidationError(`Validation failed: ${validationErrors.join(', ')}`);
     }
 
-    // Check rate limiting
+    // Normalize email
     const normalizedEmail = EmailUtils.normalize(email);
-    const rateLimit = RateLimitUtils.checkRateLimit(
-      `register:${normalizedEmail}`,
-      3,
-      60 * 60 * 1000
-    ); // 3 attempts per hour
-    if (!rateLimit.allowed) {
-      throw new RateLimitError('Too many registration attempts. Please try again later.');
-    }
 
     // Check if email already exists
     const existingUser = await prisma.user.findUnique({
@@ -100,9 +93,6 @@ export class AuthService {
       },
     });
 
-    // Reset rate limit on successful registration
-    RateLimitUtils.resetRateLimit(`register:${normalizedEmail}`);
-
     return {
       user: user as AuthUser,
       message: 'Account created successfully',
@@ -123,12 +113,6 @@ export class AuthService {
     }
 
     const normalizedEmail = EmailUtils.normalize(email);
-
-    // Check rate limiting
-    const rateLimit = RateLimitUtils.checkRateLimit(`login:${normalizedEmail}`, 5, 15 * 60 * 1000); // 5 attempts per 15 minutes
-    if (!rateLimit.allowed) {
-      throw new RateLimitError('Too many login attempts. Please try again later.');
-    }
 
     // Find user
     const user = await prisma.user.findUnique({
@@ -162,9 +146,6 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedError('Invalid email or password');
     }
-
-    // Reset rate limit on successful login
-    RateLimitUtils.resetRateLimit(`login:${normalizedEmail}`);
 
     // Generate tokens
     const tokenId = randomBytes(16).toString('hex');
