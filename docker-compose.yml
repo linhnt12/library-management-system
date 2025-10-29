@@ -73,6 +73,8 @@ services:
     command: yarn worker:email
     depends_on:
       - redis
+    env_file:
+      - .env.docker
     networks:
       - library_network
 
