@@ -62,6 +62,22 @@ services:
     networks:
       - library_network
 
+  # Worker Email Service (Queue Worker)
+  worker_email:
+    image: node:20-alpine
+    container_name: library_worker_email
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: yarn worker:email
+    depends_on:
+      - redis
+    env_file:
+      - .env.docker
+    networks:
+      - library_network
+
 volumes:
   mysql_data:
     driver: local
