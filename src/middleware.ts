@@ -14,5 +14,5 @@ export function middleware(request: NextRequest) {
 
 // Config middleware only for these routes
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/change-password'],
 };

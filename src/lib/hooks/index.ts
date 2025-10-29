@@ -7,6 +7,7 @@ export * from './useBookItemForm';
 export * from './useBookItems';
 export * from './useBooks';
 export * from './useCategories';
+export * from './useChangePasswordForm';
 export * from './useDialog';
 export * from './useDigitalLicenseForm';
 export * from './useFormSubmission';
