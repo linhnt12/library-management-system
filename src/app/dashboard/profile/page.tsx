@@ -9,6 +9,7 @@ import {
   Spinner,
   Tag,
 } from '@/components';
+import { ROUTES } from '@/constants';
 import { USER_ROLES } from '@/constants/user';
 import { useProfileForm } from '@/lib/hooks';
 import { Box, Card, Flex, Grid, HStack, Image, Input, Stack, Text } from '@chakra-ui/react';
@@ -228,6 +229,7 @@ export default function ProfilePage() {
                         h="40px"
                         fontSize="sm"
                         icon={RiLockPasswordLine}
+                        href={ROUTES.AUTH.CHANGE_PASSWORD}
                       />
                     </>
                   )}
