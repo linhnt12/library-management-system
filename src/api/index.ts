@@ -10,3 +10,4 @@ export * from './favorite-book.api';
 export * from './otp.api';
 export * from './password.api';
 export * from './review.api';
+export * from './user.api';

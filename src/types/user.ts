@@ -68,4 +68,6 @@ export interface UserQueryFilters {
   status?: UserStatus;
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
