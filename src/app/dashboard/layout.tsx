@@ -3,7 +3,7 @@
 import { Layout, Sidebar } from '@/components';
 import { ROUTES } from '@/constants';
 import { ReactNode } from 'react';
-import { LuBook, LuTags, LuUserPen } from 'react-icons/lu';
+import { LuBook, LuTags, LuUserPen, LuUsers } from 'react-icons/lu';
 import { SlGrid } from 'react-icons/sl';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -38,6 +38,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       children: [
         { label: 'All Categories', href: ROUTES.DASHBOARD.CATEGORIES },
         { label: 'Add Category', href: ROUTES.DASHBOARD.CATEGORIES_ADD },
+      ],
+    },
+    {
+      label: 'Users',
+      href: '',
+      icon: LuUsers,
+      children: [
+        { label: 'All Users', href: ROUTES.DASHBOARD.USERS },
+        { label: 'Add User', href: ROUTES.DASHBOARD.USERS_ADD },
       ],
     },
     { label: 'Borrowers', href: ROUTES.DASHBOARD.BORROWERS },

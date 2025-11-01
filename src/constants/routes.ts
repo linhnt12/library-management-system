@@ -38,6 +38,8 @@ export const ROUTES = {
 
     // Users routes
     USERS: '/dashboard/users',
+    USERS_ADD: '/dashboard/users/add',
+    USERS_EDIT: '/dashboard/users/edit',
     REPORTS: '/dashboard/reports',
   },
 

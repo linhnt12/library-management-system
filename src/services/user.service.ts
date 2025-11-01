@@ -6,7 +6,7 @@ import { Prisma, Role, UserStatus } from '@prisma/client';
 export class UserService {
   // Get users with pagination and filters
   static async getUsers(filters: UserQueryFilters) {
-    const { search = '', role, status, page = 1, limit = 10 } = filters;
+    const { search = '', role, status, page = 1, limit = 10, sortBy, sortOrder } = filters;
 
     const skip = (page - 1) * limit;
 
@@ -31,13 +31,34 @@ export class UserService {
       where.status = status;
     }
 
+    // Build orderBy clause
+    let orderBy: Prisma.UserOrderByWithRelationInput = { createdAt: 'desc' };
+
+    if (sortBy && sortOrder) {
+      // Map frontend sort keys to database fields
+      const sortFieldMap: Record<string, string> = {
+        id: 'id',
+        fullName: 'fullName',
+        email: 'email',
+        role: 'role',
+        status: 'status',
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt',
+      };
+
+      const dbField = sortFieldMap[sortBy];
+      if (dbField) {
+        orderBy = { [dbField]: sortOrder };
+      }
+    }
+
     // Execute queries in parallel
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         select: {
           id: true,
           fullName: true,
@@ -91,6 +112,31 @@ export class UserService {
     return user as PublicUser | null;
   }
 
+  // Get multiple users by IDs
+  static async getUsersByIds(ids: number[]): Promise<PublicUser[]> {
+    const users = await prisma.user.findMany({
+      where: {
+        id: { in: ids },
+        isDeleted: false,
+      },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phoneNumber: true,
+        address: true,
+        avatarUrl: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        inactiveAt: true,
+      },
+    });
+
+    return users as PublicUser[];
+  }
+
   // Create new user
   static async createUser(userData: CreateUserData): Promise<PublicUser> {
     // Check if email already exists
@@ -138,10 +184,21 @@ export class UserService {
       throw new NotFoundError('User not found');
     }
 
+    // Extract email value from Prisma update input format
+    // Can be: { set: string }, { unset: true }, or string
+    let newEmail: string | undefined;
+    if (userData.email) {
+      if (typeof userData.email === 'string') {
+        newEmail = userData.email;
+      } else if (userData.email.set) {
+        newEmail = userData.email.set;
+      }
+    }
+
     // Check email uniqueness if email is being changed
-    if (userData.email && userData.email !== existingUser.email) {
+    if (newEmail && newEmail !== existingUser.email) {
       const emailExists = await prisma.user.findUnique({
-        where: { email: userData.email as string },
+        where: { email: newEmail },
       });
 
       if (emailExists) {
@@ -149,13 +206,25 @@ export class UserService {
       }
     }
 
+    // Extract status value from Prisma update input format
+    // Can be: { set: UserStatus }, { unset: true }, or UserStatus
+    let newStatus: UserStatus | undefined;
+    if (userData.status) {
+      if (typeof userData.status === 'string') {
+        newStatus = userData.status as UserStatus;
+      } else if (userData.status.set) {
+        newStatus = userData.status.set as UserStatus;
+      }
+    }
+
     // Prepare update data
     const updateData: Prisma.UserUpdateInput = { ...userData };
 
-    if (userData.status !== undefined) {
-      if (userData.status === UserStatus.INACTIVE) {
+    // Set inactiveAt based on status
+    if (newStatus !== undefined) {
+      if (newStatus === UserStatus.INACTIVE) {
         updateData.inactiveAt = new Date();
-      } else if (userData.status === UserStatus.ACTIVE) {
+      } else if (newStatus === UserStatus.ACTIVE) {
         updateData.inactiveAt = null;
       }
     }
@@ -181,22 +250,41 @@ export class UserService {
     return updatedUser as PublicUser;
   }
 
-  // Soft delete user
-  static async deleteUser(id: number): Promise<void> {
-    // Check if user exists
-    const existingUser = await this.getUserById(id);
-    if (!existingUser) {
-      throw new NotFoundError('User not found');
+  // Bulk soft delete users
+  static async deleteBulkUsers(ids: number[]): Promise<{
+    deletedCount: number;
+    notFoundIds: number[];
+  }> {
+    // Find existing users
+    const existingUsers = await prisma.user.findMany({
+      where: {
+        id: { in: ids },
+        isDeleted: false,
+      },
+      select: { id: true },
+    });
+
+    const existingIds = existingUsers.map(user => user.id);
+    const notFoundIds = ids.filter(id => !existingIds.includes(id));
+
+    // Bulk update to soft delete
+    if (existingIds.length > 0) {
+      await prisma.user.updateMany({
+        where: {
+          id: { in: existingIds },
+        },
+        data: {
+          isDeleted: true,
+          status: UserStatus.INACTIVE,
+          inactiveAt: new Date(),
+        },
+      });
     }
 
-    await prisma.user.update({
-      where: { id },
-      data: {
-        isDeleted: true,
-        status: UserStatus.INACTIVE,
-        inactiveAt: new Date(),
-      },
-    });
+    return {
+      deletedCount: existingIds.length,
+      notFoundIds,
+    };
   }
 
   // Check if email exists
@@ -208,28 +296,5 @@ export class UserService {
 
     const user = await prisma.user.findFirst({ where });
     return !!user;
-  }
-
-  // Get user statistics
-  static async getUserStats() {
-    const [total, active, inactive, admins, librarians, readers] = await Promise.all([
-      prisma.user.count({ where: { isDeleted: false } }),
-      prisma.user.count({ where: { isDeleted: false, status: UserStatus.ACTIVE } }),
-      prisma.user.count({ where: { isDeleted: false, status: UserStatus.INACTIVE } }),
-      prisma.user.count({ where: { isDeleted: false, role: Role.ADMIN } }),
-      prisma.user.count({ where: { isDeleted: false, role: Role.LIBRARIAN } }),
-      prisma.user.count({ where: { isDeleted: false, role: Role.READER } }),
-    ]);
-
-    return {
-      total,
-      active,
-      inactive,
-      byRole: {
-        admins,
-        librarians,
-        readers,
-      },
-    };
   }
 }
