@@ -8,6 +8,7 @@ export * from './useBookItems';
 export * from './useBooks';
 export * from './useBorrowRequestForm';
 export * from './useCategories';
+export * from './useCategoryForm';
 export * from './useChangePasswordForm';
 export * from './useCreateBorrowRequest';
 export * from './useDialog';
