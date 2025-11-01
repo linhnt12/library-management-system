@@ -1,7 +1,15 @@
 'use client';
 
 import { BorrowRequestApi } from '@/api';
-import { BorrowRequestColumns, FormSelect, SearchInput, Table, toaster } from '@/components';
+import {
+  BorrowRequestColumns,
+  Dialog,
+  FormSelect,
+  SearchInput,
+  Table,
+  toaster,
+} from '@/components';
+import { useDialog } from '@/lib/hooks';
 import { BorrowRequestStatus, BorrowRequestWithBook } from '@/types/borrow-request';
 import { HStack, Stack } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,6 +23,7 @@ export default function BorrowRequestsPage() {
   const [statusFilter, setStatusFilter] = useState<BorrowRequestStatus | ''>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [query, setQuery] = useState('');
+  const { dialog, openDialog, handleConfirm, handleCancel } = useDialog();
 
   const fetchBorrowRequests = useCallback(async () => {
     try {
@@ -76,6 +85,35 @@ export default function BorrowRequestsPage() {
     setQuery(value);
   };
 
+  // Handle cancel borrow request
+  const handleCancelBorrowRequest = (borrowRequest: BorrowRequestWithBook) => {
+    const bookTitle = borrowRequest.items[0]?.book.title || 'this borrow request';
+
+    openDialog({
+      title: 'Confirm Cancel Borrow Request',
+      message: `Are you sure you want to cancel the borrow request for "${bookTitle}"?`,
+      confirmText: 'Cancel Request',
+      cancelText: 'No',
+      onConfirm: async () => {
+        try {
+          await BorrowRequestApi.cancelBorrowRequest(borrowRequest.id);
+          toaster.create({
+            title: 'Success',
+            description: 'Borrow request cancelled successfully',
+            type: 'success',
+          });
+          fetchBorrowRequests();
+        } catch (error) {
+          toaster.create({
+            title: 'Failed',
+            description: error instanceof Error ? error.message : 'Failed to cancel borrow request',
+            type: 'error',
+          });
+        }
+      },
+    });
+  };
+
   // Filter requests by search query (client-side filtering for now)
   const filteredRequests = searchQuery
     ? requests.filter(
@@ -88,7 +126,7 @@ export default function BorrowRequestsPage() {
       )
     : requests;
 
-  const borrowRequestColumns = BorrowRequestColumns();
+  const borrowRequestColumns = BorrowRequestColumns(handleCancelBorrowRequest);
 
   return (
     <Stack gap={4} bg="white" p={6} rounded="lg" height="100%">
@@ -125,6 +163,27 @@ export default function BorrowRequestsPage() {
           setPageSize(size);
           setPage(1);
         }}
+      />
+
+      {/* Cancel Confirmation Dialog */}
+      <Dialog
+        isOpen={dialog.isOpen}
+        onClose={handleCancel}
+        title={dialog.title}
+        content={dialog.message}
+        buttons={[
+          {
+            label: dialog.cancelText,
+            onClick: handleCancel,
+            variant: 'secondary',
+          },
+          {
+            label: dialog.confirmText,
+            onClick: handleConfirm,
+            variant: 'primary',
+          },
+        ]}
+        showCloseButton={false}
       />
     </Stack>
   );

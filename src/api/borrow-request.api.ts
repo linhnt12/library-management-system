@@ -48,4 +48,19 @@ export class BorrowRequestApi {
 
     return await handleJson<BorrowRequestsListResponse>(response);
   }
+
+  // Cancel borrow request
+  static async cancelBorrowRequest(id: number): Promise<BorrowRequestResponse> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/borrow-requests/${id}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ status: BorrowRequestStatus.CANCELLED }),
+    });
+
+    return await handleJson<BorrowRequestResponse>(response);
+  }
 }

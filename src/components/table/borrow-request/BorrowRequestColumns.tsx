@@ -6,6 +6,7 @@ import { BorrowRequestStatus, BorrowRequestWithBook } from '@/types/borrow-reque
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { LuEye } from 'react-icons/lu';
+import { MdOutlineCancel } from 'react-icons/md';
 
 // Component to display status with colors from theme
 function StatusCell({ status }: { status: BorrowRequestStatus }) {
@@ -37,7 +38,13 @@ function QueuePositionCell({ position }: { position: number | null | undefined }
 }
 
 // Component Actions
-function ActionsCell({ borrowRequest }: { borrowRequest: BorrowRequestWithBook }) {
+function ActionsCell({
+  borrowRequest,
+  onCancelClick,
+}: {
+  borrowRequest: BorrowRequestWithBook;
+  onCancelClick?: (borrowRequest: BorrowRequestWithBook) => void;
+}) {
   const router = useRouter();
 
   const handleView = () => {
@@ -48,16 +55,31 @@ function ActionsCell({ borrowRequest }: { borrowRequest: BorrowRequestWithBook }
     }
   };
 
+  const handleCancel = () => {
+    if (onCancelClick) {
+      onCancelClick(borrowRequest);
+    }
+  };
+
+  const canCancel =
+    borrowRequest.status === BorrowRequestStatus.PENDING ||
+    borrowRequest.status === BorrowRequestStatus.APPROVED;
+
   return (
     <HStack gap={2} justifyContent="center">
       <IconButton aria-label="View book" onClick={handleView}>
         <LuEye />
       </IconButton>
+      <IconButton aria-label="Cancel borrow request" onClick={handleCancel} disabled={!canCancel}>
+        <MdOutlineCancel />
+      </IconButton>
     </HStack>
   );
 }
 
-export const BorrowRequestColumns = () => [
+export const BorrowRequestColumns = (
+  onCancelClick?: (borrowRequest: BorrowRequestWithBook) => void
+) => [
   {
     key: 'id',
     header: 'ID',
@@ -147,8 +169,10 @@ export const BorrowRequestColumns = () => [
     key: 'actions',
     header: 'Actions',
     sortable: false,
-    width: '100px',
+    width: '140px',
     textAlign: 'center' as const,
-    render: (request: BorrowRequestWithBook) => <ActionsCell borrowRequest={request} />,
+    render: (request: BorrowRequestWithBook) => (
+      <ActionsCell borrowRequest={request} onCancelClick={onCancelClick} />
+    ),
   },
 ];
