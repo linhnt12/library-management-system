@@ -7,7 +7,8 @@ import {
   validateRequiredFields,
 } from '@/lib/utils';
 import { AuthenticatedRequest, requireReader } from '@/middleware/auth.middleware';
-import { BorrowRequestStatus } from '@/types/borrow-request';
+import { BorrowRequestStatus, BorrowRequestsListResponse } from '@/types/borrow-request';
+import { Prisma } from '@prisma/client';
 
 // Helper function to count reserved quantity for a single book
 async function countReservedQuantity(bookId: number): Promise<number> {
@@ -46,6 +47,7 @@ async function calculateQueuePosition(bookId: number, borrowRequestId: number): 
         status: 'PENDING',
         isDeleted: false,
       },
+      isDeleted: false,
     },
     include: {
       borrowRequest: {
@@ -56,13 +58,108 @@ async function calculateQueuePosition(bookId: number, borrowRequestId: number): 
       },
     },
     orderBy: {
-      createdAt: 'asc',
+      borrowRequest: {
+        createdAt: 'asc',
+      },
     },
   });
 
   const position = queue.findIndex(item => item.borrowRequestId === borrowRequestId) + 1;
   return position > 0 ? position : queue.length + 1;
 }
+
+// GET /api/borrow-requests - Get borrow requests for the current user
+export const GET = requireReader(async (request: AuthenticatedRequest) => {
+  try {
+    const { searchParams } = new URL(request.url);
+    const page = parseIntParam(searchParams.get('page'), 1);
+    const limit = parseIntParam(searchParams.get('limit'), 10);
+    const status = searchParams.get('status'); // Filter by status
+
+    const skip = (page - 1) * limit;
+
+    // Only get borrow requests for the current user
+    const where: Prisma.BorrowRequestWhereInput = {
+      userId: request.user.id,
+      isDeleted: false,
+    };
+
+    if (status && Object.values(BorrowRequestStatus).includes(status as BorrowRequestStatus)) {
+      where.status = status as BorrowRequestStatus;
+    }
+
+    const [borrowRequestsRaw, total] = await Promise.all([
+      prisma.borrowRequest.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          items: {
+            where: { isDeleted: false },
+            include: {
+              book: {
+                include: {
+                  author: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      prisma.borrowRequest.count({ where }),
+    ]);
+
+    // Transform to calculate queue position for each item
+    const borrowRequests = await Promise.all(
+      borrowRequestsRaw.map(async req => {
+        const items = await Promise.all(
+          req.items.map(async item => {
+            // Calculate queue position if status = PENDING
+            const queuePosition =
+              req.status === BorrowRequestStatus.PENDING
+                ? await calculateQueuePosition(item.bookId, req.id)
+                : null;
+
+            return {
+              ...item,
+              book: {
+                id: item.book.id,
+                title: item.book.title,
+                isbn: item.book.isbn,
+                coverImageUrl: item.book.coverImageUrl,
+                publishYear: item.book.publishYear,
+                author: {
+                  id: item.book.author.id,
+                  fullName: item.book.author.fullName,
+                },
+              },
+              queuePosition,
+            };
+          })
+        );
+
+        return {
+          ...req,
+          status: req.status as BorrowRequestStatus,
+          items,
+        };
+      })
+    );
+
+    return successResponse<BorrowRequestsListResponse>({
+      borrowRequests,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    return handleRouteError(error, 'GET /api/borrow-requests');
+  }
+});
 
 // POST /api/borrow-requests - Create borrow request
 export const POST = requireReader(async (request: AuthenticatedRequest) => {

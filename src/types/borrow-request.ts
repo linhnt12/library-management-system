@@ -14,6 +14,8 @@ export enum BorrowRequestStatus {
   PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
   FULFILLED = 'FULFILLED',
 }
 
@@ -29,6 +31,22 @@ export interface BorrowRequestItem {
   isDeleted: boolean;
 }
 
+// BorrowRequestItem with book information
+export interface BorrowRequestItemWithBook extends BorrowRequestItem {
+  book: {
+    id: number;
+    title: string;
+    isbn: string | null;
+    coverImageUrl: string | null;
+    publishYear: number | null;
+    author: {
+      id: number;
+      fullName: string;
+    };
+  };
+  queuePosition?: number | null; // Queue position (only when status = PENDING)
+}
+
 // BorrowRequest with items and user
 export interface BorrowRequestWithItems extends BorrowRequest {
   items: BorrowRequestItem[];
@@ -37,6 +55,11 @@ export interface BorrowRequestWithItems extends BorrowRequest {
     fullName: string;
     email: string;
   };
+}
+
+// BorrowRequest with items that include book information
+export interface BorrowRequestWithBook extends BorrowRequest {
+  items: BorrowRequestItemWithBook[];
 }
 
 // Create BorrowRequest data
@@ -63,4 +86,15 @@ export interface BorrowRequestResponse {
   } | null;
   queuePosition?: number | null;
   message: string;
+}
+
+// BorrowRequests list response
+export interface BorrowRequestsListResponse {
+  borrowRequests: BorrowRequestWithBook[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }

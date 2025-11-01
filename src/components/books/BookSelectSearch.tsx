@@ -2,8 +2,9 @@
 
 import { FormSelectSearch } from '@/components/forms';
 import type { BookOption } from '@/lib/hooks/useBooks';
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import React from 'react';
+import { BookCell } from './BookCell';
 
 // BookOption component for displaying individual book option
 interface BookOptionProps {
@@ -14,50 +15,15 @@ export function BookOption({ option }: BookOptionProps) {
   const { title, coverImageUrl, authorName, publishYear, isbn } = option;
 
   return (
-    <Flex align="center" gap={3} p={2}>
-      {/* Cover Image */}
-      <Box flexShrink={0}>
-        {coverImageUrl ? (
-          <Image
-            src={coverImageUrl}
-            alt={title}
-            width="40px"
-            height="60px"
-            objectFit="cover"
-            borderRadius="md"
-          />
-        ) : (
-          <Box
-            width="40px"
-            height="60px"
-            bg="layoutBg.500"
-            borderRadius="md"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-          >
-            <Text fontSize="sm" color="secondaryText.500">
-              No Image
-            </Text>
-          </Box>
-        )}
-      </Box>
-
-      {/* Book Info */}
-      <Box flex={1} minWidth={0}>
-        <Text fontWeight="medium" fontSize="sm" truncate>
-          {title}
-        </Text>
-        <Text fontSize="sm" color="secondaryText.500" truncate>
-          {authorName}, {publishYear ? `(${publishYear})` : ''}
-        </Text>
-        {isbn && (
-          <Text fontSize="sm" color="secondaryText.500">
-            ISBN: {isbn}
-          </Text>
-        )}
-      </Box>
-    </Flex>
+    <Box p={2}>
+      <BookCell
+        title={title}
+        coverImageUrl={coverImageUrl}
+        authorName={authorName}
+        isbn={isbn}
+        publishYear={publishYear}
+      />
+    </Box>
   );
 }
 

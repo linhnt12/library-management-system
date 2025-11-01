@@ -29,8 +29,15 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
     },
     {
       label: 'My Shelf',
-      href: ROUTES.MY_SHELF,
+      href: '',
       icon: RiBookShelfLine,
+      children: [
+        {
+          label: 'Borrow Requests',
+          href: ROUTES.MY_BORROW_REQUESTS,
+          icon: RiBookShelfLine,
+        },
+      ],
     },
   ];
 
