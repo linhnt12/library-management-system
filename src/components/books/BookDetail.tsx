@@ -6,18 +6,20 @@ import {
   BookItemDetailColumns,
   BookItemsTable,
   BookReview,
+  BorrowRequestForm,
   Button,
+  Dialog,
   DigitalLicensesTable,
   IconButton,
   Table,
   Tag,
 } from '@/components';
 import { ROUTES } from '@/constants';
-import { useMe, useReviewStats } from '@/lib/hooks';
+import { useBorrowRequestForm, useMe, useReviewStats } from '@/lib/hooks';
 import { BookDetail as BookDetailType } from '@/types';
 import { Badge, Box, Flex, Grid, Heading, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
-import { LuBookCheck, LuHeart, LuPencil } from 'react-icons/lu';
+import { LuBookCheck, LuHeart, LuHeartOff, LuPencil } from 'react-icons/lu';
 
 // Mock data for reservations and related books
 const mockReservations = [
@@ -189,7 +191,15 @@ interface BookDetailProps {
   onEditClick?: () => void;
   onAddBookCopyClick?: () => void;
   onBorrowClick?: () => void;
-  onAddToFavouriteClick?: () => void;
+  onCreateBorrowRequest?: (data: {
+    userId: number;
+    bookId: number;
+    startDate: string;
+    endDate: string;
+  }) => Promise<void>;
+  onAddToFavoriteClick?: () => void;
+  onRemoveFromFavoriteClick?: () => void;
+  isFavorite?: boolean;
 }
 
 export function BookDetail({
@@ -197,13 +207,30 @@ export function BookDetail({
   onEditClick,
   onAddBookCopyClick,
   onBorrowClick,
-  onAddToFavouriteClick,
+  onCreateBorrowRequest,
+  onAddToFavoriteClick,
+  onRemoveFromFavoriteClick,
+  isFavorite = false,
 }: BookDetailProps) {
   // Get current user info
   const { data: user } = useMe();
 
   // Get review stats for the book
   const { data: reviewStats } = useReviewStats(book.id);
+
+  // Borrow request form hook
+  const {
+    form: borrowForm,
+    errors: borrowErrors,
+    setField: setBorrowField,
+    dialog: borrowDialog,
+    closeDialog: closeBorrowDialog,
+    openBorrowDialog,
+  } = useBorrowRequestForm({
+    bookId: book.id,
+    user: user ? { id: user.id, fullName: user.fullName } : null,
+    onCreateBorrowRequest,
+  });
 
   // Determine what to show based on user role
   const isAdminOrLibrarian = user?.role === 'ADMIN' || user?.role === 'LIBRARIAN';
@@ -263,27 +290,29 @@ export function BookDetail({
                     {book.isDeleted ? 'Inactive' : 'Active'}
                   </Tag>
                 )}
-                {isReader && onAddToFavouriteClick && !book.isDeleted && (
-                  <Button
-                    label="Add to Favourite"
-                    variantType="primaryOutline"
-                    onClick={onAddToFavouriteClick}
-                    height="40px"
-                    fontSize="sm"
-                    p={2}
-                    icon={LuHeart}
-                  />
-                )}
+                {isReader &&
+                  !book.isDeleted &&
+                  (isFavorite ? onRemoveFromFavoriteClick : onAddToFavoriteClick) && (
+                    <Button
+                      label={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                      variantType="primaryOutline"
+                      onClick={isFavorite ? onRemoveFromFavoriteClick : onAddToFavoriteClick}
+                      height="40px"
+                      fontSize="sm"
+                      p={2}
+                      icon={isFavorite ? LuHeartOff : LuHeart}
+                    />
+                  )}
                 {isAdminOrLibrarian && onEditClick && (
                   <IconButton aria-label="Edit book" onClick={onEditClick}>
                     <LuPencil />
                   </IconButton>
                 )}
-                {isReader && onBorrowClick && !book.isDeleted && (
+                {isReader && (onBorrowClick || onCreateBorrowRequest) && !book.isDeleted && (
                   <Button
                     label="Borrow Now"
                     variantType="primary"
-                    onClick={onBorrowClick}
+                    onClick={onCreateBorrowRequest ? openBorrowDialog : onBorrowClick}
                     height="40px"
                     fontSize="sm"
                     p={2}
@@ -417,6 +446,37 @@ export function BookDetail({
 
           {/* Book Reviews */}
           <BookReview bookId={book.id} isReader={isReader} user={user} />
+
+          {/* Borrow Request Dialog */}
+          {borrowDialog.isOpen && onCreateBorrowRequest && (
+            <Dialog
+              isOpen={borrowDialog.isOpen}
+              onClose={closeBorrowDialog}
+              title={borrowDialog.title || 'Borrow Book'}
+              content={
+                <BorrowRequestForm
+                  startDate={borrowForm.startDate}
+                  endDate={borrowForm.endDate}
+                  onStartDateChange={date => setBorrowField('startDate', date)}
+                  onEndDateChange={date => setBorrowField('endDate', date)}
+                  startDateError={borrowErrors.startDate}
+                  endDateError={borrowErrors.endDate}
+                />
+              }
+              buttons={[
+                {
+                  label: borrowDialog.cancelText || 'Cancel',
+                  variant: 'secondary',
+                  onClick: closeBorrowDialog,
+                },
+                {
+                  label: borrowDialog.confirmText || 'Confirm',
+                  variant: 'primary',
+                  onClick: borrowDialog.onConfirm || (() => {}),
+                },
+              ]}
+            />
+          )}
         </Box>
 
         {/* Right Column - Analytics and Related Books */}

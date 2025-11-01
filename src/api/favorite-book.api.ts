@@ -64,4 +64,19 @@ export class FavoriteBookApi {
 
     await handleJson<void>(response);
   }
+
+  // Check if a book is favorite
+  static async checkFavoriteBook(bookId: number): Promise<boolean> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/favorite-books?bookId=${bookId}`, {
+      method: 'GET',
+      headers,
+    });
+
+    const data = await handleJson<{ isFavorite: boolean }>(response);
+    return data.isFavorite;
+  }
 }

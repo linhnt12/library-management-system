@@ -31,6 +31,8 @@ export interface FavoriteBookWithBook {
     };
     bookEditions?: { id: number; format: 'EBOOK' | 'AUDIO' }[];
     _count?: { bookItems: number };
+    categories?: string[];
+    averageRating?: number;
   };
 }
 

@@ -21,6 +21,31 @@ import { Prisma } from '@prisma/client';
 export const GET = requireAuth(async (request: AuthenticatedRequest) => {
   try {
     const { searchParams } = new URL(request.url);
+
+    // Check if checking favorite status for a specific book
+    const bookIdParam = searchParams.get('bookId');
+    if (bookIdParam) {
+      const userId = request.user.id;
+      const bookId = parseIntParam(bookIdParam);
+
+      if (!bookId || bookId <= 0) {
+        throw new ValidationError('Invalid bookId');
+      }
+
+      const favorite = await prisma.userFavoriteBook.findUnique({
+        where: {
+          userId_bookId: {
+            userId,
+            bookId,
+          },
+        },
+      });
+
+      return successResponse<{ isFavorite: boolean }>({
+        isFavorite: !!favorite && !favorite.isDeleted,
+      });
+    }
+
     const { page, limit, search } = parsePaginationParams(searchParams);
 
     // Get userId from authenticated user
@@ -108,6 +133,24 @@ export const GET = requireAuth(async (request: AuthenticatedRequest) => {
                   bookItems: true,
                 },
               },
+              bookCategories: {
+                where: { isDeleted: false },
+                select: {
+                  category: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+              reviews: {
+                where: {
+                  isDeleted: false,
+                },
+                select: {
+                  rating: true,
+                },
+              },
             },
           },
         },
@@ -115,7 +158,36 @@ export const GET = requireAuth(async (request: AuthenticatedRequest) => {
       prisma.userFavoriteBook.count({ where }),
     ]);
 
-    const favoriteBooks = favoriteBooksRaw as unknown as FavoriteBookWithBook[];
+    // Transform favorite books to include calculated fields
+    const favoriteBooks = (
+      favoriteBooksRaw as unknown as (FavoriteBookWithBook & {
+        book: FavoriteBookWithBook['book'] & {
+          bookCategories?: { category: { name: string } }[];
+          reviews?: { rating: number }[];
+        };
+      })[]
+    ).map(favorite => {
+      // Calculate averageRating from reviews
+      const reviews = favorite.book.reviews || [];
+      const averageRating =
+        reviews.length > 0
+          ? Math.round(
+              (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length) * 10
+            ) / 10
+          : 0;
+
+      // Map bookCategories to categories array
+      const categories = favorite.book.bookCategories?.map(x => x.category.name) ?? [];
+
+      return {
+        ...favorite,
+        book: {
+          ...favorite.book,
+          categories,
+          averageRating,
+        },
+      };
+    }) as FavoriteBookWithBook[];
 
     return successResponse<FavoriteBooksListPayload>({
       favoriteBooks,

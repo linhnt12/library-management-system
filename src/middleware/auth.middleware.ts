@@ -17,7 +17,9 @@ export interface AuthenticatedRequest extends NextRequest {
 }
 
 // Authentication middleware
-export async function authenticateToken(request: NextRequest): Promise<{ success: boolean; user?: AuthUser; error?: string; }> {
+export async function authenticateToken(
+  request: NextRequest
+): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
   try {
     // Get token from Authorization header
     const authHeader = request.headers.get('authorization');
@@ -111,6 +113,10 @@ export const requireAdmin = (
 export const requireLibrarian = (
   handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
 ) => withAuth(handler, { roles: [Role.ADMIN, Role.LIBRARIAN] });
+
+export const requireReader = (
+  handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
+) => withAuth(handler, { roles: [Role.READER] });
 
 export const optionalAuth = (
   handler: (req: AuthenticatedRequest, context?: unknown) => Promise<NextResponse>
