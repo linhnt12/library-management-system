@@ -2,6 +2,7 @@
 
 import { BookApi, FavoriteBookApi } from '@/api';
 import { BookDetail, toaster } from '@/components';
+import { useCreateBorrowRequest } from '@/lib/hooks';
 import { BookDetail as BookDetailType } from '@/types';
 import { Box } from '@chakra-ui/react';
 import { useParams, useRouter } from 'next/navigation';
@@ -13,6 +14,7 @@ export default function PublicBookPage() {
   const bookId = Number(params.id);
   const [book, setBook] = useState<BookDetailType | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const createBorrowRequestMutation = useCreateBorrowRequest();
 
   // Fetch book data
   useEffect(() => {
@@ -100,14 +102,34 @@ export default function PublicBookPage() {
     return null;
   }
 
+  const handleCreateBorrowRequest = async (data: {
+    userId: number;
+    bookId: number;
+    startDate: string;
+    endDate: string;
+  }) => {
+    // Transform data to match API format
+    // Quantity is always 1 (one copy per user)
+    await createBorrowRequestMutation.mutateAsync({
+      userId: data.userId,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      items: [
+        {
+          bookId: data.bookId,
+          quantity: 1,
+          startDate: data.startDate,
+          endDate: data.endDate,
+        },
+      ],
+    });
+  };
+
   return (
     <Box bg="white" rounded="lg" p={4}>
       <BookDetail
         book={book}
-        onBorrowClick={() => {
-          // TODO: Implement borrow functionality
-          console.log('Borrow book:', book.id);
-        }}
+        onCreateBorrowRequest={handleCreateBorrowRequest}
         onAddToFavoriteClick={handleAddToFavorite}
         onRemoveFromFavoriteClick={handleRemoveFromFavorite}
         isFavorite={isFavorite}

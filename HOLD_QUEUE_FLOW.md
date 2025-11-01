@@ -2,9 +2,12 @@
 
 ## 📋 Tổng quan
 
-- ✅ Reader nhận sách **sau khi đã được "mượn"** trong hệ thống
-- ✅ Tự động approve và tạo BorrowRecord ngay khi có sách
+- ✅ Reader nhận sách **sau khi thủ thư tạo BorrowRecord** (không tự động)
+- ✅ Tự động approve BorrowRequest khi có đủ sách để đặt trước (tính ở level Book - số lượng)
+- ✅ **Không reserve BookItem** khi đặt trước, chỉ tính số lượng còn lại: `Total AVAILABLE - Đã đặt trước (APPROVED)`
+- ✅ Thủ thư mới tạo BorrowRecord khi giao sách thực tế và chọn BookItem cụ thể
 - ✅ Hold Queue theo FIFO để đảm bảo công bằng
+- ✅ Nhiều readers có thể cùng có request APPROVED cho cùng một cuốn sách (nếu còn đủ số lượng)
 
 ---
 
@@ -27,8 +30,8 @@
 **Logic hệ thống:**
 
 ```typescript
-// 1. Kiểm tra sách available
-const availableCount = await prisma.bookItem.count({
+// 1. Đếm tổng BookItem AVAILABLE
+const totalAvailable = await prisma.bookItem.count({
   where: {
     bookId: bookId,
     status: 'AVAILABLE',
@@ -36,57 +39,61 @@ const availableCount = await prisma.bookItem.count({
   },
 });
 
-// 2. Nếu availableCount >= quantity
-if (availableCount >= 2) {
+// 2. Đếm tổng quantity đã được đặt trước (BorrowRequest APPROVED chưa FULFILLED)
+const reservedQuantity = await prisma.borrowRequestItem.aggregate({
+  where: {
+    bookId: bookId,
+    borrowRequest: {
+      status: 'APPROVED', // Chỉ tính các request đã được approve
+      isDeleted: false,
+    },
+  },
+  _sum: {
+    quantity: true,
+  },
+});
+
+// 3. Tính số lượng còn lại có thể đặt trước
+const remainingAvailable = totalAvailable - (reservedQuantity._sum.quantity || 0);
+
+// 4. Nếu remainingAvailable >= quantity cần
+if (remainingAvailable >= 2) {
   // → Trường hợp có sách ngay
-  // → Xử lý tiếp ở TRƯỜNG HỢP 2
+  // → Xử lý tiếp ở BƯỚC 2
 }
 ```
 
+**Ví dụ:**
+
+- Tổng BookItem AVAILABLE: 3 quyển
+- Đã có BorrowRequest APPROVED đặt trước: 2 quyển
+- Còn lại: 3 - 2 = 1 quyển
+- Request mới cần: 2 quyển → Không đủ → Vào queue
+- Request mới cần: 1 quyển → Đủ → APPROVED
+
 ```
 ┌──────────────────────────────────────────┐
-│ BƯỚC 2: Instant Approval & Tạo Record  │
+│ BƯỚC 2: Instant Approval                │
 └──────────────────────────────────────────┘
 ```
 
 **Actions:**
 
-1. **Tạo `BorrowRequest`** với `status = PENDING` tạm thời
-2. Kiểm tra lại và validate đủ sách
-3. **Tạo `BorrowRecord`** ngay lập tức:
+1. **Tính số lượng có thể đặt trước:**
    ```typescript
-   BorrowRecord {
-     userId: readerId,
-     borrowDate: "2025-01-01",
-     returnDate: "2025-01-15",
-     status: "BORROWED"
-   }
+   remainingAvailable = Tổng BookItem AVAILABLE - Tổng quantity của BorrowRequest APPROVED
    ```
-4. **Chọn BookItem cụ thể:**
-   ```typescript
-   // Ưu tiên condition tốt nhất
-   BookItem WHERE bookId = X
-     AND status = 'AVAILABLE'
-   ORDER BY condition DESC (NEW > GOOD > WORN)
-   LIMIT 2
-   ```
-5. **Tạo `BorrowBook` records:**
-   ```typescript
-   BorrowBook {
-     borrowId: borrowRecord.id,
-     bookItemId: bookItem1.id
-   }
-   BorrowBook {
-     borrowId: borrowRecord.id,
-     bookItemId: bookItem2.id
-   }
-   ```
-6. **Update `BookItem.status`:**
-   ```typescript
-   BookItem1.status = 'ON_BORROW';
-   BookItem2.status = 'ON_BORROW';
-   ```
-7. **Update `BorrowRequest.status = 'APPROVED'`** hoặc `'FULFILLED'`
+2. **Tạo `BorrowRequest`** với `status = APPROVED` (còn đủ sách để đặt trước)
+3. ❌ **KHÔNG thay đổi BookItem status** (giữ nguyên AVAILABLE)
+4. ❌ **KHÔNG chọn BookItem cụ thể** (chỉ check số lượng, thủ thư sẽ chọn khi giao sách)
+5. ❌ **KHÔNG tạo `BorrowRecord`** (thủ thư tạo khi giao sách)
+6. ❌ **KHÔNG tạo `BorrowBook` links** (chưa có BorrowRecord)
+
+**Lưu ý:**
+
+- Đặt trước chỉ tính ở level **Book** (số lượng), không cần chọn BookItem cụ thể
+- BookItem vẫn giữ nguyên `status = AVAILABLE` cho đến khi thủ thư giao sách thực tế
+- Nhiều readers có thể cùng đặt trước cùng một cuốn sách (nếu còn đủ số lượng)
 
 ```
 ┌──────────────────────────────────────────┐
@@ -99,8 +106,8 @@ if (availableCount >= 2) {
 ```typescript
 Notification {
   userId: readerId,
-  title: "Mượn sách thành công",
-  message: "Bạn đã mượn thành công 'Harry Potter' - 2 quyển.
+  title: "Yêu cầu mượn sách đã được duyệt",
+  message: "Yêu cầu mượn 'Harry Potter' của bạn đã được duyệt.
             Vui lòng đến thư viện để nhận sách.",
   type: "SYSTEM",
   status: "UNREAD"
@@ -110,9 +117,48 @@ Notification {
 **Trạng thái cuối:**
 
 - ✅ `BorrowRequest.status = APPROVED`
-- ✅ `BorrowRecord.status = BORROWED`
-- ✅ `BookItem.status = ON_BORROW` (2 items)
-- ✅ Reader: "Đã mượn thành công, đến thư viện nhận sách"
+- ❌ `BorrowRecord` = null (chưa tạo, thủ thư sẽ tạo khi giao sách)
+- ✅ `BookItem.status = AVAILABLE` (không thay đổi, chờ thủ thư giao)
+- ✅ Reader: "Yêu cầu đã được duyệt, đến thư viện để nhận sách"
+
+**Bước tiếp theo (Thủ thư giao sách):**
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 4: Thủ thư giao sách              │
+└──────────────────────────────────────────┘
+```
+
+1. **Thủ thư tìm BorrowRequest** với `status = APPROVED`
+2. **Chọn BookItem cụ thể:**
+   ```typescript
+   // Ưu tiên condition tốt nhất
+   BookItem WHERE bookId = X
+     AND status = 'AVAILABLE'
+   ORDER BY condition DESC (NEW > GOOD > WORN)
+   LIMIT 1
+   ```
+3. **Tạo `BorrowRecord`:**
+   ```typescript
+   BorrowRecord {
+     userId: readerId,
+     borrowDate: "2025-01-01",
+     returnDate: "2025-01-15",
+     status: "BORROWED"
+   }
+   ```
+4. **Tạo `BorrowBook` links:**
+   ```typescript
+   BorrowBook {
+     borrowId: borrowRecord.id,
+     bookItemId: bookItem1.id
+   }
+   ```
+5. **Update `BookItem.status`:**
+   ```typescript
+   BookItem1.status = 'ON_BORROW'; // AVAILABLE → ON_BORROW
+   ```
+6. **Update `BorrowRequest.status = 'FULFILLED'`**
 
 ---
 
@@ -135,7 +181,8 @@ Notification {
 **Logic kiểm tra:**
 
 ```typescript
-const availableCount = await prisma.bookItem.count({
+// 1. Đếm tổng BookItem AVAILABLE
+const totalAvailable = await prisma.bookItem.count({
   where: {
     bookId: 'Dune',
     status: 'AVAILABLE',
@@ -143,7 +190,24 @@ const availableCount = await prisma.bookItem.count({
   },
 });
 
-// availableCount = 0 (không có sách available)
+// 2. Đếm tổng quantity đã được đặt trước
+const reservedQuantity = await prisma.borrowRequestItem.aggregate({
+  where: {
+    bookId: 'Dune',
+    borrowRequest: {
+      status: 'APPROVED',
+      isDeleted: false,
+    },
+  },
+  _sum: {
+    quantity: true,
+  },
+});
+
+// 3. Tính số lượng còn lại
+const remainingAvailable = totalAvailable - (reservedQuantity._sum.quantity || 0);
+
+// remainingAvailable = 0 hoặc < quantity cần → Vào queue
 ```
 
 ```
@@ -317,9 +381,33 @@ async function processHoldQueueForBook(bookId: number) {
 
 // Kiểm tra từng item
 for (const item of request.items) {
-  const availableCount = await countAvailableBookItems(item.bookId);
+  // 1. Đếm tổng BookItem AVAILABLE
+  const totalAvailable = await prisma.bookItem.count({
+    where: {
+      bookId: item.bookId,
+      status: 'AVAILABLE',
+      isDeleted: false,
+    },
+  });
 
-  if (availableCount < item.quantity) {
+  // 2. Đếm tổng quantity đã được đặt trước (APPROVED)
+  const reservedQuantity = await prisma.borrowRequestItem.aggregate({
+    where: {
+      bookId: item.bookId,
+      borrowRequest: {
+        status: 'APPROVED',
+        isDeleted: false,
+      },
+    },
+    _sum: {
+      quantity: true,
+    },
+  });
+
+  // 3. Tính số lượng còn lại có thể đặt trước
+  const remainingAvailable = totalAvailable - (reservedQuantity._sum.quantity || 0);
+
+  if (remainingAvailable < item.quantity) {
     // ❌ Chưa đủ sách
     return null; // Không approve, giữ trong queue
   }
@@ -335,8 +423,14 @@ for (const item of request.items) {
 
 ```
 Request #120 có 2 items:
-- "Dune": cần 1, available: 2 ✅
-- "Foundation": cần 2, available: 3 ✅
+- "Dune": cần 1
+  - Total AVAILABLE: 2
+  - Đã đặt trước (APPROVED): 0
+  - Còn lại: 2 - 0 = 2 ✅ (>= 1)
+- "Foundation": cần 2
+  - Total AVAILABLE: 3
+  - Đã đặt trước (APPROVED): 0
+  - Còn lại: 3 - 0 = 3 ✅ (>= 2)
 → APPROVE ngay
 ```
 
@@ -344,8 +438,14 @@ Request #120 có 2 items:
 
 ```
 Request #120 có 2 items:
-- "Dune": cần 1, available: 2 ✅
-- "Foundation": cần 2, available: 1 ❌
+- "Dune": cần 1
+  - Total AVAILABLE: 2
+  - Đã đặt trước (APPROVED): 1
+  - Còn lại: 2 - 1 = 1 ✅ (>= 1)
+- "Foundation": cần 2
+  - Total AVAILABLE: 3
+  - Đã đặt trước (APPROVED): 2
+  - Còn lại: 3 - 2 = 1 ❌ (< 2)
 → KHÔNG approve, giữ PENDING
 → Chờ thêm sách "Foundation" trả về
 ```
@@ -365,7 +465,7 @@ Sách trả về: 1 quyển "Dune"
 
 ```
 ┌──────────────────────────────────────────┐
-│ BƯỚC 4: Tự động Approve Request         │
+│ BƯỚC 4: Tự động Approve & Reserve       │
 └──────────────────────────────────────────┘
 ```
 
@@ -373,50 +473,8 @@ Sách trả về: 1 quyển "Dune"
 
 ```typescript
 await prisma.$transaction(async tx => {
-  // 1. Tạo BorrowRecord
-  const borrowRecord = await tx.borrowRecord.create({
-    data: {
-      userId: request.userId,
-      borrowDate: request.startDate,
-      returnDate: request.endDate,
-      status: 'BORROWED', // Đã mượn
-    },
-  });
-
-  // 2. Xử lý từng BorrowRequestItem
-  for (const item of request.items) {
-    // Chọn BookItem cụ thể
-    const selectedItems = await tx.bookItem.findMany({
-      where: {
-        bookId: item.bookId,
-        status: 'AVAILABLE',
-        isDeleted: false,
-      },
-      orderBy: [
-        { condition: 'desc' }, // NEW > GOOD > WORN
-        { createdAt: 'asc' },
-      ],
-      take: item.quantity,
-    });
-
-    // Tạo BorrowBook links
-    for (const bookItem of selectedItems) {
-      await tx.borrowBook.create({
-        data: {
-          borrowId: borrowRecord.id,
-          bookItemId: bookItem.id,
-        },
-      });
-
-      // Update status ngay
-      await tx.bookItem.update({
-        where: { id: bookItem.id },
-        data: { status: 'ON_BORROW' },
-      });
-    }
-  }
-
-  // 3. Update BorrowRequest status
+  // Chỉ update BorrowRequest status
+  // KHÔNG thay đổi BookItem status
   await tx.borrowRequest.update({
     where: { id: request.id },
     data: { status: 'APPROVED' },
@@ -430,22 +488,70 @@ await prisma.$transaction(async tx => {
 BorrowRequest #120:
   status: PENDING → APPROVED ✅
 
-BorrowRecord #456:
-  userId: readerId
-  borrowDate: "2025-01-01"
-  returnDate: "2025-01-15"
-  status: "BORROWED"
-
-BorrowBook records:
-  - borrowId: 456, bookItemId: 10 (Dune)
-  - borrowId: 456, bookItemId: 20 (Foundation)
-  - borrowId: 456, bookItemId: 21 (Foundation)
+❌ BorrowRecord: CHƯA TẠO (thủ thư sẽ tạo khi giao sách)
 
 BookItem:
-  - Item #10: status = ON_BORROW ✅
-  - Item #20: status = ON_BORROW ✅
-  - Item #21: status = ON_BORROW ✅
+  - Item #10: status = AVAILABLE (không thay đổi) ✅
+  - Item #20: status = AVAILABLE (không thay đổi) ✅
+  - Item #21: status = AVAILABLE (không thay đổi) ✅
 ```
+
+**Bước tiếp theo (Thủ thư giao sách):**
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 5: Thủ thư tạo BorrowRecord        │
+└──────────────────────────────────────────┘
+```
+
+1. **Tạo BorrowRecord:**
+
+   ```typescript
+   BorrowRecord {
+     userId: request.userId,
+     borrowDate: request.startDate,
+     returnDate: request.endDate,
+     status: 'BORROWED'
+   }
+   ```
+
+2. **Chọn BookItem và tạo BorrowBook links:**
+
+   ```typescript
+   // Chọn BookItem từ các items AVAILABLE (ưu tiên condition tốt nhất)
+   for (const item of request.items) {
+     const selectedItem = await tx.bookItem.findFirst({
+       where: {
+         bookId: item.bookId,
+         status: 'AVAILABLE',
+         isDeleted: false,
+       },
+       orderBy: [
+         { condition: 'desc' }, // NEW > GOOD > WORN > DAMAGED
+         { createdAt: 'asc' },
+       ],
+     });
+
+     if (selectedItem) {
+       await tx.borrowBook.create({
+         data: {
+           borrowId: borrowRecord.id,
+           bookItemId: selectedItem.id,
+         },
+       });
+
+       await tx.bookItem.update({
+         where: { id: selectedItem.id },
+         data: { status: 'ON_BORROW' }, // AVAILABLE → ON_BORROW
+       });
+     }
+   }
+   ```
+
+3. **Update BorrowRequest:**
+   ```typescript
+   BorrowRequest.status = 'FULFILLED';
+   ```
 
 ```
 ┌──────────────────────────────────────────┐
@@ -460,7 +566,7 @@ Notification {
   userId: readerId (Request #120),
   title: "Yêu cầu mượn sách đã được duyệt",
   message: "Yêu cầu mượn sách của bạn đã được duyệt tự động!
-            Bạn đã mượn thành công:
+            Bạn có thể mượn:
             - Dune (1 quyển)
             - Foundation (2 quyển)
             Vui lòng đến thư viện để nhận sách.",
@@ -468,6 +574,12 @@ Notification {
   status: "UNREAD"
 }
 ```
+
+**Lưu ý:**
+
+- Sách vẫn AVAILABLE, không bị reserve khi tạo request
+- Nhiều readers có thể có request APPROVED cho cùng một cuốn sách
+- Thủ thư sẽ chọn BookItem và tạo BorrowRecord khi reader đầu tiên đến nhận sách
 
 **Cập nhật queue position:**
 
@@ -518,7 +630,8 @@ Request #125 được check:
   - "1984": availableCount = 4, cần 3 ✅
     ↓
 → APPROVE ngay
-→ Tạo BorrowRecord với 6 BookItem (2+1+3)
+→ Reserve 6 BookItems (2+1+3) với status = RESERVED
+→ KHÔNG tạo BorrowRecord (thủ thư tạo khi giao sách)
 ```
 
 ---
@@ -571,12 +684,14 @@ await prisma.$transaction(async tx => {
 ```
 Lần trả về 1 (BookItem #50):
   → Request #120 được approve
-  → BookItem #50: ON_BORROW
+  → BookItem #50: giữ nguyên AVAILABLE (không thay đổi)
+  → KHÔNG tạo BorrowRecord (thủ thư tạo khi giao sách)
   → Queue: #121 → #1, #122 → #2
 
 Lần trả về 2 (BookItem #51):
   → Request #121 được approve (giờ đã là #1)
-  → BookItem #51: ON_BORROW
+  → BookItem #51: giữ nguyên AVAILABLE (không thay đổi)
+  → KHÔNG tạo BorrowRecord (thủ thư tạo khi giao sách)
   → Queue: #122 → #1
 ```
 
@@ -616,15 +731,20 @@ Lần trả về 2 (BookItem #51):
                     │              Chờ thêm sách
                     │
                     ↓
-        Tạo BorrowRecord
-        Chọn BookItem (condition tốt nhất)
-        Tạo BorrowBook links
-        Update BookItem: ON_BORROW
-        Update Request: APPROVED
+        Update Request: PENDING → APPROVED
+        ❌ KHÔNG thay đổi BookItem status (giữ AVAILABLE)
+        ❌ KHÔNG tạo BorrowRecord
                     │
                     ↓
-        Thông báo Reader: "Đã mượn thành công"
-        Reader đến thư viện nhận sách
+        Thông báo Reader: "Đã được duyệt, đến thư viện nhận sách"
+        Reader đến thư viện
+                    │
+                    ↓
+        Thủ thư chọn BookItem (condition tốt nhất)
+        Thủ thư tạo BorrowRecord
+        Tạo BorrowBook links
+        Update BookItem: AVAILABLE → ON_BORROW
+        Update Request: APPROVED → FULFILLED
 ```
 
 ---
@@ -635,14 +755,28 @@ Lần trả về 2 (BookItem #51):
 
 1. **Transaction Safety**: Luôn dùng Prisma transaction khi xử lý queue để tránh race condition
 2. **FIFO Ordering**: Sắp xếp theo `createdAt ASC` để đảm bảo công bằng
-3. **Validation**: Phải check đủ sách cho TẤT CẢ items trong request trước khi approve
-4. **BookItem Selection**: Ưu tiên condition tốt nhất (NEW > GOOD > WORN > DAMAGED)
-5. **Notification**: Thông báo cho reader ở mỗi bước quan trọng
+3. **Availability Calculation**:
+   ```typescript
+   remainingAvailable = Tổng BookItem AVAILABLE - Tổng quantity của BorrowRequest APPROVED
+   ```
+
+   - Chỉ tính ở level **Book** (số lượng), không cần chọn BookItem cụ thể khi đặt trước
+   - Phải check đủ sách cho TẤT CẢ items trong request trước khi approve
+4. **BookItem Selection**:
+   - Khi đặt trước: Không chọn BookItem cụ thể (chỉ check số lượng)
+   - Khi thủ thư giao sách: Ưu tiên condition tốt nhất (NEW > GOOD > WORN > DAMAGED)
+5. **BookItem Status Flow**:
+   - Khi tạo BorrowRequest → BookItem status không thay đổi (giữ AVAILABLE)
+   - Khi APPROVED → BookItem status vẫn AVAILABLE (không reserve)
+   - Thủ thư giao sách → Chọn BookItem + Tạo BorrowRecord + BookItem: AVAILABLE → ON_BORROW
+6. **Multiple Approvals**: Nhiều readers có thể cùng có request APPROVED cho cùng một cuốn sách (nếu còn đủ số lượng để đặt trước)
+7. **Notification**: Thông báo cho reader ở mỗi bước quan trọng
 
 ### API Endpoints cần thiết:
 
-1. `POST /api/borrow-requests` - Tạo yêu cầu mượn
+1. `POST /api/borrow-requests` - Tạo yêu cầu mượn (✅ Đã implement)
 2. `GET /api/borrow-requests/my-queue` - Xem vị trí trong queue của mình
 3. `GET /api/borrow-requests/queue/[bookId]` - Xem queue của một cuốn sách (Librarian)
 4. `POST /api/book-items/[id]/return` - Trả sách (trigger queue processing)
 5. `GET /api/borrow-requests/[id]` - Chi tiết request
+6. `POST /api/borrow-requests/[id]/fulfill` - Thủ thư giao sách, tạo BorrowRecord (cần implement)
