@@ -1,5 +1,6 @@
 export * from './author';
 export * from './book';
+export * from './borrow-record';
 export * from './borrow-request';
 export * from './category';
 export * from './EntityStatusCell';
