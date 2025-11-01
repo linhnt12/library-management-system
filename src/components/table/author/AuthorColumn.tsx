@@ -1,6 +1,6 @@
 'use client';
 
-import { IconButton, StatusCell } from '@/components';
+import { EntityStatusCell, IconButton } from '@/components';
 import { ROUTES } from '@/constants';
 import { Author } from '@/types';
 import { HStack, Text, VStack } from '@chakra-ui/react';
@@ -90,7 +90,7 @@ export const AuthorColumns = (onChangeStatus?: (author: Author) => void) => [
     sortable: true,
     width: '100px',
     render: (author: Author) => (
-      <StatusCell item={author} onChangeStatus={onChangeStatus || (() => {})} />
+      <EntityStatusCell item={author} onChangeStatus={onChangeStatus || (() => {})} />
     ),
   },
   {
