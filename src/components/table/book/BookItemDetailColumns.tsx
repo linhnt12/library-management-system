@@ -89,10 +89,7 @@ function ActionsCell({ bookItem }: { bookItem: { id: number; bookId: number } })
   );
 }
 
-export const BookItemDetailColumns = () => {
-  const { data: user } = useMe();
-  const isAdminOrLibrarian = user?.role === 'ADMIN' || user?.role === 'LIBRARIAN';
-
+export function createBookItemDetailColumns(isAdminOrLibrarian: boolean) {
   const baseColumns = [
     {
       key: 'code',
@@ -145,4 +142,14 @@ export const BookItemDetailColumns = () => {
   }
 
   return baseColumns;
+}
+
+/**
+ * Hook to get book item detail columns based on current user role
+ * This hook uses useMe() internally
+ */
+export const BookItemDetailColumns = () => {
+  const { data: user } = useMe();
+  const isAdminOrLibrarian = user?.role === 'ADMIN' || user?.role === 'LIBRARIAN';
+  return createBookItemDetailColumns(isAdminOrLibrarian);
 };

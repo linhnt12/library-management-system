@@ -40,6 +40,12 @@ export class UserApi {
     return await handleJson<UsersResponse>(response);
   }
 
+  // Get all users
+  static async getAllUsers(): Promise<PublicUser[]> {
+    const response = await fetchWithAuth('/api/users/all');
+    return await handleJson<PublicUser[]>(response);
+  }
+
   // Get single user by ID
   static async getUserById(id: number): Promise<PublicUser> {
     const response = await fetchWithAuth(`/api/users/${id}`);

@@ -1,6 +1,7 @@
 import { IconButton } from '@/components';
+import { UserCell } from '@/components/user';
 import { PublicUser } from '@/types/user';
-import { Badge, HStack, Stack, Text } from '@chakra-ui/react';
+import { Badge, HStack, Text } from '@chakra-ui/react';
 import { Role, UserStatus } from '@prisma/client';
 import { LuPencil, LuTrash2 } from 'react-icons/lu';
 
@@ -27,14 +28,7 @@ export const UserColumns = (
     header: 'Full Name',
     sortable: true,
     render: (user: PublicUser) => (
-      <Stack gap={0}>
-        <Text fontWeight="semibold" color="gray.800">
-          {user.fullName}
-        </Text>
-        <Text fontSize="sm" color="gray.500">
-          {user.email}
-        </Text>
-      </Stack>
+      <UserCell user={{ fullName: user.fullName, email: user.email }} variant="stack" />
     ),
   },
   {

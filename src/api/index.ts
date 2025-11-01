@@ -4,6 +4,7 @@ export * from './author.api';
 export * from './book-edition.api';
 export * from './book-item.api';
 export * from './book.api';
+export * from './borrow-record.api';
 export * from './borrow-request.api';
 export * from './category.api';
 export * from './digital-license.api';

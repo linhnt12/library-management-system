@@ -62,6 +62,16 @@ export interface BorrowRequestWithBook extends BorrowRequest {
   items: BorrowRequestItemWithBook[];
 }
 
+// BorrowRequest with items that include book information and user information
+export interface BorrowRequestWithBookAndUser extends BorrowRequest {
+  items: BorrowRequestItemWithBook[];
+  user?: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+}
+
 // Create BorrowRequest data
 export interface CreateBorrowRequestData {
   userId: number;

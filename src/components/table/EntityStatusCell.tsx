@@ -2,15 +2,15 @@
 
 import { Tag } from '@/components';
 
-interface StatusCellProps<T> {
+interface EntityStatusCellProps<T> {
   item: T;
   onChangeStatus: (item: T) => void;
 }
 
-export function StatusCell<T extends { isDeleted: boolean }>({
+export function EntityStatusCell<T extends { isDeleted: boolean }>({
   item,
   onChangeStatus,
-}: StatusCellProps<T>) {
+}: EntityStatusCellProps<T>) {
   const handleStatusClick = () => {
     onChangeStatus(item);
   };

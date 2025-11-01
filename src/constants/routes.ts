@@ -13,18 +13,28 @@ export const ROUTES = {
     // Common routes
     HOME: '/dashboard',
 
-    // Books routes
+    // Profile routes
     PROFILE: '/dashboard/profile',
+
+    // Books routes
     BOOKS: '/dashboard/books',
     BOOKS_ADD: '/dashboard/books/add',
     BOOKS_EDIT: '/dashboard/books/edit',
+
+    // Book Copies routes
     BOOKS_COPIES: '/dashboard/books/copies',
     BOOKS_COPIES_ADD: '/dashboard/books/copies/add',
+    BOOKS_COPIES_EDIT: '/dashboard/books/copies/edit',
+
+    // Book Editions routes
     BOOKS_EDITIONS: '/dashboard/books/editions',
     BOOKS_EDITIONS_ADD: '/dashboard/books/editions/add',
+    BOOKS_EDITIONS_EDIT: '/dashboard/books/editions/edit',
 
-    // Borrowers routes
-    BORROWERS: '/dashboard/borrowers',
+    // Borrowing routes
+    BORROW_REQUESTS: '/dashboard/borrow-requests',
+    BORROW_RECORDS: '/dashboard/borrow-records',
+    BORROW_RECORDS_ADD: '/dashboard/borrow-records/add',
 
     // Authors routes
     AUTHORS: '/dashboard/authors',
@@ -40,7 +50,6 @@ export const ROUTES = {
     USERS: '/dashboard/users',
     USERS_ADD: '/dashboard/users/add',
     USERS_EDIT: '/dashboard/users/edit',
-    REPORTS: '/dashboard/reports',
   },
 
   // Common routes
