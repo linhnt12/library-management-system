@@ -41,16 +41,24 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest) => {
     const page = parseIntParam(searchParams.get('page'), 1);
     const limit = parseIntParam(searchParams.get('limit'), 10);
     const status = searchParams.get('status'); // Filter by status
+    const userId = searchParams.get('userId'); // Filter by userId
 
     const skip = (page - 1) * limit;
 
-    // Get all borrow requests (no user filter)
+    // Get all borrow requests with optional filters
     const where: Prisma.BorrowRequestWhereInput = {
       isDeleted: false,
     };
 
     if (status && Object.values(BorrowRequestStatus).includes(status as BorrowRequestStatus)) {
       where.status = status as BorrowRequestStatus;
+    }
+
+    if (userId) {
+      const userIdNum = parseIntParam(userId, 0);
+      if (userIdNum > 0) {
+        where.userId = userIdNum;
+      }
     }
 
     const [borrowRequestsRaw, total] = await Promise.all([

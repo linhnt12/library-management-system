@@ -70,6 +70,7 @@ export class BorrowRequestApi {
     page?: number;
     limit?: number;
     status?: BorrowRequestStatus;
+    userId?: number;
   }): Promise<{
     borrowRequests: BorrowRequestWithBookAndUser[];
     pagination: {
@@ -84,6 +85,7 @@ export class BorrowRequestApi {
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     if (params?.status) searchParams.set('status', params.status);
+    if (params?.userId) searchParams.set('userId', params.userId.toString());
 
     const token = getAccessToken();
     const headers: Record<string, string> = {};

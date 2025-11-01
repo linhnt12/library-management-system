@@ -14,6 +14,19 @@ export function useUsers(filters?: UserQueryFilters) {
 }
 
 /**
+ * Hook to fetch all users
+ */
+export function useAllUsers() {
+  return useQuery({
+    queryKey: ['users', 'all'],
+    queryFn: async (): Promise<PublicUser[]> => {
+      return UserApi.getAllUsers();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+/**
  * Hook to fetch single user by ID
  */
 export function useUser(id: number | null) {
