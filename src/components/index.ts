@@ -11,4 +11,5 @@ export * from './layout';
 export * from './providers';
 export * from './table';
 export * from './ui';
+export * from './user';
 export * from './user-layout';
