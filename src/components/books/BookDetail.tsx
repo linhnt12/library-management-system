@@ -17,7 +17,7 @@ import { useMe, useReviewStats } from '@/lib/hooks';
 import { BookDetail as BookDetailType } from '@/types';
 import { Badge, Box, Flex, Grid, Heading, HStack, Image, Text, VStack } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
-import { LuBookCheck, LuHeart, LuPencil } from 'react-icons/lu';
+import { LuBookCheck, LuHeart, LuHeartOff, LuPencil } from 'react-icons/lu';
 
 // Mock data for reservations and related books
 const mockReservations = [
@@ -189,7 +189,9 @@ interface BookDetailProps {
   onEditClick?: () => void;
   onAddBookCopyClick?: () => void;
   onBorrowClick?: () => void;
-  onAddToFavouriteClick?: () => void;
+  onAddToFavoriteClick?: () => void;
+  onRemoveFromFavoriteClick?: () => void;
+  isFavorite?: boolean;
 }
 
 export function BookDetail({
@@ -197,7 +199,9 @@ export function BookDetail({
   onEditClick,
   onAddBookCopyClick,
   onBorrowClick,
-  onAddToFavouriteClick,
+  onAddToFavoriteClick,
+  onRemoveFromFavoriteClick,
+  isFavorite = false,
 }: BookDetailProps) {
   // Get current user info
   const { data: user } = useMe();
@@ -263,17 +267,19 @@ export function BookDetail({
                     {book.isDeleted ? 'Inactive' : 'Active'}
                   </Tag>
                 )}
-                {isReader && onAddToFavouriteClick && !book.isDeleted && (
-                  <Button
-                    label="Add to Favourite"
-                    variantType="primaryOutline"
-                    onClick={onAddToFavouriteClick}
-                    height="40px"
-                    fontSize="sm"
-                    p={2}
-                    icon={LuHeart}
-                  />
-                )}
+                {isReader &&
+                  !book.isDeleted &&
+                  (isFavorite ? onRemoveFromFavoriteClick : onAddToFavoriteClick) && (
+                    <Button
+                      label={isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                      variantType="primaryOutline"
+                      onClick={isFavorite ? onRemoveFromFavoriteClick : onAddToFavoriteClick}
+                      height="40px"
+                      fontSize="sm"
+                      p={2}
+                      icon={isFavorite ? LuHeartOff : LuHeart}
+                    />
+                  )}
                 {isAdminOrLibrarian && onEditClick && (
                   <IconButton aria-label="Edit book" onClick={onEditClick}>
                     <LuPencil />
