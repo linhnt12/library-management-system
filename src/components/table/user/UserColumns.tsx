@@ -1,27 +1,43 @@
-import { IconButton } from '@/components';
+'use client';
+
+import { IconButton, Tag } from '@/components';
+import { EntityStatusCell } from '@/components/table';
 import { UserCell } from '@/components/user';
+import { formatDate } from '@/lib/utils';
 import { PublicUser } from '@/types/user';
-import { Badge, HStack, Text } from '@chakra-ui/react';
-import { Role, UserStatus } from '@prisma/client';
+import { HStack, Text } from '@chakra-ui/react';
+import { Role } from '@prisma/client';
 import { LuPencil, LuTrash2 } from 'react-icons/lu';
+
+const getRoleVariantType = (
+  role: Role
+): 'active' | 'reserved' | 'borrowed' | 'inactive' | 'lost' => {
+  switch (role) {
+    case Role.ADMIN:
+      return 'lost';
+    case Role.LIBRARIAN:
+      return 'reserved';
+    case Role.READER:
+      return 'active';
+    default:
+      return 'active';
+  }
+};
 
 /**
  * User table columns configuration
  */
 export const UserColumns = (
   onEdit: (user: PublicUser) => void,
-  onDelete: (user: PublicUser) => void
+  onDelete: (user: PublicUser) => void,
+  onChangeStatus?: (user: PublicUser) => void
 ) => [
   {
     key: 'id',
     header: 'ID',
     sortable: true,
     width: '80px',
-    render: (user: PublicUser) => (
-      <Text fontWeight="medium" color="gray.700">
-        #{user.id}
-      </Text>
-    ),
+    render: (user: PublicUser) => <Text fontWeight="medium">{user.id}</Text>,
   },
   {
     key: 'fullName',
@@ -37,27 +53,7 @@ export const UserColumns = (
     sortable: true,
     width: '120px',
     render: (user: PublicUser) => {
-      const roleColors = {
-        [Role.ADMIN]: { bg: 'red.100', color: 'red.700' },
-        [Role.LIBRARIAN]: { bg: 'blue.100', color: 'blue.700' },
-        [Role.READER]: { bg: 'green.100', color: 'green.700' },
-      };
-
-      const colors = roleColors[user.role];
-
-      return (
-        <Badge
-          bg={colors.bg}
-          color={colors.color}
-          px={2}
-          py={1}
-          borderRadius="md"
-          fontWeight="medium"
-          fontSize="xs"
-        >
-          {user.role}
-        </Badge>
-      );
+      return <Tag variantType={getRoleVariantType(user.role)}>{user.role}</Tag>;
     },
   },
   {
@@ -65,47 +61,20 @@ export const UserColumns = (
     header: 'Status',
     sortable: true,
     width: '120px',
-    render: (user: PublicUser) => {
-      const isActive = user.status === UserStatus.ACTIVE;
-      return (
-        <Badge
-          bg={isActive ? 'green.100' : 'red.100'}
-          color={isActive ? 'green.700' : 'red.700'}
-          px={2}
-          py={1}
-          borderRadius="md"
-          fontWeight="medium"
-          fontSize="xs"
-        >
-          {isActive ? 'Active' : 'Inactive'}
-        </Badge>
-      );
-    },
+    render: (user: PublicUser) => <EntityStatusCell item={user} onChangeStatus={onChangeStatus} />,
   },
   {
     key: 'phoneNumber',
     header: 'Phone',
     width: '140px',
-    render: (user: PublicUser) => (
-      <Text fontSize="sm" color="gray.600">
-        {user.phoneNumber || '-'}
-      </Text>
-    ),
+    render: (user: PublicUser) => <Text fontSize="sm">{user.phoneNumber || '-'}</Text>,
   },
   {
     key: 'createdAt',
     header: 'Created At',
     sortable: true,
     width: '140px',
-    render: (user: PublicUser) => (
-      <Text fontSize="sm" color="gray.600">
-        {new Date(user.createdAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        })}
-      </Text>
-    ),
+    render: (user: PublicUser) => <Text fontSize="sm">{formatDate(user.createdAt)}</Text>,
   },
   {
     key: 'actions',

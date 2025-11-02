@@ -7,6 +7,7 @@ import { ROUTES } from '@/constants';
 import { useDialog, useUserFilters } from '@/lib/hooks';
 import { PublicUser } from '@/types/user';
 import { HStack, Stack } from '@chakra-ui/react';
+import { UserStatus } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { FiFilter } from 'react-icons/fi';
@@ -152,10 +153,41 @@ export default function UsersPage() {
       },
     });
   };
+
+  // Handle change user status
+  const handleChangeStatus = (user: PublicUser) => {
+    const newStatus = user.status === UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
+    const actionText = newStatus === UserStatus.INACTIVE ? 'deactivate' : 'activate';
+
+    openDialog({
+      title: 'Confirm Change User Status',
+      message: `Do you want to ${actionText} user "${user.fullName}"?`,
+      confirmText: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} User`,
+      cancelText: 'Cancel',
+      onConfirm: async () => {
+        try {
+          await UserApi.updateUser(user.id, { status: newStatus });
+          toaster.create({
+            title: 'Success',
+            description: `User ${actionText}d successfully`,
+            type: 'success',
+          });
+          fetchUsers();
+        } catch (error: unknown) {
+          console.error('Error updating user status:', error);
+          toaster.create({
+            title: 'Error',
+            description: (error as Error)?.message || `Failed to ${actionText} user`,
+            type: 'error',
+          });
+        }
+      },
+    });
+  };
   // #endregion
 
   // #region Table Columns
-  const userColumns = UserColumns(handleEditUser, handleDeleteUser);
+  const userColumns = UserColumns(handleEditUser, handleDeleteUser, handleChangeStatus);
   // #endregion
 
   // #region Render
