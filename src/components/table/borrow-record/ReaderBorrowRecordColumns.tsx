@@ -1,29 +1,91 @@
 'use client';
 
-import { IconButton } from '@/components';
+import { IconButton, Tag } from '@/components';
+import { MAX_RENEWALS } from '@/constants/borrow-record';
 import { formatDate } from '@/lib/utils';
-import { BorrowRecordWithDetails } from '@/types/borrow-record';
+import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { HStack, Text } from '@chakra-ui/react';
+import { HiOutlineArrowPath } from 'react-icons/hi2';
 import { LuEye } from 'react-icons/lu';
 import { BorrowRecordStatusCell } from './BorrowRecordStatusCell';
 
+// Component to render renewal count with color coding
+function RenewalCountCell({ renewalCount }: { renewalCount: number }) {
+  const getRenewalColor = (count: number): 'active' | 'inactive' => {
+    if (count >= MAX_RENEWALS) {
+      return 'inactive';
+    }
+    return 'active';
+  };
+
+  return (
+    <Tag variantType={getRenewalColor(renewalCount)}>
+      {renewalCount}/{MAX_RENEWALS}
+    </Tag>
+  );
+}
+
 // Component Actions for Reader
-function ReaderActionsCell({ borrowRecord }: { borrowRecord: BorrowRecordWithDetails }) {
+function ReaderActionsCell({
+  borrowRecord,
+  onRenewClick,
+}: {
+  borrowRecord: BorrowRecordWithDetails;
+  onRenewClick?: (borrowRecord: BorrowRecordWithDetails) => void;
+}) {
   const handleView = () => {
     // TODO: Implement view borrow record functionality
     console.log('View borrow record:', borrowRecord.id);
   };
+
+  const handleRenew = () => {
+    if (onRenewClick) {
+      onRenewClick(borrowRecord);
+    }
+  };
+
+  // Check if renewal is allowed
+  const canRenew = (() => {
+    // Must be BORROWED and not returned
+    if (borrowRecord.status !== BorrowStatus.BORROWED || borrowRecord.actualReturnDate) {
+      return false;
+    }
+
+    // Must not be overdue
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (borrowRecord.returnDate) {
+      const returnDate = new Date(borrowRecord.returnDate);
+      returnDate.setHours(0, 0, 0, 0);
+      if (returnDate < today) {
+        return false;
+      }
+    }
+
+    // Must not exceed max renewals
+    if (borrowRecord.renewalCount >= MAX_RENEWALS) {
+      return false;
+    }
+
+    return true;
+  })();
 
   return (
     <HStack gap={2} justifyContent="center">
       <IconButton aria-label="View book" onClick={handleView}>
         <LuEye />
       </IconButton>
+      <IconButton aria-label="Renew book" onClick={handleRenew} disabled={!canRenew}>
+        <HiOutlineArrowPath />
+      </IconButton>
     </HStack>
   );
 }
 
-export const ReaderBorrowRecordColumns = () => [
+export const ReaderBorrowRecordColumns = (
+  onRenewClick?: (borrowRecord: BorrowRecordWithDetails) => void
+) => [
   {
     key: 'id',
     header: 'ID',
@@ -71,8 +133,9 @@ export const ReaderBorrowRecordColumns = () => [
     header: 'Renewals',
     sortable: true,
     width: '100px',
-    textAlign: 'center' as const,
-    render: (record: BorrowRecordWithDetails) => <Text>{record.renewalCount || 0}</Text>,
+    render: (record: BorrowRecordWithDetails) => (
+      <RenewalCountCell renewalCount={record.renewalCount || 0} />
+    ),
   },
   {
     key: 'status',
@@ -98,6 +161,8 @@ export const ReaderBorrowRecordColumns = () => [
     sortable: false,
     width: '120px',
     textAlign: 'center' as const,
-    render: (record: BorrowRecordWithDetails) => <ReaderActionsCell borrowRecord={record} />,
+    render: (record: BorrowRecordWithDetails) => (
+      <ReaderActionsCell borrowRecord={record} onRenewClick={onRenewClick} />
+    ),
   },
 ];

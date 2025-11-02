@@ -1,9 +1,12 @@
 'use client';
 
 import { BorrowRecordApi } from '@/api';
-import { FormSelect, ReaderBorrowRecordColumns, Table, toaster } from '@/components';
+import { Dialog, FormSelect, ReaderBorrowRecordColumns, Table, toaster } from '@/components';
+import { RenewBorrowRecordForm } from '@/components/borrow-records/RenewBorrowRecordForm';
+import { EXTENSION_DAYS, MAX_RENEWALS } from '@/constants/borrow-record';
+import { useDialog } from '@/lib/hooks';
 import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
-import { HStack, Stack } from '@chakra-ui/react';
+import { HStack, Stack, Text } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function MyBorrowRecordsPage() {
@@ -13,6 +16,9 @@ export default function MyBorrowRecordsPage() {
   const [records, setRecords] = useState<BorrowRecordWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<BorrowStatus | ''>('');
+  const [renewingRecord, setRenewingRecord] = useState<BorrowRecordWithDetails | null>(null);
+  const [newReturnDate, setNewReturnDate] = useState<Date | null>(null);
+  const { dialog, openDialog, handleConfirm, handleCancel } = useDialog();
 
   const fetchBorrowRecords = useCallback(async () => {
     try {
@@ -57,11 +63,67 @@ export default function MyBorrowRecordsPage() {
     setPage(1);
   };
 
-  const borrowRecordColumns = ReaderBorrowRecordColumns();
+  // Handle renew borrow record
+  const handleRenewBorrowRecord = useCallback(
+    (borrowRecord: BorrowRecordWithDetails) => {
+      const calculatedNewReturnDate = borrowRecord.returnDate
+        ? new Date(
+            new Date(borrowRecord.returnDate).setDate(
+              new Date(borrowRecord.returnDate).getDate() + EXTENSION_DAYS
+            )
+          )
+        : new Date();
+
+      setRenewingRecord(borrowRecord);
+      setNewReturnDate(calculatedNewReturnDate);
+
+      openDialog({
+        title: 'Renew Borrow Record',
+        message: '',
+        confirmText: 'Renew',
+        cancelText: 'Cancel',
+        onConfirm: async () => {
+          try {
+            const response = await BorrowRecordApi.renewBorrowRecord(borrowRecord.id);
+            toaster.create({
+              title: 'Success',
+              description: response.message || 'Borrow record renewed successfully',
+              type: 'success',
+            });
+            setRenewingRecord(null);
+            setNewReturnDate(null);
+            fetchBorrowRecords();
+          } catch (error) {
+            toaster.create({
+              title: 'Failed',
+              description: error instanceof Error ? error.message : 'Failed to renew borrow record',
+              type: 'error',
+            });
+          }
+        },
+        onCancel: () => {
+          setRenewingRecord(null);
+          setNewReturnDate(null);
+        },
+      });
+    },
+    [openDialog, fetchBorrowRecords]
+  );
+
+  const borrowRecordColumns = ReaderBorrowRecordColumns(handleRenewBorrowRecord);
 
   return (
     <Stack height="100%" bg="white" p={6} rounded="lg">
-      <HStack mb={4} gap={4} justifyContent="flex-start" alignItems="center" flexWrap="wrap">
+      <HStack mb={4} justifyContent="space-between" alignItems="center" flexWrap="wrap">
+        <HStack gap={1}>
+          <Text fontSize="sm" fontWeight="medium">
+            Renewal rules:
+          </Text>
+          <Text fontSize="sm" color="secondaryText.500">
+            Maximum {MAX_RENEWALS} renewals, {EXTENSION_DAYS} days extension each. Cannot renew when
+            overdue.
+          </Text>
+        </HStack>
         <FormSelect
           items={statusFilterOptions}
           value={statusFilter}
@@ -87,6 +149,43 @@ export default function MyBorrowRecordsPage() {
           setPage(1);
         }}
       />
+
+      {/* Renew Confirmation Dialog */}
+      {dialog.isOpen && renewingRecord && newReturnDate && (
+        <Dialog
+          isOpen={dialog.isOpen}
+          onClose={() => {
+            handleCancel();
+            setRenewingRecord(null);
+            setNewReturnDate(null);
+          }}
+          title={dialog.title || 'Renew Borrow Record'}
+          content={
+            dialog.message ? (
+              <>{dialog.message}</>
+            ) : (
+              <RenewBorrowRecordForm borrowRecord={renewingRecord} newReturnDate={newReturnDate} />
+            )
+          }
+          buttons={[
+            {
+              label: dialog.cancelText,
+              onClick: () => {
+                handleCancel();
+                setRenewingRecord(null);
+                setNewReturnDate(null);
+              },
+              variant: 'secondary',
+            },
+            {
+              label: dialog.confirmText,
+              onClick: handleConfirm,
+              variant: 'primary',
+            },
+          ]}
+          showCloseButton={false}
+        />
+      )}
     </Stack>
   );
 }

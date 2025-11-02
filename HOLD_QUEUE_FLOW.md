@@ -749,6 +749,393 @@ Lần trả về 2 (BookItem #51):
 
 ---
 
+## 🔄 TRƯỜNG HỢP 6: Gia hạn mượn sách (Renewal)
+
+### 📋 Tổng quan
+
+- ✅ Reader có thể gia hạn BorrowRecord đang mượn
+- ✅ Số lần gia hạn tối đa: **3 lần**
+- ❌ **KHÔNG cho gia hạn khi đã quá hạn (OVERDUE)** → Tính phí phạt ở chức năng riêng
+- ✅ Kiểm tra conflict với Hold Queue (nếu có người đặt trước → không cho gia hạn)
+- ✅ Tăng `returnDate` và `renewalCount++`
+
+---
+
+### Luồng thực hiện:
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 1: Reader yêu cầu gia hạn          │
+└──────────────────────────────────────────┘
+```
+
+**Input từ Reader:**
+
+- Reader đang mượn sách, `BorrowRecord.status = 'BORROWED'`
+- `returnDate = "2025-01-15"` (ngày trả dự kiến)
+- `renewalCount = 0` (chưa gia hạn lần nào)
+- Reader nhấn nút "Gia hạn mượn sách"
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 2: Validation điều kiện             │
+└──────────────────────────────────────────┘
+```
+
+**Kiểm tra các điều kiện:**
+
+```typescript
+// 1. Kiểm tra trạng thái BorrowRecord
+const borrowRecord = await prisma.borrowRecord.findUnique({
+  where: { id: borrowRecordId },
+  include: {
+    borrowBooks: {
+      include: {
+        bookItem: {
+          include: { book: true },
+        },
+      },
+    },
+    user: true,
+  },
+});
+
+// Rule 1: Phải là BORROWED và chưa trả
+if (borrowRecord.status !== 'BORROWED' || borrowRecord.actualReturnDate) {
+  throw new Error('Không thể gia hạn: Đã trả sách');
+}
+
+// Rule 2: KHÔNG được quá hạn
+const today = new Date();
+if (borrowRecord.returnDate && today > borrowRecord.returnDate) {
+  throw new Error('Không thể gia hạn khi đã quá hạn. Vui lòng trả sách hoặc thanh toán phí phạt.');
+}
+
+// Rule 3: Không vượt quá 3 lần gia hạn
+if (borrowRecord.renewalCount >= 3) {
+  throw new Error('Đã đạt số lần gia hạn tối đa (3 lần)');
+}
+```
+
+**Ví dụ các trường hợp:**
+
+| renewalCount | returnDate | today      | Kết quả                                     |
+| ------------ | ---------- | ---------- | ------------------------------------------- |
+| 0            | 15/01/2025 | 10/01/2025 | ✅ Cho phép (lần 1)                         |
+| 1            | 20/01/2025 | 18/01/2025 | ✅ Cho phép (lần 2)                         |
+| 2            | 25/01/2025 | 22/01/2025 | ✅ Cho phép (lần 3)                         |
+| 3            | 30/01/2025 | 27/01/2025 | ❌ Đã đạt tối đa                            |
+| 1            | 15/01/2025 | 20/01/2025 | ❌ Quá hạn → Tính phí phạt (chức năng khác) |
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 3: Kiểm tra conflict với Hold Queue │
+└──────────────────────────────────────────┘
+```
+
+**Logic kiểm tra:**
+
+```typescript
+// Với mỗi BookItem trong BorrowRecord, check có người đặt trước không
+for (const borrowBook of borrowRecord.borrowBooks) {
+  const bookId = borrowBook.bookItem.bookId;
+
+  // Đếm số lượng request đang chờ sách này
+  const pendingRequests = await prisma.borrowRequestItem.aggregate({
+    where: {
+      bookId: bookId,
+      borrowRequest: {
+        status: { in: ['PENDING', 'APPROVED'] },
+        isDeleted: false,
+      },
+    },
+    _sum: { quantity: true },
+  });
+
+  // Nếu có người chờ → không cho gia hạn (ưu tiên người đang chờ)
+  if (pendingRequests._sum.quantity > 0) {
+    throw new Error(
+      `Sách "${borrowBook.bookItem.book.title}" đang có người đặt trước, không thể gia hạn`
+    );
+  }
+}
+```
+
+**Ví dụ conflict:**
+
+```
+BorrowRecord #50 đang mượn "Dune" (bookItemId: 100)
+Hold Queue cho "Dune":
+- Request #120 (PENDING): cần 1 quyển
+- Request #121 (APPROVED): cần 1 quyển
+
+→ Tổng: 2 người đang chờ "Dune"
+→ Reader của BorrowRecord #50 KHÔNG thể gia hạn
+```
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 4: Tính ngày trả mới               │
+└──────────────────────────────────────────┘
+```
+
+**Tính toán:**
+
+```typescript
+// Thời gian gia hạn (ví dụ: 7-14 ngày)
+const EXTENSION_DAYS = 14; // Hoặc lấy từ config/Policy
+
+// Tính ngày trả mới
+const oldReturnDate = borrowRecord.returnDate;
+const newReturnDate = new Date(oldReturnDate);
+newReturnDate.setDate(newReturnDate.getDate() + EXTENSION_DAYS);
+
+// Kiểm tra giới hạn tổng thời gian mượn (ví dụ: không quá 60 ngày từ borrowDate)
+const MAX_BORROW_DAYS = 60;
+const totalBorrowDays = Math.ceil(
+  (newReturnDate.getTime() - borrowRecord.borrowDate.getTime()) / (1000 * 60 * 60 * 24)
+);
+
+if (totalBorrowDays > MAX_BORROW_DAYS) {
+  // Điều chỉnh newReturnDate về giới hạn tối đa
+  newReturnDate = new Date(borrowRecord.borrowDate);
+  newReturnDate.setDate(newReturnDate.getDate() + MAX_BORROW_DAYS);
+}
+```
+
+**Ví dụ:**
+
+```
+BorrowRecord:
+- borrowDate: 01/01/2025
+- returnDate: 15/01/2025 (mượn 14 ngày)
+- renewalCount: 0
+
+Gia hạn lần 1:
+- newReturnDate: 15/01/2025 + 14 ngày = 29/01/2025
+- renewalCount: 1
+```
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 5: Update BorrowRecord              │
+└──────────────────────────────────────────┘
+```
+
+**Transaction update:**
+
+```typescript
+await prisma.$transaction(async tx => {
+  // Update BorrowRecord
+  const updatedRecord = await tx.borrowRecord.update({
+    where: { id: borrowRecordId },
+    data: {
+      returnDate: newReturnDate,
+      renewalCount: { increment: 1 }, // Tăng từ 0 → 1 → 2 → 3 (tối đa)
+      status: 'BORROWED', // Đảm bảo vẫn BORROWED (không phải OVERDUE)
+      updatedAt: new Date(),
+    },
+  });
+
+  // ❌ KHÔNG thay đổi BookItem status (vẫn ON_BORROW)
+  // ❌ KHÔNG thay đổi BorrowBook links
+});
+```
+
+**Trạng thái sau khi gia hạn:**
+
+```
+BorrowRecord #50:
+  returnDate: 15/01/2025 → 29/01/2025 ✅
+  renewalCount: 0 → 1 ✅
+  status: BORROWED (không đổi) ✅
+
+BookItem #100:
+  status: ON_BORROW (không đổi) ✅
+```
+
+```
+┌──────────────────────────────────────────┐
+│ BƯỚC 6: Thông báo cho Reader             │
+└──────────────────────────────────────────┘
+```
+
+**Notification:**
+
+```typescript
+Notification {
+  userId: readerId,
+  title: "Gia hạn mượn sách thành công",
+  message: `Yêu cầu gia hạn của bạn đã được xử lý.
+            Ngày trả mới: ${formatDate(newReturnDate)}
+            Số lần gia hạn: ${renewalCount}/3`,
+  type: "SYSTEM",
+  status: "UNREAD"
+}
+```
+
+---
+
+### 🔄 Flowchart tổng hợp:
+
+```
+              Reader yêu cầu gia hạn
+                        │
+              ┌─────────┴─────────┐
+              │                   │
+      [status = BORROWED?]    [Không]
+              │                   │
+              │                   ↓
+              │          ❌ Reject: "Đã trả sách"
+              │
+              ↓
+      [returnDate >= today?]
+              │                   │
+              │                   ↓
+              │          ❌ Reject: "Đã quá hạn"
+              │                  (Tính phí phạt ở chức năng khác)
+              │
+              ↓
+      [renewalCount < 3?]
+              │                   │
+              │                   ↓
+              │          ❌ Reject: "Đã đạt tối đa 3 lần"
+              │
+              ↓
+      [Kiểm tra Hold Queue]
+              │                   │
+              │                   ↓
+      [Có người đặt trước?]   [Có]
+              │                   │
+              │                   ↓
+              │          ❌ Reject: "Sách đang có người đặt trước"
+              │
+              ↓
+      Tính newReturnDate
+              │
+              ↓
+      Update BorrowRecord:
+        - returnDate = newReturnDate
+        - renewalCount++
+              │
+              ↓
+      Tạo Notification
+              │
+              ↓
+      ✅ Success: "Gia hạn thành công"
+```
+
+---
+
+### ⚠️ Các trường hợp đặc biệt
+
+#### Trường hợp 1: Gia hạn BorrowRecord có nhiều sách
+
+```
+BorrowRecord #60 mượn 3 sách:
+- "Dune" (bookItemId: 100)
+- "Foundation" (bookItemId: 200)
+- "1984" (bookItemId: 300)
+
+Kiểm tra conflict:
+- "Dune": Có 1 người chờ → ❌ Không cho gia hạn
+- "Foundation": Không có người chờ → ✅
+- "1984": Không có người chờ → ✅
+
+→ Kết quả: ❌ KHÔNG cho gia hạn (chỉ cần 1 sách có conflict)
+→ Reader phải trả tất cả hoặc chờ người đặt trước hủy
+```
+
+#### Trường hợp 2: Đồng thời gia hạn (Race Condition)
+
+```typescript
+// Sử dụng transaction để tránh race condition
+await prisma.$transaction(async tx => {
+  // Lock BorrowRecord
+  const record = await tx.borrowRecord.findUnique({
+    where: { id: borrowRecordId },
+    // ... với locking nếu cần
+  });
+
+  // Double-check điều kiện trong transaction
+  if (record.renewalCount >= 3) {
+    throw new Error('Đã đạt tối đa');
+  }
+
+  // Update
+  await tx.borrowRecord.update({ ... });
+});
+```
+
+---
+
+### 📝 Tổng kết quy tắc gia hạn
+
+1. **Số lần tối đa**: 3 lần (`renewalCount < 3`)
+2. **Không quá hạn**: `returnDate >= today` và `status != 'OVERDUE'`
+3. **Conflict với Hold Queue**: Nếu có `BorrowRequest` PENDING/APPROVED cho cùng `bookId` → không cho gia hạn
+4. **Update**: Chỉ update `returnDate` và `renewalCount`, không thay đổi `BookItem.status`
+5. **Overdue**: Khi quá hạn → không cho gia hạn, tính phí phạt ở chức năng riêng
+
+---
+
+### 🔗 API Endpoint
+
+**`POST /api/borrow-records/[id]/renew`**
+
+**Request Body (optional):**
+
+```typescript
+{
+  extensionDays?: number // Mặc định: 14 ngày
+}
+```
+
+**Response Success:**
+
+```typescript
+{
+  success: true,
+  borrowRecord: {
+    id: number,
+    returnDate: Date,
+    renewalCount: number,
+    status: 'BORROWED'
+  },
+  message: "Gia hạn thành công đến {newReturnDate}"
+}
+```
+
+**Response Errors:**
+
+```typescript
+// Case 1: Đã đạt tối đa
+{
+  success: false,
+  error: "Đã đạt số lần gia hạn tối đa (3 lần)"
+}
+
+// Case 2: Đã quá hạn
+{
+  success: false,
+  error: "Không thể gia hạn khi đã quá hạn. Vui lòng trả sách hoặc thanh toán phí phạt."
+}
+
+// Case 3: Có người đặt trước
+{
+  success: false,
+  error: "Sách đang có người đặt trước, không thể gia hạn"
+}
+
+// Case 4: Đã trả sách
+{
+  success: false,
+  error: "Không thể gia hạn: Đã trả sách"
+}
+```
+
+---
+
 ## 📝 Ghi chú Implementation
 
 ### Các điểm cần lưu ý:
@@ -756,12 +1143,14 @@ Lần trả về 2 (BookItem #51):
 1. **Transaction Safety**: Luôn dùng Prisma transaction khi xử lý queue để tránh race condition
 2. **FIFO Ordering**: Sắp xếp theo `createdAt ASC` để đảm bảo công bằng
 3. **Availability Calculation**:
+
    ```typescript
    remainingAvailable = Tổng BookItem AVAILABLE - Tổng quantity của BorrowRequest APPROVED
    ```
 
    - Chỉ tính ở level **Book** (số lượng), không cần chọn BookItem cụ thể khi đặt trước
    - Phải check đủ sách cho TẤT CẢ items trong request trước khi approve
+
 4. **BookItem Selection**:
    - Khi đặt trước: Không chọn BookItem cụ thể (chỉ check số lượng)
    - Khi thủ thư giao sách: Ưu tiên condition tốt nhất (NEW > GOOD > WORN > DAMAGED)
@@ -779,4 +1168,4 @@ Lần trả về 2 (BookItem #51):
 3. `GET /api/borrow-requests/queue/[bookId]` - Xem queue của một cuốn sách (Librarian)
 4. `POST /api/book-items/[id]/return` - Trả sách (trigger queue processing)
 5. `GET /api/borrow-requests/[id]` - Chi tiết request
-6. `POST /api/borrow-requests/[id]/fulfill` - Thủ thư giao sách, tạo BorrowRecord (cần implement)
+6. `POST /api/borrow-records/[id]/renew` - Gia hạn mượn sách (cần implement)

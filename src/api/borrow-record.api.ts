@@ -113,4 +113,24 @@ export class BorrowRecordApi {
       };
     }>(response);
   }
+
+  // Renew borrow record
+  static async renewBorrowRecord(id: number): Promise<{
+    borrowRecord: BorrowRecordWithDetails;
+    message: string;
+  }> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/borrow-records/${id}/renew`, {
+      method: 'POST',
+      headers,
+    });
+
+    return await handleJson<{
+      borrowRecord: BorrowRecordWithDetails;
+      message: string;
+    }>(response);
+  }
 }
