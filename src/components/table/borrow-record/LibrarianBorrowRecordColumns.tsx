@@ -1,6 +1,7 @@
 'use client';
 
 import { IconButton, UserCell } from '@/components';
+import { formatDate } from '@/lib/utils';
 import { BorrowRecordWithDetails } from '@/types/borrow-record';
 import { HStack, Text } from '@chakra-ui/react';
 import { LuEye } from 'react-icons/lu';
@@ -51,7 +52,7 @@ export const LibrarianBorrowRecordColumns = () => [
     sortable: true,
     width: '180px',
     render: (record: BorrowRecordWithDetails) => (
-      <Text fontSize="sm">{new Date(record.borrowDate).toLocaleDateString('en-US')}</Text>
+      <Text fontSize="sm">{formatDate(record.borrowDate)}</Text>
     ),
   },
   {
@@ -60,9 +61,7 @@ export const LibrarianBorrowRecordColumns = () => [
     sortable: true,
     width: '180px',
     render: (record: BorrowRecordWithDetails) => (
-      <Text fontSize="sm">
-        {record.returnDate ? new Date(record.returnDate).toLocaleDateString('en-US') : '—'}
-      </Text>
+      <Text fontSize="sm">{formatDate(record.returnDate)}</Text>
     ),
   },
   {
@@ -71,11 +70,7 @@ export const LibrarianBorrowRecordColumns = () => [
     sortable: true,
     width: '180px',
     render: (record: BorrowRecordWithDetails) => (
-      <Text fontSize="sm">
-        {record.actualReturnDate
-          ? new Date(record.actualReturnDate).toLocaleDateString('en-US')
-          : '—'}
-      </Text>
+      <Text fontSize="sm">{formatDate(record.actualReturnDate)}</Text>
     ),
   },
   {
@@ -100,7 +95,7 @@ export const LibrarianBorrowRecordColumns = () => [
     sortable: true,
     width: '150px',
     render: (record: BorrowRecordWithDetails) => (
-      <Text fontSize="sm">{new Date(record.createdAt).toLocaleDateString('en-US')}</Text>
+      <Text fontSize="sm">{formatDate(record.createdAt)}</Text>
     ),
   },
   {

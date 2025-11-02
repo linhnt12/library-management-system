@@ -10,6 +10,7 @@ import {
   Table,
   toaster,
 } from '@/components';
+import { formatDate } from '@/lib/utils';
 import { DigitalLicense } from '@/types';
 import { Badge, Box, Flex, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
@@ -168,11 +169,7 @@ export function DigitalLicensesTable({ bookId }: DigitalLicensesTableProps) {
       sortable: true,
       render: (license: DigitalLicense) => (
         <Text fontSize="sm" color="secondaryText.500">
-          {new Date(license.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })}
+          {formatDate(license.createdAt)}
         </Text>
       ),
     },

@@ -2,6 +2,7 @@
 
 import { IconButton, UserCell } from '@/components';
 import { BookCell } from '@/components/books';
+import { formatDate } from '@/lib/utils';
 import { BorrowRequestStatus, BorrowRequestWithBookAndUser } from '@/types/borrow-request';
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -119,9 +120,7 @@ export const LibrarianBorrowRequestColumns = (
     sortable: true,
     width: '150px',
     render: (request: BorrowRequestWithBookAndUser) => (
-      <Text fontSize="sm">
-        {new Date(request.items[0]?.startDate || request.startDate).toLocaleDateString('en-US')}
-      </Text>
+      <Text fontSize="sm">{formatDate(request.items[0]?.startDate || request.startDate)}</Text>
     ),
   },
   {
@@ -130,9 +129,7 @@ export const LibrarianBorrowRequestColumns = (
     sortable: true,
     width: '150px',
     render: (request: BorrowRequestWithBookAndUser) => (
-      <Text fontSize="sm">
-        {new Date(request.items[0]?.endDate || request.endDate).toLocaleDateString('en-US')}
-      </Text>
+      <Text fontSize="sm">{formatDate(request.items[0]?.endDate || request.endDate)}</Text>
     ),
   },
   {
@@ -162,7 +159,7 @@ export const LibrarianBorrowRequestColumns = (
     sortable: true,
     width: '150px',
     render: (request: BorrowRequestWithBookAndUser) => (
-      <Text fontSize="sm">{new Date(request.createdAt).toLocaleDateString('en-US')}</Text>
+      <Text fontSize="sm">{formatDate(request.createdAt)}</Text>
     ),
   },
   {

@@ -1,6 +1,7 @@
 'use client';
 
 import { Avatar, Button, StarRating } from '@/components';
+import { formatDate } from '@/lib/utils';
 import { ReviewDisplayData } from '@/types';
 import { Box, HStack, Menu, Portal, Text, VStack } from '@chakra-ui/react';
 import { HiDotsVertical } from 'react-icons/hi';
@@ -28,11 +29,7 @@ export function BookReviewCard({ review, currentUserId, onEdit, onDelete }: Book
             <HStack gap={2}>
               <StarRating rating={review.rating} size="sm" />
               <Text fontSize="xs" color="secondaryText.500">
-                {new Date(review.reviewDate).toLocaleDateString('vi-VN', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                })}
+                {formatDate(review.reviewDate)}
               </Text>
             </HStack>
           </VStack>

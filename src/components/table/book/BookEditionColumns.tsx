@@ -2,6 +2,7 @@
 
 import { IconButton, Tag } from '@/components';
 import { ROUTES } from '@/constants';
+import { formatDate } from '@/lib/utils';
 import { BookEditionWithBook } from '@/types';
 import { HStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -214,11 +215,7 @@ export const BookEditionColumns = (
     textAlign: 'center' as const,
     render: (edition: BookEditionWithBook) => (
       <Text fontSize="sm" color="gray.600">
-        {new Date(edition.createdAt).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        })}
+        {formatDate(edition.createdAt)}
       </Text>
     ),
   },
