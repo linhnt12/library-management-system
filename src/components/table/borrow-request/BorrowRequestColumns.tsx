@@ -1,41 +1,14 @@
 'use client';
 
-import { IconButton, Tag } from '@/components';
+import { IconButton } from '@/components';
 import { BookCell } from '@/components/books';
 import { BorrowRequestStatus, BorrowRequestWithBook } from '@/types/borrow-request';
 import { Box, HStack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { LuEye } from 'react-icons/lu';
 import { MdOutlineCancel } from 'react-icons/md';
-
-// Component to display status with colors from theme
-function StatusCell({ status }: { status: BorrowRequestStatus }) {
-  const statusConfig: Record<
-    BorrowRequestStatus,
-    { variantType: 'active' | 'reserved' | 'borrowed' | 'inactive' | 'lost'; label: string }
-  > = {
-    [BorrowRequestStatus.PENDING]: { variantType: 'reserved', label: 'Pending' },
-    [BorrowRequestStatus.APPROVED]: { variantType: 'active', label: 'Approved' },
-    [BorrowRequestStatus.REJECTED]: { variantType: 'inactive', label: 'Rejected' },
-    [BorrowRequestStatus.FULFILLED]: { variantType: 'active', label: 'Fulfilled' },
-    [BorrowRequestStatus.CANCELLED]: { variantType: 'lost', label: 'Cancelled' },
-    [BorrowRequestStatus.EXPIRED]: { variantType: 'inactive', label: 'Expired' },
-  };
-
-  const config = statusConfig[status] || statusConfig[BorrowRequestStatus.PENDING];
-
-  return <Tag variantType={config.variantType}>{config.label}</Tag>;
-}
-
-// Component to display queue position
-function QueuePositionCell({ position }: { position: number | null | undefined }) {
-  if (!position) return <Text color="secondaryText.500">—</Text>;
-  return (
-    <Text fontWeight="medium" color="secondary.500">
-      #{position}
-    </Text>
-  );
-}
+import { BorrowRequestStatusCell } from './BorrowRequestStatusCell';
+import { QueuePositionCell } from './QueuePositionCell';
 
 // Component Actions
 function ActionsCell({
@@ -143,7 +116,7 @@ export const BorrowRequestColumns = (
     sortable: true,
     width: '120px',
     textAlign: 'center' as const,
-    render: (request: BorrowRequestWithBook) => <StatusCell status={request.status} />,
+    render: (request: BorrowRequestWithBook) => <BorrowRequestStatusCell status={request.status} />,
   },
   {
     key: 'queuePosition',

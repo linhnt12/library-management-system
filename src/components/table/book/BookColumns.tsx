@@ -1,6 +1,6 @@
 'use client';
 
-import { IconButton, StatusCell } from '@/components';
+import { EntityStatusCell, IconButton } from '@/components';
 import { ROUTES } from '@/constants';
 import { useAuthors } from '@/lib/hooks/useAuthors';
 import { Book } from '@/types';
@@ -123,7 +123,7 @@ export const BookColumns = (onChangeStatus?: (book: Book) => void) => [
     sortable: true,
     width: '100px',
     render: (book: Book) => (
-      <StatusCell item={book} onChangeStatus={onChangeStatus || (() => {})} />
+      <EntityStatusCell item={book} onChangeStatus={onChangeStatus || (() => {})} />
     ),
   },
   {

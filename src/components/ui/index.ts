@@ -2,6 +2,7 @@ export * from './Avatar';
 export * from './ColorMode';
 export * from './Dialog';
 export * from './Provider';
+export * from './SelectableCheckbox';
 export * from './Spinner';
 export * from './Tag';
 export * from './Toaster';
