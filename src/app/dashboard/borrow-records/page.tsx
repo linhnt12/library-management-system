@@ -2,12 +2,14 @@
 
 import { BorrowRecordApi } from '@/api';
 import {
+  Dialog,
   FormSelect,
   LibrarianBorrowRecordColumns,
   SearchInput,
   Table,
   toaster,
 } from '@/components';
+import { ReturnBorrowRecordForm } from '@/components/borrow-records/ReturnBorrowRecordForm';
 import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { HStack, Stack } from '@chakra-ui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -80,7 +82,25 @@ export default function DashboardBorrowRecordsPage() {
     setQuery(value);
   };
 
-  const borrowRecordColumns = LibrarianBorrowRecordColumns();
+  const [isReturnOpen, setIsReturnOpen] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<BorrowRecordWithDetails | null>(null);
+
+  const openReturn = (record: BorrowRecordWithDetails) => {
+    setSelectedRecord(record);
+    setIsReturnOpen(true);
+  };
+
+  const closeReturn = () => {
+    setIsReturnOpen(false);
+    setSelectedRecord(null);
+  };
+
+  const handleReturnSuccess = async () => {
+    closeReturn();
+    await fetchBorrowRecords();
+  };
+
+  const borrowRecordColumns = LibrarianBorrowRecordColumns({ onReturnClick: openReturn });
 
   return (
     <Stack gap={4} height="100%">
@@ -117,6 +137,25 @@ export default function DashboardBorrowRecordsPage() {
           setPageSize(size);
           setPage(1);
         }}
+      />
+
+      <Dialog
+        isOpen={isReturnOpen}
+        onClose={closeReturn}
+        title="Return Book"
+        width="85vw"
+        maxW="1200px"
+        content={
+          selectedRecord ? (
+            <ReturnBorrowRecordForm
+              borrowRecord={selectedRecord}
+              onClose={closeReturn}
+              onSuccess={handleReturnSuccess}
+            />
+          ) : undefined
+        }
+        buttons={[]}
+        showCloseButton
       />
     </Stack>
   );

@@ -24,6 +24,7 @@ type TableProps<T> = {
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (size: number) => void;
   onSort?: (key: string, direction: 'asc' | 'desc' | null) => void;
+  hidePageSizeSelect?: boolean;
 };
 
 export function Table<T>({
@@ -37,6 +38,7 @@ export function Table<T>({
   onPageChange,
   onPageSizeChange,
   onSort,
+  hidePageSizeSelect,
 }: TableProps<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null);
@@ -214,6 +216,7 @@ export function Table<T>({
           }
           onPageChange?.(1);
         }}
+        hidePageSizeSelect={hidePageSizeSelect}
       />
     </Box>
   );

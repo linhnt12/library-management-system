@@ -1,8 +1,8 @@
 'use client';
 
-import { Dialog as ChakraDialog, Portal, CloseButton } from '@chakra-ui/react';
-import React from 'react';
 import { Button } from '@/components';
+import { Dialog as ChakraDialog, CloseButton, Portal } from '@chakra-ui/react';
+import React from 'react';
 
 export interface DialogButton {
   label: string;
@@ -18,6 +18,8 @@ export interface DialogProps {
   content: React.ReactNode;
   buttons?: DialogButton[];
   showCloseButton?: boolean;
+  width?: string | number;
+  maxW?: string | number;
 }
 
 export function Dialog({
@@ -27,13 +29,15 @@ export function Dialog({
   content,
   buttons = [],
   showCloseButton = true,
+  width,
+  maxW,
 }: DialogProps) {
   return (
     <ChakraDialog.Root open={isOpen} placement="center" onOpenChange={e => !e.open && onClose()}>
       <Portal>
         <ChakraDialog.Backdrop bg="blackAlpha.600" />
         <ChakraDialog.Positioner>
-          <ChakraDialog.Content bg="white">
+          <ChakraDialog.Content bg="white" width={width} maxW={maxW}>
             <ChakraDialog.Header>
               <ChakraDialog.Title fontSize="xl" fontWeight="bold">
                 {title}
