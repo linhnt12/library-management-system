@@ -70,4 +70,67 @@ export class BorrowRecordApi {
       };
     }>(response);
   }
+
+  // Get borrow records for current user (Reader only)
+  static async getMyBorrowRecords(params?: {
+    page?: number;
+    limit?: number;
+    status?: BorrowStatus;
+  }): Promise<{
+    borrowRecords: BorrowRecordWithDetails[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+    };
+  }> {
+    const searchParams = new URLSearchParams();
+
+    if (params?.page) searchParams.set('page', params.page.toString());
+    if (params?.limit) searchParams.set('limit', params.limit.toString());
+    if (params?.status) searchParams.set('status', params.status);
+
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const queryString = searchParams.toString();
+    const url = queryString ? `/api/borrow-records?${queryString}` : '/api/borrow-records';
+
+    const response = await fetchWithAuth(url, {
+      method: 'GET',
+      headers,
+    });
+
+    return await handleJson<{
+      borrowRecords: BorrowRecordWithDetails[];
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
+    }>(response);
+  }
+
+  // Renew borrow record
+  static async renewBorrowRecord(id: number): Promise<{
+    borrowRecord: BorrowRecordWithDetails;
+    message: string;
+  }> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/borrow-records/${id}/renew`, {
+      method: 'POST',
+      headers,
+    });
+
+    return await handleJson<{
+      borrowRecord: BorrowRecordWithDetails;
+      message: string;
+    }>(response);
+  }
 }

@@ -12,6 +12,7 @@ import {
 } from '@/components';
 import { createBookItemDetailColumns } from '@/components/table/book/BookItemDetailColumns';
 import { useBorrowRecordForm, useMe } from '@/lib/hooks';
+import { formatDate } from '@/lib/utils';
 import { BookItemWithBook, Column } from '@/types';
 import { Box, Flex, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { useMemo } from 'react';
@@ -252,7 +253,7 @@ export function BorrowRecordForm({
                             <HStack justify="space-between" mb={3}>
                               <Text fontWeight="semibold">Request #{request.id}</Text>
                               <Text fontSize="sm" color="gray.600">
-                                Created: {new Date(request.createdAt).toLocaleDateString('vi-VN')}
+                                Created: {formatDate(request.createdAt)}
                               </Text>
                             </HStack>
                             <VStack gap={2} align="stretch">

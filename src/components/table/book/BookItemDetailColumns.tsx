@@ -3,6 +3,7 @@
 import { IconButton, Tag } from '@/components';
 import { CONDITION_LABELS, ROUTES, STATUS_LABELS } from '@/constants';
 import { useMe } from '@/lib/hooks';
+import { formatDate } from '@/lib/utils';
 import { HStack, Text } from '@chakra-ui/react';
 import { Condition, ItemStatus } from '@prisma/client';
 import { useRouter } from 'next/navigation';
@@ -68,8 +69,7 @@ function StatusCell({ status }: { status: string }) {
 function AcquisitionDateCell({ date }: { date: Date | null }) {
   if (!date) return <Text color="gray.500">N/A</Text>;
 
-  const formattedDate = new Date(date).toLocaleDateString('vi-VN');
-  return <Text>{formattedDate}</Text>;
+  return <Text>{formatDate(date)}</Text>;
 }
 
 // Component to render action buttons

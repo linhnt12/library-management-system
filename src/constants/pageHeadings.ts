@@ -1,10 +1,6 @@
 import { ROUTES } from './routes';
 
 export const pageHeadings: Record<string, string> = {
-  // Common routes
-  [ROUTES.PROFILE]: 'My Profile',
-  [ROUTES.SETTINGS]: 'Settings',
-
   // Dashboard routes
   [ROUTES.DASHBOARD.HOME]: 'Dashboard',
 

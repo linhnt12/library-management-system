@@ -58,6 +58,7 @@ export const ROUTES = {
   BOOK_DETAIL: '/books/:id',
   FAVORITE: '/favorite',
   MY_BORROW_REQUESTS: '/my-borrow-requests',
+  MY_BORROW_RECORDS: '/my-borrow-records',
   PROFILE: '/profile',
   SETTINGS: '/settings',
   LOGOUT: '/logout',
