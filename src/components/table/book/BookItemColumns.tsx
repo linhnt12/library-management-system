@@ -113,7 +113,7 @@ export const BookItemColumns = () => [
     render: (bookItem: BookItemWithBook) => (
       <HStack gap={3}>
         <Image
-          src={undefined}
+          src={bookItem.book.coverImageUrl ?? undefined}
           alt={bookItem.book.title}
           width="40px"
           height="60px"

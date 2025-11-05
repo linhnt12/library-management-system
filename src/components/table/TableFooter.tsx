@@ -13,6 +13,7 @@ export type TableFooterProps = {
   onPageSizeChange?: (size: number) => void;
   pageSizeOptions?: number[];
   highlightColor?: string;
+  hidePageSizeSelect?: boolean;
 };
 
 export function TableFooter({
@@ -22,6 +23,7 @@ export function TableFooter({
   onPageChange,
   onPageSizeChange,
   pageSizeOptions = tablePageSizeOptions,
+  hidePageSizeSelect = false,
 }: TableFooterProps) {
   const pageSizeItems = pageSizeOptions.map(opt => ({ value: String(opt), label: String(opt) }));
   return (
@@ -33,25 +35,29 @@ export function TableFooter({
       borderColor="gray.200"
       pt={4}
     >
-      <HStack gap={2}>
-        <Text fontSize="sm" color="secondaryText.500">
-          Show
-        </Text>
-        <FormSelect
-          id="table-page-size-select"
-          items={pageSizeItems}
-          value={String(pageSize)}
-          onChange={val => onPageSizeChange?.(Number(val))}
-          width="70px"
-          height="32px"
-          fontSize="sm"
-          triggerSize="xs"
-          variantType="filter"
-        />
-        <Text fontSize="sm" color="secondaryText.500">
-          of {total} results
-        </Text>
-      </HStack>
+      {!hidePageSizeSelect ? (
+        <HStack gap={2}>
+          <Text fontSize="sm" color="secondaryText.500">
+            Show
+          </Text>
+          <FormSelect
+            id="table-page-size-select"
+            items={pageSizeItems}
+            value={String(pageSize)}
+            onChange={val => onPageSizeChange?.(Number(val))}
+            width="70px"
+            height="32px"
+            fontSize="sm"
+            triggerSize="xs"
+            variantType="filter"
+          />
+          <Text fontSize="sm" color="secondaryText.500">
+            of {total} results
+          </Text>
+        </HStack>
+      ) : (
+        <Box />
+      )}
       <PaginationControls
         page={page}
         pageSize={pageSize}
