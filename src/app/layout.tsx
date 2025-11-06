@@ -1,4 +1,10 @@
-import { Provider, QueryProvider, SessionExpiredHandler, Toaster } from '@/components';
+import {
+  Provider,
+  QueryProvider,
+  SessionExpiredHandler,
+  SocketProvider,
+  Toaster,
+} from '@/components';
 import { ClientLayoutWrapper } from '@/components/user-layout';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -29,9 +35,11 @@ export default function RootLayout({
       <body className={`${inter.variable} ${interMono.variable} antialiased`}>
         <QueryProvider>
           <Provider>
-            <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
-            <Toaster />
-            <SessionExpiredHandler />
+            <SocketProvider>
+              <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
+              <Toaster />
+              <SessionExpiredHandler />
+            </SocketProvider>
           </Provider>
         </QueryProvider>
       </body>
