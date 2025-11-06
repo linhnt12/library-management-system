@@ -152,17 +152,6 @@ export const POST = requireReader(async (request: AuthenticatedRequest, context?
         },
       });
 
-      // Create notification
-      await tx.notification.create({
-        data: {
-          userId: record.userId,
-          title: 'Borrow Renewal Successful',
-          message: `Your borrow record has been renewed successfully. New return date: ${newReturnDate.toLocaleDateString()}. Renewal count: ${record.renewalCount}/${MAX_RENEWALS}`,
-          type: 'SYSTEM',
-          status: 'UNREAD',
-        },
-      });
-
       return record;
     });
 

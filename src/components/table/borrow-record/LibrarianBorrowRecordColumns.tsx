@@ -2,28 +2,44 @@
 
 import { IconButton, UserCell } from '@/components';
 import { formatDate } from '@/lib/utils';
-import { BorrowRecordWithDetails } from '@/types/borrow-record';
+import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { HStack, Text } from '@chakra-ui/react';
 import { LuEye } from 'react-icons/lu';
+import { PiCheckFat } from 'react-icons/pi';
 import { BorrowRecordStatusCell } from './BorrowRecordStatusCell';
 
 // Component Actions for Librarian
-function LibrarianActionsCell({ borrowRecord }: { borrowRecord: BorrowRecordWithDetails }) {
+function LibrarianActionsCell({
+  borrowRecord,
+  onReturnClick,
+}: {
+  borrowRecord: BorrowRecordWithDetails;
+  onReturnClick?: (record: BorrowRecordWithDetails) => void;
+}) {
   const handleView = () => {
     // TODO: Implement view borrow record functionality
     console.log('View borrow record:', borrowRecord.id);
   };
+
+  const handleReturn = () => onReturnClick?.(borrowRecord);
+
+  const canReturn = borrowRecord.status === BorrowStatus.BORROWED && !borrowRecord.actualReturnDate;
 
   return (
     <HStack gap={2} justifyContent="center">
       <IconButton aria-label="View book" onClick={handleView}>
         <LuEye />
       </IconButton>
+      <IconButton aria-label="Return books" onClick={handleReturn} disabled={!canReturn}>
+        <PiCheckFat />
+      </IconButton>
     </HStack>
   );
 }
 
-export const LibrarianBorrowRecordColumns = () => [
+export const LibrarianBorrowRecordColumns = (opts?: {
+  onReturnClick?: (record: BorrowRecordWithDetails) => void;
+}) => [
   {
     key: 'id',
     header: 'ID',
@@ -104,6 +120,8 @@ export const LibrarianBorrowRecordColumns = () => [
     sortable: false,
     width: '100px',
     textAlign: 'center' as const,
-    render: (record: BorrowRecordWithDetails) => <LibrarianActionsCell borrowRecord={record} />,
+    render: (record: BorrowRecordWithDetails) => (
+      <LibrarianActionsCell borrowRecord={record} onReturnClick={opts?.onReturnClick} />
+    ),
   },
 ];

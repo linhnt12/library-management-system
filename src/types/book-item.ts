@@ -18,6 +18,7 @@ export interface BookItemWithBook extends BookItem {
     id: number;
     title: string;
     isbn: string | null;
+    coverImageUrl: string | null;
     author: {
       id: number;
       fullName: string;
