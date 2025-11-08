@@ -36,7 +36,7 @@ console.log('========================================');
 // Runs every day at 00:00 (midnight)
 CronManager.register({
   name: 'borrow-reminder',
-  schedule: '*/3 * * * * *', // Every day at 00:00
+  schedule: '0 0 * * *', // Every day at 00:00
   task: borrowReminderTask,
   description: 'Check BorrowRequest endDate and send reminder notifications (3 days before due)',
   enabled: true,

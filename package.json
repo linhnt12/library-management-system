@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -k -n web,worker,socket,cron -c auto \"next dev\" \"yarn worker\" \"yarn dev:socket\" \"yarn cron\"",
+    "dev": "concurrently -k -n web,worker,cron -c auto \"next dev\" \"yarn worker\" \"yarn cron\"",
     "dev:socket": "ts-node --project tsconfig.server.json server/socket-server.ts",
     "build": "next build --turbopack",
     "start": "yarn build && next start",
