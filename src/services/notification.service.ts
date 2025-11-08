@@ -1,12 +1,17 @@
 /**
  * Notification Service
  * Handles all notification functionality including database storage and WebSocket delivery
- * Supports both direct sending and queue-based sending
+ * All notifications must go through queue - no direct sending
  */
 
 import { ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
-import { addNotificationToQueue, addUrgentNotificationToQueue } from '@/queues/notification.queue';
+import {
+  addBulkNotificationsToQueue,
+  addNotificationToQueue,
+  addUrgentNotificationToQueue,
+} from '@/queues/notification.queue';
+import { JobPriority } from '@/types/queue';
 import { NotificationStatus, NotificationType } from '@prisma/client';
 
 // #region Types
@@ -48,39 +53,6 @@ export interface NotificationWithUser {
     email: string;
     fullName: string;
   };
-}
-
-// #endregion
-
-// #region Socket Server Integration
-
-/**
- * Get socket server instance
- * This will be set by the socket server when it initializes
- */
-let socketServerInstance: {
-  emitToUser: (userId: number, event: string, data: unknown) => void;
-} | null = null;
-
-/**
- * Set socket server instance (called by socket server on initialization)
- */
-export function setSocketServerInstance(instance: {
-  emitToUser: (userId: number, event: string, data: unknown) => void;
-}): void {
-  socketServerInstance = instance;
-}
-
-/**
- * Emit notification to user via WebSocket
- */
-function emitNotificationToUser(userId: number, notification: NotificationWithUser): void {
-  if (socketServerInstance) {
-    socketServerInstance.emitToUser(userId, 'notification', notification);
-    console.log(`Notification ${notification.id} emitted to user ${userId} via WebSocket`);
-  } else {
-    console.warn('Socket server instance not available, notification not sent via WebSocket');
-  }
 }
 
 // #endregion
@@ -142,34 +114,8 @@ export class NotificationService {
   }
 
   /**
-   * Send notification directly (save to DB and send via WebSocket)
-   * Use this for immediate notifications
-   */
-  static async sendNotification(data: CreateNotificationData): Promise<SendNotificationResult> {
-    try {
-      // 1. Save notification to database first (as required)
-      const notification = await this.createNotification(data);
-
-      // 2. Send via WebSocket if user is connected
-      emitNotificationToUser(data.userId, notification);
-
-      return {
-        success: true,
-        notificationId: notification.id,
-      };
-    } catch (error) {
-      console.error('Failed to send notification:', error);
-
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
-      };
-    }
-  }
-
-  /**
    * Queue notification for asynchronous sending
-   * Returns job ID instead of notification ID
+   * All notifications must go through queue - no direct sending
    * Notification will be saved to DB and sent via WebSocket by the worker
    */
   static async queueNotification(data: CreateNotificationData): Promise<SendNotificationResult> {
@@ -265,20 +211,84 @@ export class NotificationService {
   }
 
   /**
-   * Send notification to multiple users
-   * Saves to DB and sends via WebSocket for each user
+   * Queue bulk notifications with shared data for multiple users
+   * All users receive the same notification content
+   *
+   * @param userIds - Array of user IDs to send notification to
+   * @param sharedData - Shared notification data (title, message, type) for all users
+   * @param priority - Job priority (default: LOW for bulk)
    */
-  static async sendBulkNotifications(
-    notifications: CreateNotificationData[]
-  ): Promise<SendNotificationResult[]> {
-    const results: SendNotificationResult[] = [];
+  static async queueBulkNotifications(
+    userIds: number[],
+    sharedData: {
+      title: string;
+      message: string;
+      type: NotificationType;
+    },
+    priority: 'LOW' | 'NORMAL' | 'HIGH' = 'LOW'
+  ): Promise<{ success: boolean; jobIds: string[]; error?: string }> {
+    try {
+      // Validate input
+      if (!userIds || userIds.length === 0) {
+        throw new ValidationError('User IDs array is required and must not be empty');
+      }
 
-    for (const notificationData of notifications) {
-      const result = await this.sendNotification(notificationData);
-      results.push(result);
+      if (!sharedData.title || sharedData.title.trim() === '') {
+        throw new ValidationError('Notification title is required');
+      }
+
+      if (!sharedData.message || sharedData.message.trim() === '') {
+        throw new ValidationError('Notification message is required');
+      }
+
+      // Validate all user IDs
+      const invalidUserIds = userIds.filter(id => !id || id <= 0);
+      if (invalidUserIds.length > 0) {
+        throw new ValidationError(`Invalid user IDs: ${invalidUserIds.join(', ')}`);
+      }
+
+      // Remove duplicates
+      const uniqueUserIds = [...new Set(userIds)];
+
+      // Convert priority string to JobPriority enum
+      const priorityValue =
+        priority === 'HIGH'
+          ? JobPriority.HIGH
+          : priority === 'NORMAL'
+            ? JobPriority.NORMAL
+            : JobPriority.LOW;
+
+      // Add bulk notifications to queue
+      const jobIds = await addBulkNotificationsToQueue(
+        uniqueUserIds.map(userId => ({
+          userId,
+          title: sharedData.title.trim(),
+          message: sharedData.message.trim(),
+          type: sharedData.type,
+        })),
+        priorityValue
+      );
+
+      console.log('Bulk notifications queued successfully:', {
+        jobIds: jobIds.length,
+        userIds: uniqueUserIds.length,
+        title: sharedData.title,
+        priority,
+      });
+
+      return {
+        success: true,
+        jobIds,
+      };
+    } catch (error) {
+      console.error('Failed to queue bulk notifications:', error);
+
+      return {
+        success: false,
+        jobIds: [],
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      };
     }
-
-    return results;
   }
 
   /**
