@@ -12,6 +12,7 @@ export * from './favorite-book';
 export * from './file';
 export * from './mail';
 export * from './otp';
+export * from './payment';
 export * from './policy';
 export * from './queue';
 export * from './review';
