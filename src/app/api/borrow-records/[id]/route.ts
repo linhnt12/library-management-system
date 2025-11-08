@@ -26,6 +26,7 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
             id: true,
             fullName: true,
             email: true,
+            violationPoints: true,
           },
         },
         borrowBooks: {
@@ -58,6 +59,7 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
             id: borrowRecordRaw.user.id,
             fullName: borrowRecordRaw.user.fullName,
             email: borrowRecordRaw.user.email,
+            violationPoints: borrowRecordRaw.user.violationPoints,
           }
         : undefined,
       borrowBooks: borrowRecordRaw.borrowBooks.map(bb => ({

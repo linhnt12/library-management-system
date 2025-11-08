@@ -1,71 +1,42 @@
-import { ViolationPolicy } from '@/types/violation';
-
 /**
  * Default number of days from today for violation payment due date
  */
 export const DEFAULT_VIOLATION_DUE_DATE_DAYS = 3;
 
-export const VIOLATION_POLICIES: Record<string, ViolationPolicy> = {
-  LOST: {
-    id: 'LOST_BOOK',
-    name: 'Lost Book',
-    points: 3,
-    penaltyPercent: 100,
-  },
-  DAMAGED: {
-    id: 'DAMAGED_BOOK',
-    name: 'Severely Damaged Book',
-    points: 2,
-    penaltyPercent: 100,
-  },
-  WORN: {
-    id: 'WORN_BOOK',
-    name: 'Worn Book',
-    points: 1,
-    penaltyPercent: 50,
-  },
+/**
+ * Mapping policy ID to violation points
+ */
+export const VIOLATION_POLICY_POINTS: Record<string, number> = {
+  LOST_BOOK: 3,
+  DAMAGED_BOOK: 2,
+  WORN_BOOK: 1,
 };
 
 /**
- * Get violation policy info by policy ID
+ * Default penalty percent for fallback
  */
-export function getViolationPolicyInfo(policyId: string): { name: string; points: number } {
-  const policy = Object.values(VIOLATION_POLICIES).find(p => p.id === policyId);
-  return policy ? { name: policy.name, points: policy.points } : { name: 'Unknown', points: 0 };
-}
+export const DEFAULT_PENALTY_PERCENT: Record<string, number> = {
+  LOST_BOOK: 100,
+  DAMAGED_BOOK: 100,
+  WORN_BOOK: 50,
+};
 
 /**
- * Get violation policy by condition
+ * Mapping condition to policy ID
  */
-export function getViolationPolicyByCondition(condition: string): ViolationPolicy | null {
-  return VIOLATION_POLICIES[condition] || null;
-}
+export const CONDITION_TO_POLICY_ID: Record<string, string> = {
+  LOST: 'LOST_BOOK',
+  DAMAGED: 'DAMAGED_BOOK',
+  WORN: 'WORN_BOOK',
+};
 
 /**
- * Get violation policy by policy ID
+ * Mapping policy ID to condition
  */
-export function getViolationPolicyById(policyId: string): ViolationPolicy | null {
-  return Object.values(VIOLATION_POLICIES).find(p => p.id === policyId) || null;
-}
+export const POLICY_ID_TO_CONDITION: Record<string, string> = {
+  LOST_BOOK: 'LOST',
+  DAMAGED_BOOK: 'DAMAGED',
+  WORN_BOOK: 'WORN',
+};
 
-/**
- * Map policy ID to condition
- */
-export function policyIdToCondition(policyId: string): string {
-  const policyToCondition: Record<string, string> = {
-    LOST_BOOK: 'LOST',
-    DAMAGED_BOOK: 'DAMAGED',
-    WORN_BOOK: 'WORN',
-  };
-  return policyToCondition[policyId] || '';
-}
-
-/**
- * Get policy options for form select
- */
-export function getViolationPolicyOptions() {
-  return Object.values(VIOLATION_POLICIES).map(policy => ({
-    value: policy.id,
-    label: `${policy.name} (+${policy.points} points, ${policy.penaltyPercent}% of book value)`,
-  }));
-}
+export { policyIdToCondition } from '@/lib/utils/violation-utils';

@@ -2,7 +2,7 @@
 
 import { EntityStatusCell, IconButton } from '@/components';
 import { ROUTES } from '@/constants';
-import { getViolationPolicyById } from '@/constants/violation';
+import { useViolationPolicyById } from '@/lib/hooks';
 import { Policy } from '@/types';
 import { HStack, Text, VStack } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -36,7 +36,7 @@ function AmountCell({
   unit: 'FIXED' | 'PER_DAY';
 }) {
   // Check if this is a violation policy that calculates based on book price percentage
-  const violationPolicy = getViolationPolicyById(policy.id);
+  const violationPolicy = useViolationPolicyById(policy.id);
 
   // If it's a violation policy with unit = FIXED, show percentage instead of amount
   if (violationPolicy && unit === 'FIXED') {

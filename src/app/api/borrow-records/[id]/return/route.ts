@@ -1,6 +1,7 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, successResponse } from '@/lib/utils';
+import { getViolationPolicyMetadata } from '@/lib/utils/violation-utils';
 import { AuthenticatedRequest, requireLibrarian } from '@/middleware/auth.middleware';
 import { BorrowStatus } from '@/types/borrow-record';
 import { BorrowRequestStatus } from '@/types/borrow-request';
@@ -92,8 +93,14 @@ export const POST = requireLibrarian(async (request: AuthenticatedRequest, conte
           policyId: payment.policyId,
         });
 
-        // Update violation points using policy.amount
-        const points = policy.amount;
+        // Get violation points from violation policy metadata
+        const metadata = getViolationPolicyMetadata(violation.policyId);
+        if (!metadata) {
+          throw new ValidationError(
+            `Invalid violation policy ID: "${violation.policyId}". Policy must be LOST_BOOK, DAMAGED_BOOK, or WORN_BOOK.`
+          );
+        }
+        const points = metadata.points;
         totalViolationPoints += points;
 
         // Update BookItem condition and status
