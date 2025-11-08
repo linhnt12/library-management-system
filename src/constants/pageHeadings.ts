@@ -42,4 +42,9 @@ export const pageHeadings: Record<string, string> = {
   [ROUTES.DASHBOARD.USERS]: 'Users Management',
   [ROUTES.DASHBOARD.USERS_ADD]: 'Add New User',
   [ROUTES.DASHBOARD.USERS_EDIT]: 'Edit User',
+
+  // Policies routes
+  [ROUTES.DASHBOARD.POLICIES]: 'Policies Management',
+  [ROUTES.DASHBOARD.POLICIES_ADD]: 'Add New Policy',
+  [ROUTES.DASHBOARD.POLICIES_EDIT]: 'Edit Policy',
 };

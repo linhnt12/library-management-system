@@ -10,6 +10,7 @@ export * from './categories';
 export * from './digital-licenses';
 export * from './forms';
 export * from './layout';
+export * from './policies';
 export * from './providers';
 export * from './table';
 export * from './ui';

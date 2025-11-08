@@ -1,4 +1,4 @@
-import { Condition, ItemStatus, PrismaClient, Role, UserStatus } from '@prisma/client';
+import { Condition, ItemStatus, PrismaClient, Role, Unit, UserStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -626,6 +626,58 @@ async function seedBookItems() {
   console.log('✅ Book items seeded successfully!');
 }
 
+async function seedPolicies() {
+  console.log('Seeding policies...');
+
+  const policies = [
+    {
+      id: 'LOST_BOOK',
+      name: 'Lost Book',
+      amount: 100,
+      unit: Unit.FIXED,
+    },
+    {
+      id: 'DAMAGED_BOOK',
+      name: 'Severely Damaged Book',
+      amount: 100,
+      unit: Unit.FIXED,
+    },
+    {
+      id: 'WORN_BOOK',
+      name: 'Worn Book',
+      amount: 50,
+      unit: Unit.FIXED,
+    },
+    {
+      id: 'LATE_RETURN',
+      name: 'Late Return',
+      amount: 10000,
+      unit: Unit.PER_DAY,
+    },
+    {
+      id: 'LATE_PAYMENT',
+      name: 'Late Payment',
+      amount: 5000,
+      unit: Unit.PER_DAY,
+    },
+  ];
+
+  // Upsert policies (create if not exists, update if exists)
+  for (const policy of policies) {
+    await prisma.policy.upsert({
+      where: { id: policy.id },
+      update: {
+        name: policy.name,
+        amount: policy.amount,
+        unit: policy.unit,
+      },
+      create: policy,
+    });
+  }
+
+  console.log('✅ Policies seeded successfully!');
+}
+
 async function main() {
   console.log('Starting seed...');
   if (!DEFAULT_ADMIN_EMAIL || !DEFAULT_ADMIN_PASSWORD || !DEFAULT_ADMIN_FULLNAME) {
@@ -637,6 +689,7 @@ async function main() {
   await seedCategories();
   await seedBooks();
   await seedBookItems();
+  await seedPolicies();
 }
 
 main()
