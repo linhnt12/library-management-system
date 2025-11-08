@@ -1,11 +1,9 @@
 'use client';
 
 import { BookItemApi, BorrowRecordApi } from '@/api';
-import { FormButtons, FormDivider, FormSelect, Table, toaster } from '@/components';
-import { BookCell } from '@/components/books/BookCell';
-import { createBookItemDetailColumns } from '@/components/table/book/BookItemDetailColumns';
+import { FormButtons, FormDivider, Table, toaster } from '@/components';
+import { createReturnBorrowRecordColumns } from '@/components/table/borrow-record';
 import { formatDate } from '@/lib/utils';
-import { Column } from '@/types';
 import { BorrowRecordWithDetails } from '@/types/borrow-record';
 import { Box, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
@@ -21,7 +19,7 @@ export function ReturnBorrowRecordForm({
   onSuccess,
 }: {
   borrowRecord: BorrowRecordWithDetails;
-  onClose?: () => void;
+  onClose: () => void;
   onSuccess?: () => void;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,57 +43,41 @@ export function ReturnBorrowRecordForm({
     setUpdates(prev => ({ ...prev, [bookItemId]: { ...prev[bookItemId], ...patch } }));
   };
 
-  const columns: Column<(typeof items)[number]['bookItem']>[] = useMemo(() => {
-    const base = createBookItemDetailColumns(false).filter(col => col.key !== 'status');
-
-    // Create Book column to insert before code
-    const bookColumn: Column<(typeof items)[number]['bookItem']> = {
-      key: 'book',
-      header: 'Book',
-      sortable: false,
-      width: '280px',
-      render: (item: (typeof items)[number]['bookItem']) => (
-        <BookCell
-          title={item.book?.title}
-          authorName={item.book?.author?.fullName}
-          coverImageUrl={(item.book as unknown as { coverImageUrl?: string | null })?.coverImageUrl}
-          publishYear={(item.book as unknown as { publishYear?: number | null })?.publishYear}
-        />
-      ),
-    };
-
-    // Find code column index and insert book column before it
-    const codeIndex = base.findIndex(col => col.key === 'code');
-    const columnsWithBook: Column<(typeof items)[number]['bookItem']>[] = [...base] as Column<
-      (typeof items)[number]['bookItem']
-    >[];
-    if (codeIndex >= 0) {
-      columnsWithBook.splice(codeIndex, 0, bookColumn);
-    } else {
-      columnsWithBook.unshift(bookColumn);
-    }
-
-    return columnsWithBook.map(col => {
-      if (col.key === 'condition') {
-        return {
-          ...col,
-          header: 'New Condition',
-          width: '180px',
-          render: (bookItem: (typeof items)[number]['bookItem']) => (
-            <FormSelect
-              items={conditionOptions}
-              value={updates[bookItem.id]?.condition || ''}
-              onChange={(val: string) => setItemUpdate(bookItem.id, { condition: val })}
-              placeholder="Keep current"
-              width="100%"
-              fontSize="sm"
-            />
-          ),
-        } as Column<(typeof items)[number]['bookItem']>;
-      }
-      return col as Column<(typeof items)[number]['bookItem']>;
+  const handleCreateViolation = (bookItemId: number) => {
+    // TODO: Navigate to violation creation page or open dialog
+    // For now, show a message
+    toaster.create({
+      title: 'Create Violation',
+      description: `Creating violation for book item ${bookItemId}`,
+      type: 'info',
     });
-  }, [updates, conditionOptions]);
+  };
+
+  const tableData = useMemo(() => items.map(bb => bb.bookItem), [items]);
+
+  const columns = useMemo(
+    () =>
+      createReturnBorrowRecordColumns({
+        tableData: tableData as Array<{
+          id: number;
+          code: string;
+          condition?: string;
+          book?: {
+            title?: string;
+            author?: { fullName?: string };
+            coverImageUrl?: string | null;
+            publishYear?: number | null;
+          } | null;
+        }>,
+        updates,
+        conditionOptions,
+        onConditionChange: (bookItemId: number, condition: string) => {
+          setItemUpdate(bookItemId, { condition });
+        },
+        onCreateViolation: handleCreateViolation,
+      }),
+    [tableData, updates, conditionOptions]
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,51 +116,53 @@ export function ReturnBorrowRecordForm({
     }
   };
 
-  const tableData = useMemo(() => items.map(bb => bb.bookItem), [items]);
-
   return (
-    <Stack as="form" onSubmit={handleSubmit} gap={4} maxH="70vh" overflowY="auto" px={1}>
-      <VStack align="stretch" gap={2}>
-        <Text fontWeight="bold">Borrow Record ID: {borrowRecord.id}</Text>
-        <HStack gap={4} flexWrap="wrap" fontSize="sm">
-          <Text>
-            <b>Borrower:</b> {borrowRecord.user?.fullName}
-          </Text>
-          <Text>
-            <b>Borrow Date:</b> {formatDate(borrowRecord.borrowDate)}
-          </Text>
-          <Text>
-            <b>Expected Return:</b> {formatDate(borrowRecord.returnDate)}
-          </Text>
-        </HStack>
-      </VStack>
+    <Stack as="form" onSubmit={handleSubmit} height="100%" gap={0} px={1}>
+      <Box flex="1" overflowY="auto">
+        <Stack gap={4} py={4}>
+          <VStack align="stretch" gap={2}>
+            <Text fontWeight="bold">Borrow Record ID: {borrowRecord.id}</Text>
+            <HStack gap={4} flexWrap="wrap" fontSize="sm">
+              <Text>
+                <b>Borrower:</b> {borrowRecord.user?.fullName}
+              </Text>
+              <Text>
+                <b>Borrow Date:</b> {formatDate(borrowRecord.borrowDate)}
+              </Text>
+              <Text>
+                <b>Expected Return:</b> {formatDate(borrowRecord.returnDate)}
+              </Text>
+            </HStack>
+          </VStack>
 
-      <FormDivider />
+          <FormDivider />
 
-      <Box>
-        <Text fontWeight="semibold" mb={3}>
-          Books to Return ({items.length})
-        </Text>
-        <Text fontSize="sm" color="gray.600" mb={4}>
-          Review and update condition for each book item if needed
-        </Text>
-        <Table
-          columns={columns}
-          data={tableData}
-          page={1}
-          pageSize={10}
-          total={tableData.length}
-          loading={false}
-          hidePageSizeSelect
-        />
+          <Box>
+            <Text fontWeight="semibold" mb={3}>
+              Books to Return ({items.length})
+            </Text>
+            <Text fontSize="sm" color="gray.600" mb={4}>
+              Review and update condition for each book item if needed
+            </Text>
+            <Table
+              columns={columns}
+              data={tableData}
+              page={1}
+              pageSize={10}
+              total={tableData.length}
+              loading={false}
+              hidePageSizeSelect
+            />
+          </Box>
+        </Stack>
       </Box>
 
-      <Box mt={2}>
+      <Box>
         <FormButtons
           submitLabel="Confirm Return"
           cancelLabel="Cancel"
           isSubmitting={isSubmitting}
-          onCancel={() => onClose?.()}
+          onCancel={onClose}
         />
       </Box>
     </Stack>

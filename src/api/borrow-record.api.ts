@@ -114,6 +114,20 @@ export class BorrowRecordApi {
     }>(response);
   }
 
+  // Get borrow record by id
+  static async getBorrowRecordById(id: number): Promise<BorrowRecordWithDetails> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/borrow-records/${id}`, {
+      method: 'GET',
+      headers,
+    });
+
+    return await handleJson<BorrowRecordWithDetails>(response);
+  }
+
   // Renew borrow record
   static async renewBorrowRecord(id: number): Promise<{
     borrowRecord: BorrowRecordWithDetails;

@@ -35,6 +35,7 @@ export const ROUTES = {
     BORROW_REQUESTS: '/dashboard/borrow-requests',
     BORROW_RECORDS: '/dashboard/borrow-records',
     BORROW_RECORDS_ADD: '/dashboard/borrow-records/add',
+    BORROW_RECORDS_RETURN: '/dashboard/borrow-records/return',
 
     // Authors routes
     AUTHORS: '/dashboard/authors',

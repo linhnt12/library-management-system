@@ -26,6 +26,7 @@ export const pageHeadings: Record<string, string> = {
   [ROUTES.DASHBOARD.BORROW_REQUESTS]: 'Borrow Requests Management',
   [ROUTES.DASHBOARD.BORROW_RECORDS]: 'Borrow Records Management',
   [ROUTES.DASHBOARD.BORROW_RECORDS_ADD]: 'Add New Borrow Record',
+  [ROUTES.DASHBOARD.BORROW_RECORDS_RETURN]: 'Return Borrow Record',
 
   // Authors routes
   [ROUTES.DASHBOARD.AUTHORS]: 'Authors Management',
