@@ -45,3 +45,29 @@ export enum JobPriority {
 }
 
 // #endregion
+
+// #region Notification Queue Types
+
+/**
+ * Notification job data structure
+ */
+export interface NotificationJobData {
+  userId: number;
+  title: string;
+  message: string;
+  type: 'SYSTEM' | 'REMINDER' | 'ALERT' | 'OTHER';
+  jobId?: string;
+  timestamp?: number;
+}
+
+/**
+ * Notification job result after processing
+ */
+export interface NotificationJobResult {
+  success: boolean;
+  notificationId?: number;
+  error?: string;
+  processedAt: number;
+}
+
+// #endregion
