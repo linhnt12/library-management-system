@@ -1,15 +1,12 @@
 import { BorrowRecordApi } from '@/api';
 import { createReturnBorrowRecordColumns } from '@/components/table/borrow-record';
 import { toaster } from '@/components/ui/Toaster';
-import {
-  DEFAULT_VIOLATION_DUE_DATE_DAYS,
-  getViolationPolicyByCondition,
-  getViolationPolicyInfo,
-  policyIdToCondition,
-} from '@/constants';
+import { DEFAULT_VIOLATION_DUE_DATE_DAYS, policyIdToCondition } from '@/constants';
+import { conditionToPolicyId, getViolationPolicyMetadata } from '@/lib/utils/violation-utils';
 import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
 import { Violation } from '@/types/violation';
 import { useCallback, useMemo, useState } from 'react';
+import { useViolationPolicies } from './useViolationPolicies';
 
 type ItemUpdate = {
   status?: string;
@@ -27,6 +24,9 @@ export function useReturnBorrowRecordForm({
   borrowRecord,
   onSuccess,
 }: UseReturnBorrowRecordFormOptions) {
+  // Get violation policies from database
+  const { violationPolicies } = useViolationPolicies();
+
   // Form state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [updates, setUpdates] = useState<Record<number, ItemUpdate>>({});
@@ -101,8 +101,10 @@ export function useReturnBorrowRecordForm({
         const bookItem = items.find(bb => bb.bookItem.id === bookItemId)?.bookItem;
         if (!bookItem) return;
 
-        // Get policy for the condition
-        const policy = getViolationPolicyByCondition(condition);
+        // Get policy for the condition from database
+        const policyId = conditionToPolicyId(condition);
+        if (!policyId || !violationPolicies) return;
+        const policy = violationPolicies[policyId];
         if (!policy) return;
 
         // Check if violation already exists for this book item
@@ -151,7 +153,7 @@ export function useReturnBorrowRecordForm({
         }
       }
     },
-    [items, pendingViolations, setItemUpdate, handleRemoveViolation]
+    [items, pendingViolations, setItemUpdate, handleRemoveViolation, violationPolicies]
   );
 
   const handleViolationConfirm = useCallback((violation: Violation) => {
@@ -168,10 +170,10 @@ export function useReturnBorrowRecordForm({
 
   const totalViolationPoints = useMemo(() => {
     return Object.values(pendingViolations).reduce((sum, v) => {
-      const info = getViolationPolicyInfo(v.policyId);
-      return sum + info.points;
+      const policy = violationPolicies?.[v.policyId];
+      return sum + (policy?.points || 0);
     }, 0);
-  }, [pendingViolations]);
+  }, [pendingViolations, violationPolicies]);
 
   const tableData = useMemo(() => items.map(bb => bb.bookItem), [items]);
 
@@ -294,6 +296,20 @@ export function useReturnBorrowRecordForm({
     handleViewViolation,
     handleSubmit,
     handleCloseViolationDialog,
-    getViolationPolicyInfo,
+    getViolationPolicyInfo: useCallback(
+      (policyId: string) => {
+        const policy = violationPolicies?.[policyId];
+        if (policy) {
+          return { name: policy.name, points: policy.points };
+        }
+        // Fallback: get metadata only
+        const metadata = getViolationPolicyMetadata(policyId);
+        return {
+          name: 'Unknown',
+          points: metadata?.points || 0,
+        };
+      },
+      [violationPolicies]
+    ),
   };
 }

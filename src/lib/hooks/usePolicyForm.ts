@@ -3,6 +3,7 @@ import { ROUTES } from '@/constants';
 import { useDialog, useFormSubmission } from '@/lib/hooks';
 import { CreatePolicyFormState, PolicyFormErrors, validateCreatePolicy } from '@/lib/validators';
 import { CreatePolicyData, Policy, UpdatePolicyData } from '@/types';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -16,6 +17,7 @@ const initialState: CreatePolicyFormState = {
 
 export function usePolicyForm(policyId?: string) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [form, setForm] = useState<CreatePolicyFormState>(initialState);
   const [errors, setErrors] = useState<PolicyFormErrors>({});
   const [isLoading, setIsLoading] = useState(!!policyId);
@@ -153,6 +155,8 @@ export function usePolicyForm(policyId?: string) {
               apiCall: (data: CreatePolicyData | UpdatePolicyData) =>
                 PolicyApi.updatePolicy(policyId!, data as Partial<CreatePolicyData>),
               onSuccess: () => {
+                // Invalidate policies cache to refresh data
+                queryClient.invalidateQueries({ queryKey: ['policies'] });
                 router.push(ROUTES.DASHBOARD.POLICIES);
               },
             });
@@ -163,6 +167,8 @@ export function usePolicyForm(policyId?: string) {
               apiCall: (data: CreatePolicyData | UpdatePolicyData) =>
                 PolicyApi.createPolicy(data as CreatePolicyData),
               onSuccess: () => {
+                // Invalidate policies cache to refresh data
+                queryClient.invalidateQueries({ queryKey: ['policies'] });
                 resetForm();
                 router.push(ROUTES.DASHBOARD.POLICIES);
               },
@@ -179,6 +185,7 @@ export function usePolicyForm(policyId?: string) {
       transformDataForUpdate,
       transformDataForCreate,
       submit,
+      queryClient,
       policyId,
       resetForm,
       router,

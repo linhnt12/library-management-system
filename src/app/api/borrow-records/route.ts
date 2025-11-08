@@ -51,6 +51,7 @@ export const GET = requireReader(async (request: AuthenticatedRequest) => {
               id: true,
               fullName: true,
               email: true,
+              violationPoints: true,
             },
           },
           borrowBooks: {
@@ -82,6 +83,7 @@ export const GET = requireReader(async (request: AuthenticatedRequest) => {
               id: record.user.id,
               fullName: record.user.fullName,
               email: record.user.email,
+              violationPoints: record.user.violationPoints,
             }
           : undefined,
         borrowBooks: record.borrowBooks.map(bb => ({
@@ -175,6 +177,7 @@ export const POST = requireLibrarian(async (request: AuthenticatedRequest) => {
         id: true,
         fullName: true,
         email: true,
+        violationPoints: true,
       },
     });
 

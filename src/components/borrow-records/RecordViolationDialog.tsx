@@ -1,9 +1,10 @@
 'use client';
 
 import { Dialog, FormField, FormInput } from '@/components';
-import { DEFAULT_VIOLATION_DUE_DATE_DAYS, getViolationPolicyByCondition } from '@/constants';
+import { DEFAULT_VIOLATION_DUE_DATE_DAYS } from '@/constants';
+import { useViolationPolicyByCondition } from '@/lib/hooks';
 import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
-import { Violation, ViolationPolicy } from '@/types/violation';
+import { Violation } from '@/types/violation';
 import { Box, HStack, Text, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -27,30 +28,28 @@ export function RecordViolationDialog({
   initialViolation,
 }: RecordViolationDialogProps) {
   const [amount, setAmount] = useState<number>(0);
-  const [policy, setPolicy] = useState<ViolationPolicy | null>(null);
   const [dueDate, setDueDate] = useState<string>('');
 
-  useEffect(() => {
-    if (bookItem && newCondition) {
-      const newPolicy = getViolationPolicyByCondition(newCondition);
-      if (newPolicy) {
-        setPolicy(newPolicy);
-        const bookPrice = bookItem.book?.price || 0;
-        const suggestedAmount = Math.floor((bookPrice * newPolicy.penaltyPercent) / 100);
-        // Use initial amount if provided (when editing), otherwise use suggested amount
-        setAmount(initialViolation?.amount || suggestedAmount);
+  // Get violation policy from database
+  const policy = useViolationPolicyByCondition(newCondition);
 
-        // Set default due date (3 days from today) if not provided
-        if (initialViolation?.dueDate) {
-          setDueDate(initialViolation.dueDate);
-        } else {
-          const defaultDueDate = new Date();
-          defaultDueDate.setDate(defaultDueDate.getDate() + DEFAULT_VIOLATION_DUE_DATE_DAYS);
-          setDueDate(defaultDueDate.toISOString().split('T')[0]);
-        }
+  useEffect(() => {
+    if (bookItem && newCondition && policy) {
+      const bookPrice = bookItem.book?.price || 0;
+      const suggestedAmount = Math.floor((bookPrice * policy.penaltyPercent) / 100);
+      // Use initial amount if provided (when editing), otherwise use suggested amount
+      setAmount(initialViolation?.amount || suggestedAmount);
+
+      // Set default due date (3 days from today) if not provided
+      if (initialViolation?.dueDate) {
+        setDueDate(initialViolation.dueDate);
+      } else {
+        const defaultDueDate = new Date();
+        defaultDueDate.setDate(defaultDueDate.getDate() + DEFAULT_VIOLATION_DUE_DATE_DAYS);
+        setDueDate(defaultDueDate.toISOString().split('T')[0]);
       }
     }
-  }, [bookItem, newCondition, initialViolation]);
+  }, [bookItem, newCondition, initialViolation, policy]);
 
   const bookPrice = bookItem?.book?.price || 0;
 
