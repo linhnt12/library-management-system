@@ -5,6 +5,7 @@ import {
   CreateBorrowRecordData,
   CreateBorrowRecordResponse,
 } from '@/types/borrow-record';
+import { Violation } from '@/types/violation';
 
 export class BorrowRecordApi {
   // Create borrow record
@@ -114,6 +115,20 @@ export class BorrowRecordApi {
     }>(response);
   }
 
+  // Get borrow record by id
+  static async getBorrowRecordById(id: number): Promise<BorrowRecordWithDetails> {
+    const token = getAccessToken();
+    const headers: Record<string, string> = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const response = await fetchWithAuth(`/api/borrow-records/${id}`, {
+      method: 'GET',
+      headers,
+    });
+
+    return await handleJson<BorrowRecordWithDetails>(response);
+  }
+
   // Renew borrow record
   static async renewBorrowRecord(id: number): Promise<{
     borrowRecord: BorrowRecordWithDetails;
@@ -135,22 +150,42 @@ export class BorrowRecordApi {
   }
 
   // Return borrow record
-  static async returnBorrowRecord(id: number): Promise<{
+  static async returnBorrowRecord(
+    id: number,
+    options?: {
+      violations?: Violation[];
+      conditionUpdates?: Record<number, string>;
+    }
+  ): Promise<{
     borrowRecord: BorrowRecordWithDetails;
     message: string;
+    payments?: Array<{ id: number; amount: number; policyId: string }>;
   }> {
     const token = getAccessToken();
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };
     if (token) headers.Authorization = `Bearer ${token}`;
 
+    const body: {
+      violations?: Violation[];
+      conditionUpdates?: Record<number, string>;
+    } = {};
+    if (options?.violations) {
+      body.violations = options.violations;
+    }
+    if (options?.conditionUpdates) {
+      body.conditionUpdates = options.conditionUpdates;
+    }
+
     const response = await fetchWithAuth(`/api/borrow-records/${id}/return`, {
       method: 'POST',
       headers,
+      body: Object.keys(body).length > 0 ? JSON.stringify(body) : undefined,
     });
 
     return await handleJson<{
       borrowRecord: BorrowRecordWithDetails;
       message: string;
+      payments?: Array<{ id: number; amount: number; policyId: string }>;
     }>(response);
   }
 }

@@ -2,19 +2,20 @@
 
 import { BorrowRecordApi } from '@/api';
 import {
-  Dialog,
   FormSelect,
   LibrarianBorrowRecordColumns,
   SearchInput,
   Table,
   toaster,
 } from '@/components';
-import { ReturnBorrowRecordForm } from '@/components/borrow-records/ReturnBorrowRecordForm';
+import { ROUTES } from '@/constants';
 import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { HStack, Stack } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function DashboardBorrowRecordsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -82,25 +83,11 @@ export default function DashboardBorrowRecordsPage() {
     setQuery(value);
   };
 
-  const [isReturnOpen, setIsReturnOpen] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<BorrowRecordWithDetails | null>(null);
-
-  const openReturn = (record: BorrowRecordWithDetails) => {
-    setSelectedRecord(record);
-    setIsReturnOpen(true);
+  const handleReturnClick = (record: BorrowRecordWithDetails) => {
+    router.push(ROUTES.DASHBOARD.BORROW_RECORDS_RETURN + `/${record.id}`);
   };
 
-  const closeReturn = () => {
-    setIsReturnOpen(false);
-    setSelectedRecord(null);
-  };
-
-  const handleReturnSuccess = async () => {
-    closeReturn();
-    await fetchBorrowRecords();
-  };
-
-  const borrowRecordColumns = LibrarianBorrowRecordColumns({ onReturnClick: openReturn });
+  const borrowRecordColumns = LibrarianBorrowRecordColumns({ onReturnClick: handleReturnClick });
 
   return (
     <Stack gap={4} height="100%">
@@ -137,25 +124,6 @@ export default function DashboardBorrowRecordsPage() {
           setPageSize(size);
           setPage(1);
         }}
-      />
-
-      <Dialog
-        isOpen={isReturnOpen}
-        onClose={closeReturn}
-        title="Return Book"
-        width="85vw"
-        maxW="1200px"
-        content={
-          selectedRecord ? (
-            <ReturnBorrowRecordForm
-              borrowRecord={selectedRecord}
-              onClose={closeReturn}
-              onSuccess={handleReturnSuccess}
-            />
-          ) : undefined
-        }
-        buttons={[]}
-        showCloseButton
       />
     </Stack>
   );
