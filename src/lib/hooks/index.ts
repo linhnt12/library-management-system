@@ -17,6 +17,7 @@ export * from './useDigitalLicenseForm';
 export * from './useFormSubmission';
 export * from './useLoginForm';
 export * from './useMe';
+export * from './usePolicyForm';
 export * from './useProfileForm';
 export * from './useRegisterForm';
 export * from './useReturnBorrowRecordForm';

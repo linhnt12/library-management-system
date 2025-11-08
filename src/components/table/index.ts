@@ -5,6 +5,7 @@ export * from './borrow-request';
 export * from './category';
 export * from './EntityStatusCell';
 export * from './PaginationControls';
+export * from './policy';
 export * from './Table';
 export * from './TableFooter';
 export * from './user';

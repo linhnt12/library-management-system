@@ -51,6 +51,11 @@ export const ROUTES = {
     USERS: '/dashboard/users',
     USERS_ADD: '/dashboard/users/add',
     USERS_EDIT: '/dashboard/users/edit',
+
+    // Policies routes
+    POLICIES: '/dashboard/policies',
+    POLICIES_ADD: '/dashboard/policies/add',
+    POLICIES_EDIT: '/dashboard/policies/edit',
   },
 
   // Common routes

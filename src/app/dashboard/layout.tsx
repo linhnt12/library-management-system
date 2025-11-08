@@ -3,6 +3,7 @@
 import { Layout, Sidebar } from '@/components';
 import { ROUTES } from '@/constants';
 import { ReactNode } from 'react';
+import { HiOutlineScale } from 'react-icons/hi';
 import { LuBook, LuClipboardList, LuTags, LuUserPen, LuUsers } from 'react-icons/lu';
 import { SlGrid } from 'react-icons/sl';
 
@@ -57,6 +58,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         { label: 'Borrow Requests', href: ROUTES.DASHBOARD.BORROW_REQUESTS },
         { label: 'Borrow Records', href: ROUTES.DASHBOARD.BORROW_RECORDS },
         { label: 'Add Borrow Record', href: ROUTES.DASHBOARD.BORROW_RECORDS_ADD },
+      ],
+    },
+    {
+      label: 'Policies',
+      href: '',
+      icon: HiOutlineScale,
+      children: [
+        { label: 'All Policies', href: ROUTES.DASHBOARD.POLICIES },
+        { label: 'Add Policy', href: ROUTES.DASHBOARD.POLICIES_ADD },
       ],
     },
   ];

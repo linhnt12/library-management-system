@@ -11,5 +11,6 @@ export * from './digital-license.api';
 export * from './favorite-book.api';
 export * from './otp.api';
 export * from './password.api';
+export * from './policy.api';
 export * from './review.api';
 export * from './user.api';
