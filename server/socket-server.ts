@@ -7,6 +7,9 @@ import { Server, Socket } from 'socket.io';
 const server = http.createServer();
 const io = new Server(server, { cors: { origin: '*' } });
 
+// Track connected users by userId -> Set of socket IDs
+const connectedUsers = new Map<number, Set<string>>();
+
 // Middleware: require token
 io.use((socket: Socket, next) => {
   try {
@@ -78,8 +81,73 @@ io.use((socket: Socket, next) => {
 });
 
 io.on('connection', socket => {
-  console.log('Connected:', socket.id);
+  const userId = socket.data.user?.id;
+
+  if (userId) {
+    // Track connected user
+    if (!connectedUsers.has(userId)) {
+      connectedUsers.set(userId, new Set());
+    }
+    connectedUsers.get(userId)!.add(socket.id);
+    console.log(
+      `User ${userId} connected (socket: ${socket.id}). Total connections: ${connectedUsers.get(userId)!.size}`
+    );
+  }
+
+  // Handle ping/pong
   socket.on('ping', () => socket.emit('pong'));
+
+  // Handle disconnection
+  socket.on('disconnect', reason => {
+    if (userId) {
+      const userSockets = connectedUsers.get(userId);
+      if (userSockets) {
+        userSockets.delete(socket.id);
+        if (userSockets.size === 0) {
+          connectedUsers.delete(userId);
+        }
+        console.log(
+          `User ${userId} disconnected (socket: ${socket.id}, reason: ${reason}). Remaining connections: ${userSockets.size}`
+        );
+      }
+    }
+  });
 });
 
-server.listen(4000, () => console.log('Socket server running on :4000'));
+/**
+ * Emit event to a specific user (all their connected sockets)
+ */
+function emitToUser(userId: number, event: string, data: unknown): void {
+  const userSockets = connectedUsers.get(userId);
+  if (userSockets && userSockets.size > 0) {
+    userSockets.forEach(socketId => {
+      io.to(socketId).emit(event, data);
+    });
+    console.log(`Emitted '${event}' to user ${userId} (${userSockets.size} socket(s))`);
+  } else {
+    console.log(
+      `User ${userId} is not connected. Notification will be delivered when they reconnect.`
+    );
+  }
+}
+
+// Export socket server instance for notification service
+server.listen(4000, () => {
+  console.log('Socket server running on :4000');
+
+  // Register socket server instance with notification service
+  // Use dynamic import to avoid circular dependencies
+  import('../src/services/notification.service')
+    .then(({ setSocketServerInstance }) => {
+      setSocketServerInstance({
+        emitToUser,
+      });
+      console.log('Socket server instance registered with NotificationService');
+    })
+    .catch(err => {
+      console.error('Failed to register socket server with NotificationService:', err);
+    });
+});
+
+// Export for direct use if needed
+export { emitToUser, io };

@@ -4,3 +4,4 @@
  */
 
 export * from './email.queue';
+export * from './notification.queue';
