@@ -142,47 +142,13 @@ function emitToUser(userId: number, event: string, data: unknown): void {
   }
 }
 
-/**
- * Mục đích của việc export socket server instance cho notification service:
- *
- * 1. Cho phép NotificationService.sendNotification() gửi thông báo qua WebSocket ngay lập tức
- *    khi gọi trực tiếp (không qua queue)
- *
- * 2. Notification worker cũng có thể emit trực tiếp qua socket server khi xử lý jobs từ queue
- *
- * 3. Tách biệt trách nhiệm:
- *    - Socket server: Quản lý kết nối WebSocket và tracking users
- *    - Notification service: Business logic tạo và gửi notifications
- *    - Notification worker: Xử lý async jobs từ queue
- *
- * Lưu ý: Đây là optional - nếu không đăng ký được, notification worker vẫn có thể
- * emit trực tiếp qua socket server khi xử lý jobs.
- */
-server.listen(4000, () => {
-  console.log('Socket server running on :4000');
-
-  // Register socket server instance with notification service (optional)
-  // Use dynamic import to avoid circular dependencies and make it optional
-  // This allows socket server to run even if notification service can't be loaded
-  import('../src/services/notification.service')
-    .then(({ setSocketServerInstance }) => {
-      setSocketServerInstance({
-        emitToUser,
-      });
-      console.log('✓ Socket server instance registered with NotificationService');
-    })
-    .catch(err => {
-      // Non-critical: socket server can still function without notification service registration
-      // The notification worker will handle WebSocket emissions directly
-      console.warn(
-        '⚠ Socket server registration with NotificationService skipped (this is optional):',
-        err.message
-      );
-      console.warn(
-        '  Notification WebSocket delivery will be handled by the notification worker instead.'
-      );
-    });
-});
+// Only start the server if this file is run directly (not imported)
+// This prevents port conflicts when worker imports this file
+if (require.main === module) {
+  server.listen(4000, () => {
+    console.log('Socket server running on :4000');
+  });
+}
 
 // Export for direct use if needed
 export { emitToUser, io };
