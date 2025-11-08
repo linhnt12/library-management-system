@@ -5,6 +5,7 @@ import { ROUTES } from '@/constants';
 import { ReactNode } from 'react';
 import { HiOutlineScale } from 'react-icons/hi';
 import { LuBook, LuClipboardList, LuTags, LuUserPen, LuUsers } from 'react-icons/lu';
+import { RiFileWarningLine } from 'react-icons/ri';
 import { SlGrid } from 'react-icons/sl';
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -68,6 +69,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         { label: 'All Policies', href: ROUTES.DASHBOARD.POLICIES },
         { label: 'Add Policy', href: ROUTES.DASHBOARD.POLICIES_ADD },
       ],
+    },
+    {
+      label: 'Violations',
+      href: ROUTES.DASHBOARD.VIOLATIONS,
+      icon: RiFileWarningLine,
     },
   ];
 

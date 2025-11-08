@@ -47,4 +47,7 @@ export const pageHeadings: Record<string, string> = {
   [ROUTES.DASHBOARD.POLICIES]: 'Policies Management',
   [ROUTES.DASHBOARD.POLICIES_ADD]: 'Add New Policy',
   [ROUTES.DASHBOARD.POLICIES_EDIT]: 'Edit Policy',
+
+  // Violations routes
+  [ROUTES.DASHBOARD.VIOLATIONS]: 'Violations Management',
 };

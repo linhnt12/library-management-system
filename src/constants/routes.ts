@@ -56,6 +56,9 @@ export const ROUTES = {
     POLICIES: '/dashboard/policies',
     POLICIES_ADD: '/dashboard/policies/add',
     POLICIES_EDIT: '/dashboard/policies/edit',
+
+    // Violations routes
+    VIOLATIONS: '/dashboard/violations',
   },
 
   // Common routes
