@@ -16,3 +16,4 @@ export * from './queue';
 export * from './review';
 export * from './table';
 export * from './user';
+export * from './violation';

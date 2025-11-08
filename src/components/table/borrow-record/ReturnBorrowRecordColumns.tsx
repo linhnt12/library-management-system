@@ -1,10 +1,9 @@
 'use client';
 
-import { Button, FormSelect } from '@/components';
+import { FormSelect } from '@/components';
 import { BookCell } from '@/components/books/BookCell';
 import { Column } from '@/types';
-import { HStack, Text } from '@chakra-ui/react';
-import { RiFileWarningLine } from 'react-icons/ri';
+import { Text } from '@chakra-ui/react';
 
 type BookItem = {
   id: number;
@@ -27,7 +26,6 @@ type ReturnBorrowRecordColumnsParams = {
   updates: Record<number, { condition?: string }>;
   conditionOptions: FormSelectItem[];
   onConditionChange: (bookItemId: number, condition: string) => void;
-  onCreateViolation: (bookItemId: number) => void;
 };
 
 // Component to render No. column
@@ -77,42 +75,11 @@ function NewConditionCell({
   );
 }
 
-// Component to render Actions column
-function ActionsCell({
-  bookItem,
-  updates,
-  onCreateViolation,
-}: {
-  bookItem: BookItem;
-  updates: Record<number, { condition?: string }>;
-  onCreateViolation: (bookItemId: number) => void;
-}) {
-  const updatedCondition = updates[bookItem.id]?.condition;
-  const isViolationCondition =
-    updatedCondition === 'LOST' || updatedCondition === 'WORN' || updatedCondition === 'DAMAGED';
-
-  return (
-    <HStack justifyContent="center">
-      <Button
-        label="Fine Record"
-        icon={RiFileWarningLine}
-        variantType="primary"
-        onClick={() => onCreateViolation(bookItem.id)}
-        disabled={!isViolationCondition}
-        fontSize="sm"
-        h="32px"
-        px={3}
-      />
-    </HStack>
-  );
-}
-
 export function createReturnBorrowRecordColumns({
   tableData,
   updates,
   conditionOptions,
   onConditionChange,
-  onCreateViolation,
 }: ReturnBorrowRecordColumnsParams): Column<BookItem>[] {
   return [
     {
@@ -150,16 +117,6 @@ export function createReturnBorrowRecordColumns({
           conditionOptions={conditionOptions}
           onConditionChange={onConditionChange}
         />
-      ),
-    },
-    {
-      key: 'actions',
-      header: 'Actions',
-      sortable: false,
-      width: '200px',
-      textAlign: 'center' as const,
-      render: (item: BookItem) => (
-        <ActionsCell bookItem={item} updates={updates} onCreateViolation={onCreateViolation} />
       ),
     },
   ];

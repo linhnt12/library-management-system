@@ -19,6 +19,7 @@ export * from './useLoginForm';
 export * from './useMe';
 export * from './useProfileForm';
 export * from './useRegisterForm';
+export * from './useReturnBorrowRecordForm';
 export * from './useReviewForm';
 export * from './useReviews';
 export * from './useUserFilters';

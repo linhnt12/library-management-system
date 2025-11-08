@@ -72,6 +72,7 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
             isbn: bb.bookItem.book.isbn,
             coverImageUrl: bb.bookItem.book.coverImageUrl,
             publishYear: bb.bookItem.book.publishYear,
+            price: bb.bookItem.book.price,
             author: {
               id: bb.bookItem.book.author.id,
               fullName: bb.bookItem.book.author.fullName,

@@ -18,20 +18,39 @@ export enum BorrowStatus {
   OVERDUE = 'OVERDUE',
 }
 
+// BookItem for violation dialog
+export interface BookItemForViolation {
+  id: number;
+  code: string;
+  condition?: string;
+  book?: {
+    id: number;
+    title?: string;
+    price?: number | null;
+    author?: {
+      id: number;
+      fullName?: string;
+    };
+  } | null;
+}
+
 // BorrowRecord with user and book items
 export interface BorrowRecordWithDetails extends BorrowRecord {
   user?: {
     id: number;
     fullName: string;
     email: string;
+    violationPoints?: number;
   };
   borrowBooks?: Array<{
     bookItem: {
       id: number;
       code: string;
+      condition?: string;
       book: {
         id: number;
         title: string;
+        price?: number | null;
         author: {
           id: number;
           fullName: string;

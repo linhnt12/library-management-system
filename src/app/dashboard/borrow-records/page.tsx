@@ -84,7 +84,7 @@ export default function DashboardBorrowRecordsPage() {
   };
 
   const handleReturnClick = (record: BorrowRecordWithDetails) => {
-    router.push(ROUTES.DASHBOARD.BORROW_RECORDS_RETURN.replace(':id', record.id.toString()));
+    router.push(ROUTES.DASHBOARD.BORROW_RECORDS_RETURN + `/${record.id}`);
   };
 
   const borrowRecordColumns = LibrarianBorrowRecordColumns({ onReturnClick: handleReturnClick });
