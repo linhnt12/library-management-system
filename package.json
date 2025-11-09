@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "concurrently -k -n web,worker,cron -c auto \"next dev\" \"yarn worker\" \"yarn cron\"",
     "dev:socket": "ts-node --project tsconfig.server.json server/socket-server.ts",
     "build": "next build --turbopack",
     "start": "yarn build && next start",
@@ -13,7 +13,8 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
     "worker": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/workers.ts",
     "worker:email": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/email-worker.ts",
-    "worker:notification": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/notification-worker.ts"
+    "worker:notification": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/notification-worker.ts",
+    "cron": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/cron.ts"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -35,6 +36,7 @@
     "jsonwebtoken": "^9.0.2",
     "next": "15.5.4",
     "next-themes": "^0.4.6",
+    "node-cron": "^3.0.3",
     "nodemailer": "^7.0.10",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -47,6 +49,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^7.0.3",
     "@types/react": "^19",
     "@types/react-dom": "^19",
@@ -54,6 +57,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.0",
     "@typescript-eslint/parser": "^8.46.0",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.0",
     "eslint": "^9.37.0",
     "eslint-config-next": "15.5.4",
     "eslint-config-prettier": "^10.1.8",

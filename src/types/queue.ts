@@ -61,6 +61,19 @@ export interface NotificationJobData {
 }
 
 /**
+ * Bulk notification job data structure
+ * Shared notification data for multiple users
+ */
+export interface BulkNotificationJobData {
+  userIds: number[];
+  title: string;
+  message: string;
+  type: 'SYSTEM' | 'REMINDER' | 'ALERT' | 'OTHER';
+  jobId?: string;
+  timestamp?: number;
+}
+
+/**
  * Notification job result after processing
  */
 export interface NotificationJobResult {

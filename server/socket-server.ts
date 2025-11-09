@@ -4,6 +4,17 @@ import http from 'http';
 import jwt from 'jsonwebtoken';
 import { Server, Socket } from 'socket.io';
 
+// Register tsconfig paths for @/ alias resolution (needed for dynamic imports)
+import { resolve } from 'path';
+import { register } from 'tsconfig-paths';
+
+register({
+  baseUrl: resolve(__dirname, '..'),
+  paths: {
+    '@/*': ['./src/*'],
+  },
+});
+
 const server = http.createServer();
 const io = new Server(server, { cors: { origin: '*' } });
 
@@ -131,23 +142,13 @@ function emitToUser(userId: number, event: string, data: unknown): void {
   }
 }
 
-// Export socket server instance for notification service
-server.listen(4000, () => {
-  console.log('Socket server running on :4000');
-
-  // Register socket server instance with notification service
-  // Use dynamic import to avoid circular dependencies
-  import('../src/services/notification.service')
-    .then(({ setSocketServerInstance }) => {
-      setSocketServerInstance({
-        emitToUser,
-      });
-      console.log('Socket server instance registered with NotificationService');
-    })
-    .catch(err => {
-      console.error('Failed to register socket server with NotificationService:', err);
-    });
-});
+// Only start the server if this file is run directly (not imported)
+// This prevents port conflicts when worker imports this file
+if (require.main === module) {
+  server.listen(4000, () => {
+    console.log('Socket server running on :4000');
+  });
+}
 
 // Export for direct use if needed
 export { emitToUser, io };

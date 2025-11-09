@@ -8,6 +8,7 @@ import { Box, Flex, HStack, Image, Menu, Portal, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FiCalendar, FiClock } from 'react-icons/fi';
+import { NotificationBell } from './NotificationBell';
 
 // Mock data for search and avatar
 const mockData = {
@@ -113,7 +114,7 @@ export function UserHeader() {
         </HStack>
       </HStack>
 
-      {/* Right side - Time, Date, User */}
+      {/* Right side - Time, Date, Notifications, User */}
       <HStack gap={6}>
         {/* Time and Date */}
         <HStack
@@ -143,6 +144,9 @@ export function UserHeader() {
             </Text>
           </HStack>
         </HStack>
+
+        {/* Notification Bell - Only show when user is logged in */}
+        {user && <NotificationBell />}
 
         {/* User profile or Login button */}
         {user ? (
