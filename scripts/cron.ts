@@ -24,7 +24,7 @@ register({
 });
 
 import { CronManager } from '../src/lib/cron';
-import { borrowReminderTask } from '../src/lib/cron/jobs';
+import { borrowReminderTask, reservationReminderTask } from '../src/lib/cron/jobs';
 
 // #region Register All Cron Jobs
 
@@ -39,6 +39,17 @@ CronManager.register({
   schedule: '0 0 * * *', // Every day at 00:00
   task: borrowReminderTask,
   description: 'Check BorrowRequest endDate and send reminder notifications (3 days before due)',
+  enabled: true,
+});
+
+// Register Reservation Reminder Job
+// Runs every day at 01:00 (1am)
+CronManager.register({
+  name: 'reservation-reminder',
+  schedule: '0 1 * * *', // Every day at 01:00
+  task: reservationReminderTask,
+  description:
+    'Check BorrowRequest startDate for PENDING requests and send reminder notifications (3 days before reservation expires)',
   enabled: true,
 });
 
