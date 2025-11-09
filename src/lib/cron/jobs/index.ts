@@ -4,3 +4,4 @@
  */
 
 export * from './borrow-reminder.job';
+export * from './reservation-reminder.job';
