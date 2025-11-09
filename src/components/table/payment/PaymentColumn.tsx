@@ -1,9 +1,10 @@
 'use client';
 
-import { Tag } from '@/components';
+import { IconButton, Tag } from '@/components';
 import { formatDate } from '@/lib/utils';
 import { PaymentWithDetails } from '@/types';
-import { Text, VStack } from '@chakra-ui/react';
+import { HStack, Text, VStack } from '@chakra-ui/react';
+import { LuEye } from 'react-icons/lu';
 
 // Component to format amount
 function AmountCell({ amount }: { amount: number }) {
@@ -37,7 +38,30 @@ function UserCell({ payment }: { payment: PaymentWithDetails }) {
   );
 }
 
-export const PaymentColumns = () => [
+// Component Actions
+function ActionsCell({
+  payment,
+  onViewClick,
+}: {
+  payment: PaymentWithDetails;
+  onViewClick?: (payment: PaymentWithDetails) => void;
+}) {
+  const handleView = () => {
+    if (onViewClick) {
+      onViewClick(payment);
+    }
+  };
+
+  return (
+    <HStack gap={2} justifyContent="center">
+      <IconButton aria-label="View violation" onClick={handleView}>
+        <LuEye />
+      </IconButton>
+    </HStack>
+  );
+}
+
+export const PaymentColumns = (onViewClick?: (payment: PaymentWithDetails) => void) => [
   {
     key: 'id',
     header: 'ID',
@@ -93,5 +117,15 @@ export const PaymentColumns = () => [
     sortable: true,
     width: '150px',
     render: (payment: PaymentWithDetails) => <DateCell date={payment.createdAt} />,
+  },
+  {
+    key: 'actions',
+    header: 'Actions',
+    sortable: false,
+    width: '100px',
+    textAlign: 'center' as const,
+    render: (payment: PaymentWithDetails) => (
+      <ActionsCell payment={payment} onViewClick={onViewClick} />
+    ),
   },
 ];

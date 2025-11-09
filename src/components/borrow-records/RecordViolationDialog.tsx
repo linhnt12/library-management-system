@@ -1,21 +1,25 @@
 'use client';
 
-import { Dialog, FormField, FormInput } from '@/components';
+import { Dialog, FormField, FormInput, Tag } from '@/components';
 import { DEFAULT_VIOLATION_DUE_DATE_DAYS } from '@/constants';
 import { useViolationPolicyByCondition } from '@/lib/hooks';
+import { formatDate } from '@/lib/utils';
+import { PaymentWithDetails } from '@/types';
 import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
 import { Violation } from '@/types/violation';
-import { Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { Box, Grid, GridItem, HStack, Text, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 interface RecordViolationDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (violation: Violation) => void;
+  onConfirm?: (violation: Violation) => void;
   borrowRecord: BorrowRecordWithDetails;
   bookItem: BookItemForViolation | null;
   newCondition: string;
   initialViolation?: { amount: number; dueDate?: string };
+  viewOnly?: boolean;
+  payment?: PaymentWithDetails;
 }
 
 export function RecordViolationDialog({
@@ -26,6 +30,8 @@ export function RecordViolationDialog({
   bookItem,
   newCondition,
   initialViolation,
+  viewOnly = false,
+  payment,
 }: RecordViolationDialogProps) {
   const [amount, setAmount] = useState<number>(0);
   const [dueDate, setDueDate] = useState<string>('');
@@ -58,6 +64,9 @@ export function RecordViolationDialog({
   }
 
   const handleConfirm = () => {
+    if (viewOnly || !onConfirm) {
+      return;
+    }
     if (amount <= 0) {
       return;
     }
@@ -81,7 +90,7 @@ export function RecordViolationDialog({
     <Dialog
       isOpen={isOpen}
       onClose={handleClose}
-      title="Record Violation"
+      title={viewOnly ? 'View Violation' : 'Record Violation'}
       maxW="800px"
       content={
         <VStack gap={6} align="stretch">
@@ -118,15 +127,15 @@ export function RecordViolationDialog({
               </HStack>
               <HStack>
                 <Text fontWeight="medium">Book Copy Code:</Text>
-                <Text>#{bookItem.code}</Text>
+                <Text>{bookItem.code}</Text>
               </HStack>
               <HStack>
                 <Text fontWeight="medium">Price:</Text>
                 <Text>{bookPrice.toLocaleString('vi-VN')} VND</Text>
               </HStack>
               <HStack>
-                <Text fontWeight="medium">Borrow Record:</Text>
-                <Text>#{borrowRecord.id}</Text>
+                <Text fontWeight="medium">Borrow Record ID:</Text>
+                <Text>{borrowRecord.id}</Text>
               </HStack>
             </VStack>
           </Box>
@@ -136,57 +145,107 @@ export function RecordViolationDialog({
             <Text fontWeight="semibold" mb={3} fontSize="md">
               Violation Information
             </Text>
-            <VStack align="start" gap={3}>
-              <FormField label="Violation Type *" fontSize="sm" width="100%">
-                <FormInput value={policy?.name} fontSize="sm" height="40px" disabled />
-              </FormField>
+            <Grid templateColumns="repeat(2, 1fr)" gap={3}>
+              <GridItem>
+                <FormField label="Violation Type" fontSize="sm" width="100%">
+                  <FormInput value={policy?.name} fontSize="sm" height="40px" disabled />
+                </FormField>
+              </GridItem>
 
-              <FormField label="Violation Fee *" fontSize="sm" width="100%">
-                <FormInput
-                  type="text"
-                  fontSize="sm"
-                  value={amount.toLocaleString('vi-VN') + ' VND'}
-                  height="40px"
-                  disabled
-                />
-              </FormField>
+              <GridItem>
+                <FormField label="Violation Fee" fontSize="sm" width="100%">
+                  <FormInput
+                    type="text"
+                    fontSize="sm"
+                    value={amount.toLocaleString('vi-VN') + ' VND'}
+                    height="40px"
+                    disabled
+                  />
+                </FormField>
+              </GridItem>
 
-              <FormField label="Violation Points *" fontSize="sm" width="100%">
-                <FormInput
-                  value={`+${policy.points} points`}
-                  fontSize="sm"
-                  height="40px"
-                  disabled
-                />
-              </FormField>
+              <GridItem>
+                <FormField label="Violation Points" fontSize="sm" width="100%">
+                  <FormInput
+                    value={`+${policy.points} points`}
+                    fontSize="sm"
+                    height="40px"
+                    disabled
+                  />
+                </FormField>
+              </GridItem>
 
-              <FormField label="Due Date *" fontSize="sm" width="100%">
-                <FormInput
-                  type="date"
-                  fontSize="sm"
-                  height="40px"
-                  value={dueDate}
-                  onChange={e => setDueDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  placeholder="Select due date"
-                />
-              </FormField>
-            </VStack>
+              <GridItem>
+                <FormField label="Due Date" fontSize="sm" width="100%">
+                  <FormInput
+                    type="date"
+                    fontSize="sm"
+                    height="40px"
+                    value={dueDate}
+                    onChange={e => setDueDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                    placeholder="Select due date"
+                    disabled={viewOnly}
+                  />
+                </FormField>
+              </GridItem>
+            </Grid>
           </Box>
+
+          {/* Payment Information - Only show in viewOnly mode */}
+          {viewOnly && payment && (
+            <Box>
+              <Text fontWeight="semibold" mb={3} fontSize="md">
+                Payment Information
+              </Text>
+              <VStack align="start" gap={2} fontSize="sm">
+                <HStack>
+                  <Text fontWeight="medium">Payment ID:</Text>
+                  <Text>{payment.id}</Text>
+                </HStack>
+                <HStack>
+                  <Text fontWeight="medium">Status:</Text>
+                  <Tag variantType={payment.isPaid ? 'active' : 'inactive'}>
+                    {payment.isPaid ? 'Paid' : 'Unpaid'}
+                  </Tag>
+                </HStack>
+                {payment.isPaid && payment.paidAt && (
+                  <HStack>
+                    <Text fontWeight="medium">Paid At:</Text>
+                    <Text>{formatDate(payment.paidAt)}</Text>
+                  </HStack>
+                )}
+                <HStack>
+                  <Text fontWeight="medium">Created At:</Text>
+                  <Text>{formatDate(payment.createdAt)}</Text>
+                </HStack>
+              </VStack>
+            </Box>
+          )}
         </VStack>
       }
-      buttons={[
-        {
-          label: 'Cancel',
-          variant: 'secondary',
-          onClick: handleClose,
-        },
-        {
-          label: 'Confirm',
-          variant: 'primary',
-          onClick: handleConfirm,
-        },
-      ]}
+      buttons={
+        viewOnly
+          ? [
+              {
+                label: 'Close',
+                variant: 'primary',
+                onClick: handleClose,
+              },
+            ]
+          : [
+              {
+                label: 'Cancel',
+                variant: 'secondary',
+                onClick: handleClose,
+              },
+              {
+                label: 'Confirm',
+                variant: 'primary',
+                onClick: handleConfirm,
+              },
+            ]
+      }
     />
   );
 }
