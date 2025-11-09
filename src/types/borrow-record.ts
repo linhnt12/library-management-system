@@ -58,6 +58,19 @@ export interface BorrowRecordWithDetails extends BorrowRecord {
       };
     };
   }>;
+  payments?: Array<{
+    id: number;
+    policyId: string;
+    amount: number;
+    isPaid: boolean;
+    paidAt: Date | null;
+    dueDate: Date | null;
+    createdAt: Date;
+    policy?: {
+      id: string;
+      name: string;
+    };
+  }>;
 }
 
 // Create BorrowRecord data

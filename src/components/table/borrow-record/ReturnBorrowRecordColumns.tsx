@@ -1,9 +1,11 @@
 'use client';
 
-import { FormSelect } from '@/components';
+import { FormSelect, Tag } from '@/components';
 import { BookCell } from '@/components/books/BookCell';
+import { CONDITION_LABELS } from '@/constants';
 import { Column } from '@/types';
 import { Text } from '@chakra-ui/react';
+import { Condition } from '@prisma/client';
 
 type BookItem = {
   id: number;
@@ -23,9 +25,10 @@ type FormSelectItem = { value: string; label: string };
 
 type ReturnBorrowRecordColumnsParams = {
   tableData: BookItem[];
-  updates: Record<number, { condition?: string }>;
-  conditionOptions: FormSelectItem[];
-  onConditionChange: (bookItemId: number, condition: string) => void;
+  updates?: Record<number, { condition?: string }>;
+  conditionOptions?: FormSelectItem[];
+  onConditionChange?: (bookItemId: number, condition: string) => void;
+  readOnly?: boolean;
 };
 
 // Component to render No. column
@@ -51,18 +54,64 @@ function BookCellComponent({ item }: { item: BookItem }) {
   );
 }
 
+// Component to render condition with color coding (reused from BookItemColumns)
+function ConditionCell({ condition }: { condition: string }) {
+  const getConditionColor = (
+    condition: string
+  ): 'active' | 'reserved' | 'borrowed' | 'inactive' | 'lost' => {
+    switch (condition.toUpperCase()) {
+      case 'NEW':
+        return 'active';
+      case 'GOOD':
+        return 'reserved';
+      case 'WORN':
+        return 'borrowed';
+      case 'DAMAGED':
+        return 'inactive';
+      case 'LOST':
+        return 'lost';
+      default:
+        return 'inactive';
+    }
+  };
+
+  return (
+    <Tag variantType={getConditionColor(condition)}>
+      {CONDITION_LABELS[condition as Condition] || condition}
+    </Tag>
+  );
+}
+
 // Component to render New Condition select
 function NewConditionCell({
   bookItem,
   updates,
   conditionOptions,
   onConditionChange,
+  readOnly,
 }: {
   bookItem: BookItem;
-  updates: Record<number, { condition?: string }>;
-  conditionOptions: FormSelectItem[];
-  onConditionChange: (bookItemId: number, condition: string) => void;
+  updates?: Record<number, { condition?: string }>;
+  conditionOptions?: FormSelectItem[];
+  onConditionChange?: (bookItemId: number, condition: string) => void;
+  readOnly?: boolean;
 }) {
+  if (readOnly) {
+    return bookItem.condition ? (
+      <ConditionCell condition={bookItem.condition} />
+    ) : (
+      <Text fontSize="sm">N/A</Text>
+    );
+  }
+
+  if (!conditionOptions || !onConditionChange || !updates) {
+    return bookItem.condition ? (
+      <ConditionCell condition={bookItem.condition} />
+    ) : (
+      <Text fontSize="sm">N/A</Text>
+    );
+  }
+
   return (
     <FormSelect
       items={conditionOptions}
@@ -80,6 +129,7 @@ export function createReturnBorrowRecordColumns({
   updates,
   conditionOptions,
   onConditionChange,
+  readOnly = false,
 }: ReturnBorrowRecordColumnsParams): Column<BookItem>[] {
   return [
     {
@@ -106,7 +156,7 @@ export function createReturnBorrowRecordColumns({
     },
     {
       key: 'condition',
-      header: 'New Condition',
+      header: readOnly ? 'Condition' : 'New Condition',
       sortable: true,
       width: '280px',
       textAlign: 'center' as const,
@@ -116,6 +166,7 @@ export function createReturnBorrowRecordColumns({
           updates={updates}
           conditionOptions={conditionOptions}
           onConditionChange={onConditionChange}
+          readOnly={readOnly}
         />
       ),
     },

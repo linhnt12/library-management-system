@@ -12,13 +12,14 @@ import { BorrowRecordStatusCell } from './BorrowRecordStatusCell';
 function LibrarianActionsCell({
   borrowRecord,
   onReturnClick,
+  onViewClick,
 }: {
   borrowRecord: BorrowRecordWithDetails;
   onReturnClick?: (record: BorrowRecordWithDetails) => void;
+  onViewClick?: (record: BorrowRecordWithDetails) => void;
 }) {
   const handleView = () => {
-    // TODO: Implement view borrow record functionality
-    console.log('View borrow record:', borrowRecord.id);
+    onViewClick?.(borrowRecord);
   };
 
   const handleReturn = () => onReturnClick?.(borrowRecord);
@@ -39,6 +40,7 @@ function LibrarianActionsCell({
 
 export const LibrarianBorrowRecordColumns = (opts?: {
   onReturnClick?: (record: BorrowRecordWithDetails) => void;
+  onViewClick?: (record: BorrowRecordWithDetails) => void;
 }) => [
   {
     key: 'id',
@@ -121,7 +123,11 @@ export const LibrarianBorrowRecordColumns = (opts?: {
     width: '100px',
     textAlign: 'center' as const,
     render: (record: BorrowRecordWithDetails) => (
-      <LibrarianActionsCell borrowRecord={record} onReturnClick={opts?.onReturnClick} />
+      <LibrarianActionsCell
+        borrowRecord={record}
+        onReturnClick={opts?.onReturnClick}
+        onViewClick={opts?.onViewClick}
+      />
     ),
   },
 ];

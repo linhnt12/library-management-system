@@ -18,11 +18,13 @@ type FormSelectItem = { value: string; label: string };
 interface UseReturnBorrowRecordFormOptions {
   borrowRecord: BorrowRecordWithDetails;
   onSuccess?: () => void;
+  readOnly?: boolean;
 }
 
 export function useReturnBorrowRecordForm({
   borrowRecord,
   onSuccess,
+  readOnly = false,
 }: UseReturnBorrowRecordFormOptions) {
   // Get violation policies from database
   const { violationPolicies } = useViolationPolicies();
@@ -191,11 +193,12 @@ export function useReturnBorrowRecordForm({
             publishYear?: number | null;
           } | null;
         }>,
-        updates,
-        conditionOptions,
-        onConditionChange: handleConditionChange,
+        updates: readOnly ? undefined : updates,
+        conditionOptions: readOnly ? undefined : conditionOptions,
+        onConditionChange: readOnly ? undefined : handleConditionChange,
+        readOnly,
       }),
-    [tableData, updates, conditionOptions, handleConditionChange]
+    [tableData, updates, conditionOptions, handleConditionChange, readOnly]
   );
 
   const handleSubmit = useCallback(

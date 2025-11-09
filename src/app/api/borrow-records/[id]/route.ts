@@ -43,6 +43,17 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
             },
           },
         },
+        payments: {
+          where: { isDeleted: false },
+          include: {
+            policy: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -81,6 +92,21 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
             },
           },
         },
+      })),
+      payments: borrowRecordRaw.payments.map(payment => ({
+        id: payment.id,
+        policyId: payment.policyId,
+        amount: payment.amount,
+        isPaid: payment.isPaid,
+        paidAt: payment.paidAt,
+        dueDate: payment.dueDate,
+        createdAt: payment.createdAt,
+        policy: payment.policy
+          ? {
+              id: payment.policy.id,
+              name: payment.policy.name,
+            }
+          : undefined,
       })),
     };
 
