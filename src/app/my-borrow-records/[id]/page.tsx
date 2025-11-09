@@ -9,7 +9,7 @@ import { Box } from '@chakra-ui/react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function BorrowRecordDetailPage() {
+export default function MyBorrowRecordDetailPage() {
   const params = useParams();
   const router = useRouter();
   const borrowRecordId = Number(params.id);
@@ -20,7 +20,7 @@ export default function BorrowRecordDetailPage() {
   useEffect(() => {
     const fetchBorrowRecord = async () => {
       if (!borrowRecordId || borrowRecordId <= 0) {
-        router.push(ROUTES.DASHBOARD.BORROW_RECORDS);
+        router.push(ROUTES.MY_BORROW_RECORDS);
         return;
       }
 
@@ -34,7 +34,7 @@ export default function BorrowRecordDetailPage() {
           description: 'Borrow record not found',
           type: 'error',
         });
-        router.push(ROUTES.DASHBOARD.BORROW_RECORDS);
+        router.push(ROUTES.MY_BORROW_RECORDS);
       } finally {
         setLoading(false);
       }
@@ -44,11 +44,7 @@ export default function BorrowRecordDetailPage() {
   }, [borrowRecordId, router]);
 
   const handleClose = () => {
-    router.push(ROUTES.DASHBOARD.BORROW_RECORDS);
-  };
-
-  const handleReturnClick = () => {
-    router.push(`${ROUTES.DASHBOARD.BORROW_RECORDS_RETURN}/${borrowRecordId}`);
+    router.push(ROUTES.MY_BORROW_RECORDS);
   };
 
   if (loading) {
@@ -60,13 +56,8 @@ export default function BorrowRecordDetailPage() {
   }
 
   return (
-    <Box height="100%">
-      <ReturnBorrowRecordForm
-        borrowRecord={borrowRecord}
-        onClose={handleClose}
-        readOnly
-        onReturnClick={handleReturnClick}
-      />
+    <Box height="100%" bg="white" borderRadius="lg" p={4}>
+      <ReturnBorrowRecordForm borrowRecord={borrowRecord} onClose={handleClose} readOnly />
     </Box>
   );
 }

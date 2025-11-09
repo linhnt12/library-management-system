@@ -1,11 +1,12 @@
 import { NotFoundError, ValidationError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { handleRouteError, parseIntParam, successResponse } from '@/lib/utils';
-import { AuthenticatedRequest, requireLibrarian } from '@/middleware/auth.middleware';
+import { AuthenticatedRequest, requireAuth } from '@/middleware/auth.middleware';
 import { BorrowStatus } from '@/types/borrow-record';
+import { Role } from '@prisma/client';
 
 // GET /api/borrow-records/[id] - Get borrow record by id
-export const GET = requireLibrarian(async (request: AuthenticatedRequest, context?: unknown) => {
+export const GET = requireAuth(async (request: AuthenticatedRequest, context?: unknown) => {
   try {
     const { params } = context as { params: Promise<{ id: string }> };
     const { id } = await params;
@@ -15,11 +16,21 @@ export const GET = requireLibrarian(async (request: AuthenticatedRequest, contex
       throw new ValidationError('Invalid borrow record ID');
     }
 
+    const whereClause: {
+      id: number;
+      isDeleted: boolean;
+      userId?: number;
+    } = {
+      id: borrowRecordId,
+      isDeleted: false,
+    };
+
+    if (request.user.role === Role.READER) {
+      whereClause.userId = request.user.id;
+    }
+
     const borrowRecordRaw = await prisma.borrowRecord.findFirst({
-      where: {
-        id: borrowRecordId,
-        isDeleted: false,
-      },
+      where: whereClause,
       include: {
         user: {
           select: {

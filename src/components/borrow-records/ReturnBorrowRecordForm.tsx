@@ -6,7 +6,7 @@ import { BorrowRecordStatusCell } from '@/components/table/borrow-record/BorrowR
 import { policyIdToCondition, VIOLATION_POLICY_POINTS } from '@/constants';
 import { useReturnBorrowRecordForm, useViolationPolicies } from '@/lib/hooks';
 import { formatDate } from '@/lib/utils';
-import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
+import { BookItemForViolation, BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { Box, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 
@@ -15,11 +15,13 @@ export function ReturnBorrowRecordForm({
   onClose,
   onSuccess,
   readOnly = false,
+  onReturnClick,
 }: {
   borrowRecord: BorrowRecordWithDetails;
   onClose: () => void;
   onSuccess?: () => void;
   readOnly?: boolean;
+  onReturnClick?: () => void;
 }) {
   const {
     isSubmitting,
@@ -367,7 +369,12 @@ export function ReturnBorrowRecordForm({
 
         <Box>
           {readOnly ? (
-            <HStack justifyContent="flex-end" py={4}>
+            <HStack justifyContent="flex-end" py={4} gap={2}>
+              {onReturnClick &&
+                borrowRecord.status === BorrowStatus.BORROWED &&
+                !borrowRecord.actualReturnDate && (
+                  <Button onClick={onReturnClick} variantType="primary" label="Process Return" />
+                )}
               <Button onClick={onClose} variantType="secondary" label="Close" />
             </HStack>
           ) : (
