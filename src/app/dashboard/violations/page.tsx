@@ -1,8 +1,10 @@
 'use client';
 
-import { PaymentApi } from '@/api';
-import { PaymentColumns, SearchInput, Table, toaster } from '@/components';
+import { BorrowRecordApi, PaymentApi } from '@/api';
+import { PaymentColumns, RecordViolationDialog, SearchInput, Table, toaster } from '@/components';
+import { policyIdToCondition } from '@/constants/violation';
 import { PaymentWithDetails } from '@/types';
+import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
 import { HStack } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -16,6 +18,10 @@ export default function ViolationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentWithDetails | null>(null);
+  const [borrowRecord, setBorrowRecord] = useState<BorrowRecordWithDetails | null>(null);
+  const [bookItem, setBookItem] = useState<BookItemForViolation | null>(null);
 
   // Fetch payments from API
   const fetchPayments = useCallback(async () => {
@@ -70,8 +76,65 @@ export default function ViolationsPage() {
     setQuery(value);
   };
 
+  // Handle view payment
+  const handleViewPayment = useCallback(async (payment: PaymentWithDetails) => {
+    try {
+      setSelectedPayment(payment);
+
+      // Fetch borrow record with book items
+      const borrowRecordData = await BorrowRecordApi.getBorrowRecordById(payment.borrowRecordId);
+      setBorrowRecord(borrowRecordData);
+
+      // Find bookItem based on policy condition
+      const condition = policyIdToCondition(payment.policyId);
+      const matchingBookItem = borrowRecordData.borrowBooks?.find(
+        bb => bb.bookItem.condition === condition
+      )?.bookItem;
+
+      // If no matching condition, use first bookItem
+      const selectedBookItem = matchingBookItem || borrowRecordData.borrowBooks?.[0]?.bookItem;
+
+      if (selectedBookItem) {
+        setBookItem({
+          id: selectedBookItem.id,
+          code: selectedBookItem.code,
+          condition: selectedBookItem.condition,
+          book: selectedBookItem.book
+            ? {
+                id: selectedBookItem.book.id,
+                title: selectedBookItem.book.title,
+                price: selectedBookItem.book.price,
+                author: selectedBookItem.book.author
+                  ? {
+                      id: selectedBookItem.book.author.id,
+                      fullName: selectedBookItem.book.author.fullName,
+                    }
+                  : undefined,
+              }
+            : null,
+        });
+      }
+
+      setIsDialogOpen(true);
+    } catch {
+      toaster.create({
+        title: 'Failed',
+        description: 'Failed to load violation details',
+        type: 'error',
+      });
+    }
+  }, []);
+
+  // Handle close dialog
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedPayment(null);
+    setBorrowRecord(null);
+    setBookItem(null);
+  };
+
   // Create columns
-  const paymentColumns = PaymentColumns();
+  const paymentColumns = PaymentColumns(handleViewPayment);
 
   return (
     <>
@@ -99,6 +162,25 @@ export default function ViolationsPage() {
         }}
         onSort={handleSort}
       />
+
+      {/* View Violation Dialog */}
+      {isDialogOpen && borrowRecord && bookItem && selectedPayment && (
+        <RecordViolationDialog
+          isOpen={isDialogOpen}
+          onClose={handleCloseDialog}
+          borrowRecord={borrowRecord}
+          bookItem={bookItem}
+          newCondition={bookItem.condition || ''}
+          initialViolation={{
+            amount: selectedPayment.amount,
+            dueDate: selectedPayment.dueDate
+              ? new Date(selectedPayment.dueDate).toISOString().split('T')[0]
+              : undefined,
+          }}
+          viewOnly={true}
+          payment={selectedPayment}
+        />
+      )}
     </>
   );
 }

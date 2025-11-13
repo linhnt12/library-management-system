@@ -87,7 +87,14 @@ export default function DashboardBorrowRecordsPage() {
     router.push(ROUTES.DASHBOARD.BORROW_RECORDS_RETURN + `/${record.id}`);
   };
 
-  const borrowRecordColumns = LibrarianBorrowRecordColumns({ onReturnClick: handleReturnClick });
+  const handleViewClick = (record: BorrowRecordWithDetails) => {
+    router.push(ROUTES.DASHBOARD.BORROW_RECORDS + `/${record.id}`);
+  };
+
+  const borrowRecordColumns = LibrarianBorrowRecordColumns({
+    onReturnClick: handleReturnClick,
+    onViewClick: handleViewClick,
+  });
 
   return (
     <Stack gap={4} height="100%">

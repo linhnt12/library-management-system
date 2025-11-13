@@ -68,6 +68,7 @@ export const ROUTES = {
   FAVORITE: '/favorite',
   MY_BORROW_REQUESTS: '/my-borrow-requests',
   MY_BORROW_RECORDS: '/my-borrow-records',
+  MY_VIOLATIONS: '/my-violations',
   PROFILE: '/profile',
   SETTINGS: '/settings',
   LOGOUT: '/logout',

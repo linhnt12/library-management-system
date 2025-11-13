@@ -3,7 +3,7 @@
 import { IconButton, Tag } from '@/components';
 import { formatDate } from '@/lib/utils';
 import { PaymentWithDetails } from '@/types';
-import { HStack, Text, VStack } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 import { LuEye } from 'react-icons/lu';
 
 // Component to format amount
@@ -21,21 +21,6 @@ function DateCell({ date }: { date: Date | null | undefined }) {
 // Component to show payment status
 function PaymentStatusCell({ isPaid }: { isPaid: boolean }) {
   return <Tag variantType={isPaid ? 'active' : 'inactive'}>{isPaid ? 'Paid' : 'Unpaid'}</Tag>;
-}
-
-// Component to show user info
-function UserCell({ payment }: { payment: PaymentWithDetails }) {
-  const user = payment.borrowRecord?.user;
-  if (!user) return <Text color="gray.500">—</Text>;
-
-  return (
-    <VStack align="start" gap={1}>
-      <Text fontWeight="medium">{user.fullName}</Text>
-      <Text fontSize="sm" color="gray.600">
-        {user.email}
-      </Text>
-    </VStack>
-  );
 }
 
 // Component Actions
@@ -61,20 +46,13 @@ function ActionsCell({
   );
 }
 
-export const PaymentColumns = (onViewClick?: (payment: PaymentWithDetails) => void) => [
+export const MyPaymentColumns = (onViewClick?: (payment: PaymentWithDetails) => void) => [
   {
     key: 'id',
     header: 'ID',
     sortable: true,
     width: '80px',
     render: (payment: PaymentWithDetails) => <Text>{payment.id}</Text>,
-  },
-  {
-    key: 'user',
-    header: 'User',
-    sortable: false,
-    width: '250px',
-    render: (payment: PaymentWithDetails) => <UserCell payment={payment} />,
   },
   {
     key: 'policy',

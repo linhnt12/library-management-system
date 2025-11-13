@@ -3,13 +3,15 @@
 import { BorrowRecordApi } from '@/api';
 import { Dialog, FormSelect, ReaderBorrowRecordColumns, Table, toaster } from '@/components';
 import { RenewBorrowRecordForm } from '@/components/borrow-records/RenewBorrowRecordForm';
-import { EXTENSION_DAYS, MAX_RENEWALS } from '@/constants/borrow-record';
+import { EXTENSION_DAYS, MAX_RENEWALS, ROUTES } from '@/constants';
 import { useDialog } from '@/lib/hooks';
 import { BorrowRecordWithDetails, BorrowStatus } from '@/types/borrow-record';
 import { HStack, Stack, Text } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 export default function MyBorrowRecordsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
@@ -110,7 +112,11 @@ export default function MyBorrowRecordsPage() {
     [openDialog, fetchBorrowRecords]
   );
 
-  const borrowRecordColumns = ReaderBorrowRecordColumns(handleRenewBorrowRecord);
+  const handleViewClick = (record: BorrowRecordWithDetails) => {
+    router.push(`${ROUTES.MY_BORROW_RECORDS}/${record.id}`);
+  };
+
+  const borrowRecordColumns = ReaderBorrowRecordColumns(handleRenewBorrowRecord, handleViewClick);
 
   return (
     <Stack height="100%" bg="white" p={6} rounded="lg">

@@ -29,13 +29,16 @@ function RenewalCountCell({ renewalCount }: { renewalCount: number }) {
 function ReaderActionsCell({
   borrowRecord,
   onRenewClick,
+  onViewClick,
 }: {
   borrowRecord: BorrowRecordWithDetails;
   onRenewClick?: (borrowRecord: BorrowRecordWithDetails) => void;
+  onViewClick?: (borrowRecord: BorrowRecordWithDetails) => void;
 }) {
   const handleView = () => {
-    // TODO: Implement view borrow record functionality
-    console.log('View borrow record:', borrowRecord.id);
+    if (onViewClick) {
+      onViewClick(borrowRecord);
+    }
   };
 
   const handleRenew = () => {
@@ -84,7 +87,8 @@ function ReaderActionsCell({
 }
 
 export const ReaderBorrowRecordColumns = (
-  onRenewClick?: (borrowRecord: BorrowRecordWithDetails) => void
+  onRenewClick?: (borrowRecord: BorrowRecordWithDetails) => void,
+  onViewClick?: (borrowRecord: BorrowRecordWithDetails) => void
 ) => [
   {
     key: 'id',
@@ -162,7 +166,11 @@ export const ReaderBorrowRecordColumns = (
     width: '120px',
     textAlign: 'center' as const,
     render: (record: BorrowRecordWithDetails) => (
-      <ReaderActionsCell borrowRecord={record} onRenewClick={onRenewClick} />
+      <ReaderActionsCell
+        borrowRecord={record}
+        onRenewClick={onRenewClick}
+        onViewClick={onViewClick}
+      />
     ),
   },
 ];
