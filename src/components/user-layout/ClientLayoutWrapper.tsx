@@ -40,6 +40,10 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
           label: 'Borrow Records',
           href: ROUTES.MY_BORROW_RECORDS,
         },
+        {
+          label: 'Violations',
+          href: ROUTES.MY_VIOLATIONS,
+        },
       ],
     },
   ];
