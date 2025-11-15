@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -k -n web,worker,cron -c auto \"next dev\" \"yarn worker\" \"yarn cron\"",
+    "dev": "concurrently -k -n web,cron -c auto \"next dev\" \"yarn cron\"",
     "dev:socket": "ts-node --project tsconfig.server.json server/socket-server.ts",
     "build": "next build --turbopack",
     "start": "yarn build && next start",
@@ -12,8 +12,6 @@
     "format": "prettier --write .",
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
     "worker": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/workers.ts",
-    "worker:email": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/email-worker.ts",
-    "worker:notification": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/notification-worker.ts",
     "cron": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/cron.ts"
   },
   "prisma": {
