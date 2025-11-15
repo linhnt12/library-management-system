@@ -1,0 +1,53 @@
+# Gorse Recommender System Configuration
+# This file is optional - Gorse can run with environment variables alone
+# Uncomment the volume mount in docker-compose.yml to use this config file
+
+[database]
+# Database connection is configured via GORSE_DATA_STORE environment variable
+# Format: mysql://user:password@tcp(host:port)/database?parseTime=true
+
+[cache]
+# Cache connection is configured via GORSE_CACHE_STORE environment variable
+# Format: redis://:password@host:port/db
+
+[master]
+# API server settings
+api_host = "0.0.0.0"
+api_port = 8087
+
+# Dashboard settings
+dashboard_host = "0.0.0.0"
+dashboard_port = 8088
+
+# Worker settings
+workers = 1
+
+# Recommendation settings
+cache_size = 100
+popular_window = 365  # days
+fit_period = "24h"    # How often to retrain models
+check_period = "5m"   # How often to check for new data
+
+[recommend]
+# Collaborative filtering settings
+cache_size = 100
+popular_window = 365
+
+# Content-based filtering settings
+# Enable content-based recommendations
+enable_item_index = true
+enable_user_index = true
+
+# Hybrid recommendation settings
+# Weight for collaborative filtering (0.0 - 1.0)
+collaborative_weight = 0.5
+# Weight for content-based filtering (0.0 - 1.0)
+content_weight = 0.5
+
+[data]
+# Data import/export settings
+# Feedback types that indicate positive user interaction
+positive_feedback_types = ["star", "like", "comment", "view"]
+# Feedback types that indicate user has read/viewed content
+read_feedback_types = ["read"]
+
