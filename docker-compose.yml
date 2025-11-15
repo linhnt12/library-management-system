@@ -103,6 +103,7 @@ services:
       - GORSE_DATA_STORE=mysql://${MYSQL_USER:-library_user}:${MYSQL_PASSWORD:-library123}@tcp(mysql:3306)/${MYSQL_DATABASE:-library_management}?parseTime=true
       # Redis configuration (separate from web app Redis)
       - GORSE_CACHE_STORE=redis://:${GORSE_REDIS_PASSWORD:-gorse123}@redis-gorse:6379/0
+      - GORSE_SERVER_API_KEY=${GORSE_SERVER_API_KEY}
     volumes:
       - ./gorse-config.toml:/etc/gorse/config.toml:ro
     networks:
