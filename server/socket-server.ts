@@ -92,6 +92,7 @@ io.use((socket: Socket, next) => {
 });
 
 io.on('connection', socket => {
+  console.log('Socket connected');
   const userId = socket.data.user?.id;
 
   if (userId) {

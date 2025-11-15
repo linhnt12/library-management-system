@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: library_mysql
+    container_name: library-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
@@ -15,19 +15,19 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - library_network
+      - library-network
     command: --default-authentication-plugin=mysql_native_password
 
   redis:
     image: redis:7.2-alpine
-    container_name: library_redis
+    container_name: library-redis
     restart: unless-stopped
     ports:
       - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis_data:/data
     networks:
-      - library_network
+      - library-network
     command: >
       redis-server
       --save 60 1
@@ -37,7 +37,7 @@ services:
   # Worker Email Service (Queue Worker)
   worker-email:
     image: node:20-alpine
-    container_name: library_worker_email
+    container_name: library-worker-email
     restart: unless-stopped
     working_dir: /app
     volumes:
@@ -51,7 +51,23 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_DB=${REDIS_DB}
     networks:
-      - library_network
+      - library-network
+
+  # Socket Server
+  socket-server:
+    image: node:20-alpine
+    container_name: library-socket-server
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./:/app
+    command: yarn dev:socket
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - library-network
 
 volumes:
   mysql_data:
@@ -60,5 +76,5 @@ volumes:
     driver: local
 
 networks:
-  library_network:
+  library-network:
     driver: bridge
