@@ -1,0 +1,152 @@
+[
+    {
+        "ISBN": "0195153448",
+        "Title": "Classical Mythology",
+        "Author": "Mark P. O. Morford",
+        "Year": 2002,
+        "Publisher": "Oxford University Press",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "mythology",
+            "classical-studies",
+            "literature",
+            "history"
+        ]
+    },
+    {
+        "ISBN": "0002005018",
+        "Title": "Clara Callan",
+        "Author": "Richard Bruce Wright",
+        "Year": 2001,
+        "Publisher": "HarperFlamingo Canada",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "literature",
+            "fiction",
+            "canadian-literature"
+        ]
+    },
+    {
+        "ISBN": "0060973129",
+        "Title": "Decision in Normandy",
+        "Author": "Carlo D'Este",
+        "Year": 1991,
+        "Publisher": "HarperPerennial",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "military-history",
+            "world-war-2",
+            "history",
+            "war-studies"
+        ]
+    },
+    {
+        "ISBN": "0374157065",
+        "Title": "Flu: The Story of the Great Influenza Pandemic of 1918 and the Search for the Virus That Caused It",
+        "Author": "Gina Bari Kolata",
+        "Year": 1999,
+        "Publisher": "Farrar Straus Giroux",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "medicine",
+            "public-health",
+            "epidemiology",
+            "history",
+            "science"
+        ]
+    },
+    {
+        "ISBN": "0393045218",
+        "Title": "The Mummies of Urumchi",
+        "Author": "E. J. W. Barber",
+        "Year": 1999,
+        "Publisher": "W. W. Norton & Company",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "archaeology",
+            "anthropology",
+            "history",
+            "ancient-history"
+        ]
+    },
+    {
+        "ISBN": "0399135782",
+        "Title": "The Kitchen God's Wife",
+        "Author": "Amy Tan",
+        "Year": 1991,
+        "Publisher": "Putnam Pub Group",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "literature",
+            "fiction",
+            "cultural-studies",
+            "asian-american-literature"
+        ]
+    },
+    {
+        "ISBN": "0425176428",
+        "Title": "What If?: The World's Foremost Military Historians Imagine What Might Have Been",
+        "Author": "Robert Cowley",
+        "Year": 2000,
+        "Publisher": "Berkley Publishing Group",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "military-history",
+            "counterfactual-history",
+            "history",
+            "war-studies"
+        ]
+    },
+    {
+        "ISBN": "0671870432",
+        "Title": "PLEADING GUILTY",
+        "Author": "Scott Turow",
+        "Year": 1993,
+        "Publisher": "Audioworks",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "literature",
+            "fiction",
+            "legal-thriller",
+            "crime-fiction"
+        ]
+    },
+    {
+        "ISBN": "0679425608",
+        "Title": "Under the Black Flag: The Romance and the Reality of Life Among the Pirates",
+        "Author": "David Cordingly",
+        "Year": 1996,
+        "Publisher": "Random House",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "history",
+            "maritime-history",
+            "piracy",
+            "naval-history"
+        ]
+    },
+    {
+        "ISBN": "074322678X",
+        "Title": "Where You'll Find Me: And Other Stories",
+        "Author": "Ann Beattie",
+        "Year": 2002,
+        "Publisher": "Scribner",
+        "category": "book",
+        "language": "en",
+        "topic": [
+            "literature",
+            "fiction",
+            "short-stories",
+            "contemporary-fiction"
+        ]
+    }
+]
