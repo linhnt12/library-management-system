@@ -4,27 +4,81 @@ import { BorrowRecordApi, PaymentApi } from '@/api';
 import { Button, FormField, FormInput, Tag, toaster } from '@/components';
 import { ROUTES } from '@/constants';
 import { policyIdToCondition } from '@/constants/violation';
-import { useViolationPolicyByCondition } from '@/lib/hooks';
+import { usePayPalSDK, useViolationPolicyByCondition } from '@/lib/hooks';
 import { formatDate } from '@/lib/utils';
 import { PaymentWithDetails } from '@/types';
 import { BookItemForViolation, BorrowRecordWithDetails } from '@/types/borrow-record';
 import { Box, Grid, GridItem, HStack, Text, VStack } from '@chakra-ui/react';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 export default function MyViolationDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const paymentId = Number(params.id);
   const [payment, setPayment] = useState<PaymentWithDetails | null>(null);
   const [borrowRecord, setBorrowRecord] = useState<BorrowRecordWithDetails | null>(null);
   const [bookItem, setBookItem] = useState<BookItemForViolation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refReady, setRefReady] = useState(false);
+  const paypalButtonRef = useRef<HTMLDivElement>(null);
+  const paypalButtonsInstanceRef = useRef<{
+    render: (container: string | HTMLElement) => void;
+  } | null>(null);
+
+  // Use PayPal SDK hook
+  const { isLoaded: paypalSdkLoaded, error: paypalError } = usePayPalSDK();
+
+  // Callback ref to track when DOM element is ready
+  const setPaypalButtonRef = (node: HTMLDivElement | null) => {
+    if (node) {
+      paypalButtonRef.current = node;
+      setRefReady(true);
+    }
+  };
 
   // Get violation policy from database - must be called at top level
   // Use condition from bookItem if available, otherwise use empty string
   const condition = bookItem?.condition || '';
   const policy = useViolationPolicyByCondition(condition);
+
+  // Log PayPal SDK error if any
+  useEffect(() => {
+    if (paypalError) {
+      console.error('PayPal SDK error:', paypalError);
+    }
+  }, [paypalError]);
+
+  // Handle PayPal callback
+  useEffect(() => {
+    const paypalStatus = searchParams.get('paypal');
+    if (paypalStatus === 'success' && payment && !payment.isPaid) {
+      // Reload payment data to check if it was paid
+      const checkPayment = async () => {
+        try {
+          const updatedPayment = await PaymentApi.getPaymentById(paymentId);
+          if (updatedPayment.isPaid) {
+            setPayment(updatedPayment);
+            toaster.create({
+              title: 'Success',
+              description: 'Payment completed successfully',
+              type: 'success',
+            });
+          }
+        } catch (err) {
+          console.error('Error checking payment status:', err);
+        }
+      };
+      checkPayment();
+    } else if (paypalStatus === 'cancel') {
+      toaster.create({
+        title: 'Cancelled',
+        description: 'Payment was cancelled',
+        type: 'warning',
+      });
+    }
+  }, [searchParams, payment, paymentId]);
 
   // Fetch payment and related data
   useEffect(() => {
@@ -92,12 +146,85 @@ export default function MyViolationDetailPage() {
     fetchData();
   }, [paymentId, router]);
 
+  // Initialize PayPal button
+  useEffect(() => {
+    // Cleanup previous button instance
+    if (paypalButtonsInstanceRef.current && paypalButtonRef.current) {
+      paypalButtonRef.current.innerHTML = '';
+      paypalButtonsInstanceRef.current = null;
+    }
+
+    if (
+      !payment ||
+      payment.isPaid ||
+      !paypalSdkLoaded ||
+      !window.paypal ||
+      !paypalButtonRef.current
+    ) {
+      return;
+    }
+
+    try {
+      const buttons = window.paypal.Buttons({
+        createOrder: async () => {
+          try {
+            const { orderId } = await PaymentApi.createPayPalOrder(paymentId);
+            return orderId;
+          } catch (err) {
+            console.error('Error creating PayPal order:', err);
+            toaster.create({
+              title: 'Error',
+              description: 'Failed to create payment order',
+              type: 'error',
+            });
+            throw err;
+          }
+        },
+        onApprove: async data => {
+          try {
+            await PaymentApi.capturePayPalPayment(paymentId, data.orderID);
+            const updatedPayment = await PaymentApi.getPaymentById(paymentId);
+            setPayment(updatedPayment);
+            toaster.create({
+              title: 'Success',
+              description: 'Payment completed successfully',
+              type: 'success',
+            });
+            router.refresh();
+          } catch (err) {
+            console.error('Error capturing payment:', err);
+            toaster.create({
+              title: 'Error',
+              description: 'Failed to process payment',
+              type: 'error',
+            });
+          }
+        },
+        onError: err => {
+          console.error('PayPal error:', err);
+          toaster.create({
+            title: 'Error',
+            description: 'An error occurred with PayPal',
+            type: 'error',
+          });
+        },
+        style: {
+          layout: 'horizontal',
+          color: 'gold',
+          shape: 'rect',
+          label: 'paypal',
+        },
+      });
+
+      buttons.render(paypalButtonRef.current);
+      paypalButtonsInstanceRef.current = buttons;
+    } catch (err) {
+      console.error('Error rendering PayPal button:', err);
+    }
+  }, [payment, paymentId, paypalSdkLoaded, refReady, router]);
+
   const handleBack = () => {
     router.push(ROUTES.MY_VIOLATIONS);
-  };
-
-  const handlePay = () => {
-    console.log('Pay');
   };
 
   if (loading) {
@@ -117,14 +244,14 @@ export default function MyViolationDetailPage() {
 
   return (
     <Box height="100%" bg="white" borderRadius="lg" p={4}>
-      <HStack mb={4} justifyContent="space-between" alignItems="center">
+      <HStack mb={0} justifyContent="space-between" alignItems="flex-start">
         <Text fontSize="xl" fontWeight="bold">
           Violation Details
         </Text>
-        <HStack gap={4} alignItems="center">
-          {!payment.isPaid && <Button variantType="primary" onClick={handlePay} label="Pay" />}
-          <Button variantType="secondary" onClick={handleBack} label="Back" />
-        </HStack>
+        <Box display="flex" gap={4} alignItems="flex-start">
+          {!payment.isPaid && <Box ref={setPaypalButtonRef} minW="200px" minH="40px"></Box>}
+          <Button variantType="secondary" height="35px" onClick={handleBack} label="Back" />
+        </Box>
       </HStack>
 
       <VStack gap={6} align="stretch">

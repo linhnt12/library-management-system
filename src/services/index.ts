@@ -2,4 +2,5 @@ export * from './auth.service';
 export * from './mail.service';
 export * from './notification.service';
 export * from './otp.service';
+export * from './paypal.service';
 export * from './user.service';
