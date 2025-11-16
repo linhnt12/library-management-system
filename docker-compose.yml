@@ -3,7 +3,7 @@ version: '3.8'
 services:
   mysql:
     image: mysql:8.0
-    container_name: library_mysql
+    container_name: library-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
@@ -15,75 +15,114 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - library_network
+      - library-network
     command: --default-authentication-plugin=mysql_native_password
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: library_phpmyadmin
-    restart: unless-stopped
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_USER: ${MYSQL_USER:-library_user}
-      PMA_PASSWORD: ${MYSQL_PASSWORD:-library123}
-    ports:
-      - '${PHPMYADMIN_PORT:-8080}:80'
-    depends_on:
-      - mysql
-    networks:
-      - library_network
 
   redis:
     image: redis:7.2-alpine
-    container_name: library_redis
+    container_name: library-redis
     restart: unless-stopped
     ports:
       - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis_data:/data
     networks:
-      - library_network
+      - library-network
     command: >
       redis-server
       --save 60 1
       --loglevel warning
       --requirepass ${REDIS_PASSWORD:-redis123}
 
-  # optional GUI: RedisInsight (để xem key, queue)
-  redisinsight:
-    image: redis/redisinsight:latest
-    container_name: library_redisinsight
+  # Redis for Gorse Recommender System (separate from web app Redis)
+  redis-gorse:
+    image: redis:7.2-alpine
+    container_name: library-redis-gorse
     restart: unless-stopped
     ports:
-      - '${REDISINSIGHT_PORT:-5540}:5540'
-    depends_on:
-      - redis
+      - '${GORSE_REDIS_PORT:-6380}:6379'
+    volumes:
+      - redis_gorse_data:/data
     networks:
-      - library_network
+      - library-network
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel warning
+      --requirepass ${GORSE_REDIS_PASSWORD:-gorse123}
 
-  # Worker Email Service (Queue Worker)
-  worker_email:
+  # Worker Service (Queue Worker)
+  worker:
     image: node:20-alpine
-    container_name: library_worker_email
+    container_name: library-worker
     restart: unless-stopped
     working_dir: /app
     volumes:
       - ./:/app
-    command: yarn worker:email
+    command: >
+      sh -c "npx prisma generate && \
+      yarn worker"
     depends_on:
       - redis
+    environment:
+      - REDIS_HOST=redis
     env_file:
-      - .env.docker
+      - .env
     networks:
-      - library_network
+      - library-network
+
+  # Socket Server
+  socket-server:
+    image: node:20-alpine
+    container_name: library-socket-server
+    restart: unless-stopped
+    working_dir: /app
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./:/app
+    command: yarn dev:socket
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+    networks:
+      - library-network
+
+  # Gorse Recommender System (All-in-one: Master + Worker + API + Dashboard)
+  gorse:
+    image: zhenghaoz/gorse-in-one:latest
+    container_name: library-gorse
+    restart: unless-stopped
+    ports:
+      - '${GORSE_API_PORT:-8087}:8087' # API server port
+      - '${GORSE_DASHBOARD_PORT:-8088}:8088' # Dashboard port
+    depends_on:
+      - mysql
+      - redis-gorse
+    environment:
+      # Database configuration - uses existing MySQL database
+      - GORSE_DATA_STORE=mysql://${MYSQL_USER:-library_user}:${MYSQL_PASSWORD:-library123}@tcp(mysql:3306)/${MYSQL_DATABASE:-library_management}?parseTime=true
+      # Redis configuration (separate from web app Redis)
+      - GORSE_CACHE_STORE=redis://:${GORSE_REDIS_PASSWORD:-gorse123}@redis-gorse:6379/0
+      - GORSE_SERVER_API_KEY=${GORSE_SERVER_API_KEY}
+    volumes:
+      - ./gorse-config.toml:/etc/gorse/config.toml:ro
+    networks:
+      - library-network
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8087/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   mysql_data:
     driver: local
   redis_data:
     driver: local
+  redis_gorse_data:
+    driver: local
 
 networks:
-  library_network:
+  library-network:
     driver: bridge
