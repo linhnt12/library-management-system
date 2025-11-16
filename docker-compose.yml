@@ -34,6 +34,24 @@ services:
       --loglevel warning
       --requirepass ${REDIS_PASSWORD:-redis123}
 
+  # MySQL for Gorse Recommender System (separate from web app MySQL)
+  mysql-gorse:
+    image: mysql:8.0
+    container_name: library-mysql-gorse
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${GORSE_MYSQL_ROOT_PASSWORD:-gorse_root123}
+      MYSQL_DATABASE: ${GORSE_MYSQL_DATABASE:-gorse_db}
+      MYSQL_USER: ${GORSE_MYSQL_USER:-gorse_user}
+      MYSQL_PASSWORD: ${GORSE_MYSQL_PASSWORD:-gorse123}
+    ports:
+      - '${GORSE_MYSQL_PORT:-3307}:3306'
+    volumes:
+      - mysql_gorse_data:/var/lib/mysql
+    networks:
+      - library-network
+    command: --default-authentication-plugin=mysql_native_password
+
   # Redis for Gorse Recommender System (separate from web app Redis)
   redis-gorse:
     image: redis:7.2-alpine
@@ -96,11 +114,11 @@ services:
       - '${GORSE_API_PORT:-8087}:8087' # API server port
       - '${GORSE_DASHBOARD_PORT:-8088}:8088' # Dashboard port
     depends_on:
-      - mysql
+      - mysql-gorse
       - redis-gorse
     environment:
-      # Database configuration - uses existing MySQL database
-      - GORSE_DATA_STORE=mysql://${MYSQL_USER:-library_user}:${MYSQL_PASSWORD:-library123}@tcp(mysql:3306)/${MYSQL_DATABASE:-library_management}?parseTime=true
+      # Database configuration - uses dedicated MySQL database for Gorse
+      - GORSE_DATA_STORE=mysql://${GORSE_MYSQL_USER:-gorse_user}:${GORSE_MYSQL_PASSWORD:-gorse123}@tcp(mysql-gorse:3306)/${GORSE_MYSQL_DATABASE:-gorse_db}?parseTime=true
       # Redis configuration (separate from web app Redis)
       - GORSE_CACHE_STORE=redis://:${GORSE_REDIS_PASSWORD:-gorse123}@redis-gorse:6379/0
       - GORSE_SERVER_API_KEY=${GORSE_SERVER_API_KEY}
@@ -117,6 +135,8 @@ services:
 
 volumes:
   mysql_data:
+    driver: local
+  mysql_gorse_data:
     driver: local
   redis_data:
     driver: local
