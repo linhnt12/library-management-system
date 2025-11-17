@@ -43,15 +43,6 @@ export const BOOK_SORT_OPTIONS = [
   { label: 'Year Oldest', value: 'year-oldest' },
 ];
 
-// Digital License Model options
-export const DIGITAL_LICENSE_MODEL_OPTIONS = [
-  { label: 'One Copy One User', value: 'ONE_COPY_ONE_USER' },
-  { label: 'Metered', value: 'METERED' },
-  { label: 'Simultaneous', value: 'SIMULTANEOUS' },
-  { label: 'Owned', value: 'OWNED' },
-  { label: 'Subscription', value: 'SUBSCRIPTION' },
-];
-
 // Book Edition Format options
 export const EDITION_FORMAT_OPTIONS = [
   { label: 'E-Book', value: 'EBOOK' },

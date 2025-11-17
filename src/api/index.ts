@@ -7,7 +7,6 @@ export * from './book.api';
 export * from './borrow-record.api';
 export * from './borrow-request.api';
 export * from './category.api';
-export * from './digital-license.api';
 export * from './favorite-book.api';
 export * from './notification.api';
 export * from './otp.api';

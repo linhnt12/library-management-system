@@ -7,7 +7,6 @@ export * from './borrow-records';
 export * from './borrow-requests';
 export * from './buttons';
 export * from './categories';
-export * from './digital-licenses';
 export * from './forms';
 export * from './layout';
 export * from './policies';

@@ -9,7 +9,6 @@ import {
   BorrowRequestForm,
   Button,
   Dialog,
-  DigitalLicensesTable,
   IconButton,
   Table,
   Tag,
@@ -391,9 +390,6 @@ export function BookDetail({
               maxHeight="400px"
             />
           </Box>
-
-          {/* Digital Licenses */}
-          {isAdminOrLibrarian && <DigitalLicensesTable bookId={book.id} />}
 
           {/* Book Editions */}
           {isAdminOrLibrarian && (
