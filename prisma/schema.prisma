@@ -3,7 +3,7 @@
 // ===================================
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -16,16 +16,16 @@ datasource db {
 // USERS & NOTIFICATIONS
 // =========================
 model User {
-  id             Int        @id @default(autoincrement())
-  fullName       String
-  email          String     @unique
-  password       String
-  phoneNumber    String?
-  address        String?    @db.Text
-  avatarUrl      String?
-  role           Role
-  status         UserStatus
-  violationPoints Int       @default(0)
+  id              Int        @id @default(autoincrement())
+  fullName        String
+  email           String     @unique
+  password        String
+  phoneNumber     String?
+  address         String?    @db.Text
+  avatarUrl       String?
+  role            Role
+  status          UserStatus
+  violationPoints Int        @default(0)
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -69,16 +69,16 @@ model RefreshToken {
 }
 
 model OTP {
-  id        Int      @id @default(autoincrement())
-  email     String
-  code      String
-  type      OTPType
-  expiresAt DateTime
-  verified  Boolean  @default(false)
+  id         Int       @id @default(autoincrement())
+  email      String
+  code       String
+  type       OTPType
+  expiresAt  DateTime
+  verified   Boolean   @default(false)
   verifiedAt DateTime?
-  attempts  Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 // =========================
@@ -98,20 +98,23 @@ model Author {
 }
 
 model Book {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   authorId      Int
   title         String
-  isbn          String?  @unique
+  isbn          String? @unique
   publishYear   Int?
   publisher     String?
   pageCount     Int?
   price         Int?
   edition       String?
-  description   String?  @db.Text
+  description   String? @db.Text
   coverImageUrl String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  isDeleted     Boolean  @default(false)
+  language      String? // Example: "vi"
+  topic         String? // Example: ["science", "technology", "engineering", "math"]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
 
   author             Author              @relation(fields: [authorId], references: [id])
   bookCategories     BookCategory[]
@@ -227,9 +230,10 @@ model BookItem {
   condition       Condition
   status          ItemStatus
   acquisitionDate DateTime?
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  isDeleted       Boolean    @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
 
   book        Book         @relation(fields: [bookId], references: [id])
   borrowBooks BorrowBook[]
@@ -341,9 +345,10 @@ model BookEdition {
   storageUrl     String
   drmType        DRMType       @default(NONE)
   status         String?       @default("ACTIVE")
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  isDeleted      Boolean       @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
 
   book Book @relation(fields: [bookId], references: [id])
 

@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write .",
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
+    "seed:books": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed-books-from-json.ts",
     "worker": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/workers.ts",
     "cron": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/cron.ts"
   },
