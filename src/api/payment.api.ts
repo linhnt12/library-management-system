@@ -59,4 +59,37 @@ export class PaymentApi {
     const response = await fetchWithAuth(`/api/payments/${id}`);
     return await handleJson<PaymentWithDetails>(response);
   }
+
+  // Create PayPal order
+  static async createPayPalOrder(
+    paymentId: number
+  ): Promise<{ orderId: string; clientId: string }> {
+    const response = await fetchWithAuth(`/api/payments/${paymentId}/paypal/create`, {
+      method: 'POST',
+    });
+    return await handleJson<{ orderId: string; clientId: string }>(response);
+  }
+
+  // Capture PayPal payment
+  static async capturePayPalPayment(
+    paymentId: number,
+    orderId: string
+  ): Promise<{
+    payment: PaymentWithDetails;
+    borrowRecord: { id: number; actualReturnDate: Date | null };
+    paypalOrderId: string;
+  }> {
+    const response = await fetchWithAuth(`/api/payments/${paymentId}/paypal/capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ orderId }),
+    });
+    return await handleJson<{
+      payment: PaymentWithDetails;
+      borrowRecord: { id: number; actualReturnDate: Date | null };
+      paypalOrderId: string;
+    }>(response);
+  }
 }
