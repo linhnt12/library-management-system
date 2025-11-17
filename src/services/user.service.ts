@@ -2,6 +2,7 @@ import { ConflictError, NotFoundError } from '@/lib/errors';
 import { prisma } from '@/lib/prisma';
 import { CreateUserData, PublicUser, UserQueryFilters } from '@/types/user';
 import { Prisma, Role, UserStatus } from '@prisma/client';
+import { GorseService } from './gorse.service';
 
 export class UserService {
   // Get users with pagination and filters
@@ -173,6 +174,21 @@ export class UserService {
       },
     });
 
+    // Sync user to Gorse (only READER role for recommendations)
+    // Fail silently to not block user creation if Gorse is unavailable
+    if (user.role === Role.READER) {
+      try {
+        await GorseService.insertUser(
+          GorseService.createUserPayload(user.id, {
+            comment: user.fullName,
+          })
+        );
+      } catch (error) {
+        // Log error but don't fail user creation
+        console.error('Failed to sync user to Gorse:', error);
+      }
+    }
+
     return user as PublicUser;
   }
 
@@ -247,6 +263,45 @@ export class UserService {
       },
     });
 
+    // Sync user update to Gorse (only READER role for recommendations)
+    // Fail silently to not block user update if Gorse is unavailable
+    if (updatedUser.role === Role.READER) {
+      try {
+        const gorseUserId = GorseService.toGorseUserId(updatedUser.id);
+
+        // Prepare update payload
+        const updatePayload: Partial<{
+          Labels: string[];
+          Subscribe: string[];
+          Comment: string;
+        }> = {};
+
+        // Extract fullName from Prisma update input format
+        // Can be: { set: string }, { unset: true }, or string
+        let newFullName: string | undefined;
+        if (userData.fullName) {
+          if (typeof userData.fullName === 'string') {
+            newFullName = userData.fullName;
+          } else if (userData.fullName.set) {
+            newFullName = userData.fullName.set;
+          }
+        }
+
+        // Update comment if fullName changed
+        if (newFullName && newFullName !== existingUser.fullName) {
+          updatePayload.Comment = updatedUser.fullName;
+        }
+
+        // Only update if there are changes
+        if (Object.keys(updatePayload).length > 0) {
+          await GorseService.updateUser(gorseUserId, updatePayload);
+        }
+      } catch (error) {
+        // Log error but don't fail user update
+        console.error('Failed to sync user update to Gorse:', error);
+      }
+    }
+
     return updatedUser as PublicUser;
   }
 
@@ -279,6 +334,32 @@ export class UserService {
           inactiveAt: new Date(),
         },
       });
+
+      // Delete users from Gorse (only READER role)
+      // Fail silently to not block deletion if Gorse is unavailable
+      try {
+        // Get user roles to filter only READER users
+        const usersToDelete = await prisma.user.findMany({
+          where: {
+            id: { in: existingIds },
+            role: Role.READER, // Only delete READER users from Gorse
+          },
+          select: { id: true },
+        });
+
+        // Delete from Gorse in parallel
+        const deletePromises = usersToDelete.map(user =>
+          GorseService.deleteUser(GorseService.toGorseUserId(user.id)).catch(error => {
+            // Log individual errors but continue with other deletions
+            console.error(`Failed to delete user ${user.id} from Gorse:`, error);
+          })
+        );
+
+        await Promise.all(deletePromises);
+      } catch (error) {
+        // Log error but don't fail deletion
+        console.error('Failed to sync user deletion to Gorse:', error);
+      }
     }
 
     return {

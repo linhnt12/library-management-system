@@ -11,6 +11,7 @@ import {
 } from '@/types/auth';
 import { Role, UserStatus } from '@prisma/client';
 import { randomBytes } from 'crypto';
+import { GorseService } from './gorse.service';
 
 export class AuthService {
   // Register new user
@@ -92,6 +93,21 @@ export class AuthService {
         updatedAt: true,
       },
     });
+
+    // Sync user to Gorse (only READER role for recommendations)
+    // Fail silently to not block user registration if Gorse is unavailable
+    if (user.role === Role.READER) {
+      try {
+        await GorseService.insertUser(
+          GorseService.createUserPayload(user.id, {
+            comment: user.fullName,
+          })
+        );
+      } catch (error) {
+        // Log error but don't fail registration
+        console.error('Failed to sync user to Gorse:', error);
+      }
+    }
 
     return {
       user: user as AuthUser,
