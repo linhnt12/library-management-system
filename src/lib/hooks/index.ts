@@ -13,7 +13,6 @@ export * from './useCategoryForm';
 export * from './useChangePasswordForm';
 export * from './useCreateBorrowRequest';
 export * from './useDialog';
-export * from './useDigitalLicenseForm';
 export * from './useFormSubmission';
 export * from './useLoginForm';
 export * from './useMe';

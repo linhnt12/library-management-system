@@ -124,8 +124,8 @@ model Book {
   recommendations    Recommendation[]
   bookItems          BookItem[]
   borrowRequestItems BorrowRequestItem[]
-  digitalLicenses    DigitalLicense[]
   bookEditions       BookEdition[]
+  borrowEbooks      BorrowEbook[]
 }
 
 // =========================
@@ -355,32 +355,17 @@ model BookEdition {
   @@unique([bookId, format, isbn13])
 }
 
-model DigitalLicense {
-  id           Int                 @id @default(autoincrement())
-  bookId       Int
-  licenseModel DigitalLicenseModel
-  totalCopies  Int?
-  notes        String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isDeleted Boolean  @default(false)
-
-  book         Book          @relation(fields: [bookId], references: [id])
-  borrowEbooks BorrowEbook[]
-}
-
 model BorrowEbook {
   borrowId  Int
-  licenseId Int
+  bookId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isDeleted Boolean  @default(false)
 
-  borrow  BorrowRecord   @relation(fields: [borrowId], references: [id])
-  license DigitalLicense @relation(fields: [licenseId], references: [id])
+  borrow BorrowRecord @relation(fields: [borrowId], references: [id])
+  book   Book         @relation(fields: [bookId], references: [id])
 
-  @@id([borrowId, licenseId])
+  @@id([borrowId, bookId])
 }
 
 // =========================
@@ -480,13 +465,6 @@ enum DRMType {
   CUSTOM
 }
 
-enum DigitalLicenseModel {
-  ONE_COPY_ONE_USER
-  METERED
-  SIMULTANEOUS
-  OWNED
-  SUBSCRIPTION
-}
 
 enum ActionType {
   GET
