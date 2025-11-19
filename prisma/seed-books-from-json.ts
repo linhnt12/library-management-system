@@ -97,7 +97,7 @@ async function seedBooksFromJson() {
     where: { isDeleted: false },
     select: { id: true, fullName: true },
   });
-  allAuthors.forEach(author => {
+  allAuthors.forEach((author: { id: number; fullName: string }) => {
     authorsCache.set(author.fullName.toLowerCase(), author);
   });
 
@@ -105,7 +105,7 @@ async function seedBooksFromJson() {
     where: { isDeleted: false },
     select: { id: true, name: true },
   });
-  allCategories.forEach(category => {
+  allCategories.forEach((category: { id: number; name: string }) => {
     categoriesCache.set(category.name.toLowerCase(), category);
   });
 
