@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts",
     "seed:books": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/seed-books-from-json.ts",
+    "fetch:google-books": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" prisma/fetch-google-books.ts",
     "sync:gorse": "node node_modules/ts-node/dist/bin.js --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/sync-gorse-data.ts",
     "worker": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/workers.ts",
     "cron": "ts-node --compiler-options \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/cron.ts"

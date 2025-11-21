@@ -10,9 +10,10 @@ interface BookJsonData {
   Author: string;
   Year: number;
   Publisher: string;
-  category: string;
+  category: string | string[]; // Support both string (legacy) and string[] (new format)
   language: string;
-  topic: string[];
+  subtitle?: string;
+  description?: string; // Added optional description field
 }
 
 /**
@@ -79,10 +80,10 @@ async function findOrCreateCategory(
  * Seed books từ file JSON
  */
 async function seedBooksFromJson() {
-  console.log('Starting to seed books from books.json...');
+  console.log('Starting to seed books from google-books.json...');
 
   // Đọc file JSON
-  const jsonPath = path.join(__dirname, 'data-mock', 'books.json');
+  const jsonPath = path.join(__dirname, 'data-mock', 'google-books.json');
   const jsonData = fs.readFileSync(jsonPath, 'utf-8');
   const booksData: BookJsonData[] = JSON.parse(jsonData);
 
@@ -132,27 +133,30 @@ async function seedBooksFromJson() {
         }
       }
 
-      // Tìm hoặc tạo Author
-      const author = await findOrCreateAuthor(bookData.Author, authorsCache);
+      // Tìm hoặc tạo Author (xử lý trường hợp Author rỗng)
+      let author;
+      if (bookData.Author && bookData.Author.trim() !== '') {
+        author = await findOrCreateAuthor(bookData.Author, authorsCache);
+      } else {
+        // Tạo author mặc định nếu không có author
+        author = await findOrCreateAuthor('Unknown Author', authorsCache);
+      }
 
-      // Tìm hoặc tạo Category
-      const category = await findOrCreateCategory(bookData.category, categoriesCache);
-
-      // Chuyển đổi topic array thành JSON string để lưu vào database
-      const topicString =
-        bookData.topic && bookData.topic.length > 0 ? JSON.stringify(bookData.topic) : null;
-
-      // Tạo Book với đầy đủ các field bao gồm language và topic
+      // Tạo Book với đầy đủ các field bao gồm language, subtitle và description
       const book = await prisma.book.create({
         data: {
           authorId: author.id,
           title: bookData.Title,
-          isbn: bookData.ISBN || null,
-          publishYear: bookData.Year || null,
-          publisher: bookData.Publisher || null,
-          language: bookData.language || null,
-          topic: topicString,
-          description: null,
+          isbn: bookData.ISBN && bookData.ISBN.trim() !== '' ? bookData.ISBN : null,
+          publishYear: bookData.Year && bookData.Year > 0 ? bookData.Year : null,
+          publisher:
+            bookData.Publisher && bookData.Publisher.trim() !== '' ? bookData.Publisher : null,
+          language: bookData.language && bookData.language.trim() !== '' ? bookData.language : null,
+          subtitle: bookData.subtitle && bookData.subtitle.trim() !== '' ? bookData.subtitle : null,
+          description:
+            bookData.description && bookData.description.trim() !== ''
+              ? bookData.description
+              : null,
           coverImageUrl: null,
           pageCount: null,
           price: null,
@@ -160,16 +164,54 @@ async function seedBooksFromJson() {
         },
       });
 
-      // Tạo BookCategory để liên kết Book với Category
-      await prisma.bookCategory.create({
-        data: {
-          bookId: book.id,
-          categoryId: category.id,
-        },
-      });
+      // Tạo BookCategory từ category (hỗ trợ cả string và string[])
+      // Xử lý category dạng array hoặc string
+      const categoriesToProcess: string[] = [];
+
+      if (Array.isArray(bookData.category)) {
+        // Nếu là array, lấy tất cả categories
+        categoriesToProcess.push(...bookData.category);
+      } else if (
+        bookData.category &&
+        typeof bookData.category === 'string' &&
+        bookData.category.trim() !== ''
+      ) {
+        // Nếu là string (legacy format), chỉ lấy một category
+        categoriesToProcess.push(bookData.category);
+      }
+
+      // Tạo BookCategory cho mỗi category
+      for (const categoryName of categoriesToProcess) {
+        // Bỏ qua category rỗng hoặc chỉ có khoảng trắng
+        if (!categoryName || typeof categoryName !== 'string' || categoryName.trim() === '') {
+          continue;
+        }
+
+        const category = await findOrCreateCategory(categoryName, categoriesCache);
+
+        // Kiểm tra xem BookCategory đã tồn tại chưa để tránh duplicate
+        const existingBookCategory = await prisma.bookCategory.findFirst({
+          where: {
+            bookId: book.id,
+            categoryId: category.id,
+            isDeleted: false,
+          },
+        });
+
+        if (!existingBookCategory) {
+          await prisma.bookCategory.create({
+            data: {
+              bookId: book.id,
+              categoryId: category.id,
+            },
+          });
+        }
+      }
 
       createdCount++;
-      console.log(`Created book: "${bookData.Title}" by ${bookData.Author}`);
+      const authorName =
+        bookData.Author && bookData.Author.trim() !== '' ? bookData.Author : 'Unknown Author';
+      console.log(`Created book: "${bookData.Title}" by ${authorName}`);
     } catch (error) {
       console.error(`Error creating book "${bookData.Title}":`, error);
     }

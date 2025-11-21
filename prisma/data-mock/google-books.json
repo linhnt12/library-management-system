@@ -1,0 +1,244 @@
+[
+    {
+        "ISBN": "OSU:32435065917098",
+        "Title": "Library of Congress Subject Headings",
+        "Author": "Library of Congress",
+        "Year": 1992,
+        "Publisher": "",
+        "category": [
+            "Subject headings, Library of Congress",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9780309181822",
+        "Title": "Review of the U.S. Climate Change Science Program's Synthesis and Assessment Product on Temperature Trends in the Lower Atmosphere",
+        "Author": "National Research Council",
+        "Year": 2005,
+        "Publisher": "National Academies Press",
+        "category": [
+            "Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "The U.S. Climate Change Science Program (CCSP), established in 2002 to coordinate climate and global change research conducted in the United States and to support decision-making on climate-related issues, is producing twenty-one synthesis and assessment reports that address its research, observation, and decision-support needs. The first report, produced by the National Oceanic and Atmospheric Administration (NOAA) in coordination with other agencies, focuses on understanding reported differences between independently produced data sets of temperature trends for the surface through the lower stratosphere and comparing these data sets to model simulations. To ensure credibility and quality, NOAA asked the National Research Council to conduct an independent review of the report. The committee concluded that the report Temperature Trends in the Lower Atmosphere: Understanding and Reconciling Differences is a good first draft that covers an appropriate range of issues, but that it could be strengthened in a number of ways."
+    },
+    {
+        "ISBN": "PURD:32754067873970",
+        "Title": "Federal Student Loan Programs Data Book",
+        "Author": "Donald Conner",
+        "Year": 1997,
+        "Publisher": "",
+        "category": [
+            "Federal aid to higher education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:31951P00742578B",
+        "Title": "Background Material and Data on Major Programs Within the Jurisdiction of the Committee on Ways and Means",
+        "Author": "United States. Congress. House. Committee on Ways and Means",
+        "Year": 2000,
+        "Publisher": "",
+        "category": [
+            "Economic assistance, Domestic",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015041053763",
+        "Title": "Evaluation of Pest Management Programs for Cotton, Peanuts and Tobacco in the United States",
+        "Author": "Rosmarie von Rumker",
+        "Year": 1975,
+        "Publisher": "",
+        "category": [
+            "Agricultural pests",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LOC:0018544093A",
+        "Title": "Malnutrition and Federal Food Service Programs",
+        "Author": "United States. Congress. House. Committee on Education and Labor",
+        "Year": 1968,
+        "Publisher": "",
+        "category": [
+            "Food relief",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearings, Ninetieth Congress, Second Session"
+    },
+    {
+        "ISBN": "UCBK:C041558626",
+        "Title": "Oversight Hearing on Migrant Education Programs",
+        "Author": "United States. Congress. House. Committee on Education and Labor. Subcommittee on Agricultural Labor",
+        "Year": 1976,
+        "Publisher": "",
+        "category": [
+            "Children of migrant laborers",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearings Before the Subcommittee on Agricultural Labor of the Committee on Education and Labor, House of Representatives, Ninety-fourth Congress, First Session ... November 11 and December 5, 1975"
+    },
+    {
+        "ISBN": "UOM:39015026235443",
+        "Title": "National Directory of Drug Abuse and Alcoholism Treatment and Prevention Programs",
+        "Author": "",
+        "Year": 1984,
+        "Publisher": "",
+        "category": [
+            "Alcoholics",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89107113763",
+        "Title": "Program Plan for Period July 1, 1978 to October 1, 1979",
+        "Author": "North Carolina. Division of Environmental Management",
+        "Year": 1978,
+        "Publisher": "",
+        "category": [
+            "Environmental management",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435023702012",
+        "Title": "A Program Review of Secondary Vocational Education in Ohio",
+        "Author": "Ohio. General Assembly. Legislative Service Commission",
+        "Year": 1957,
+        "Publisher": "",
+        "category": [
+            "Ohio",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Job Placement & State Funding"
+    },
+    {
+        "ISBN": "9780323155977",
+        "Title": "Particle Accelerator Design: Computer Programs",
+        "Author": "John Colonias",
+        "Year": 2012,
+        "Publisher": "Elsevier",
+        "category": [
+            "Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Particle Accelerator Design: Computer Programs describes some of the most important computer programs applicable to the design of particle accelerators. Computer programs that calculate magnetic and electric fields are considered, along with programs that calculate orbits of particles in a magnetic and/or electric field. Some representative programs useful in the design of linear accelerator-type cavities are also discussed. This book is comprised of six chapters and begins with a review of two-dimensional magnetostatic programs, including TRIM, LINDA, NUTCRACKER, MAREC, GRACY, and COILS. The University of Colorado's magnet program is also examined. The next chapter is devoted to programs capable of solving problems relating to the calculation of electrostatic fields in two-dimensional geometries. The reader is also introduced to programs that perform calculations of three-dimensional linear and nonlinear problems, along with programs that employ matrix formalism and integration of equations of motion. The final chapter looks at programs for linear accelerator-type cavities, including CURE, JESSY, MESSYMESH, and AZTEC. This monograph will be a useful resource for physical scientists, engineers, and computer programmers."
+    },
+    {
+        "ISBN": "UCAL:B3280750",
+        "Title": "Transactions",
+        "Author": "Indiana Horticultural Society",
+        "Year": 1919,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "HARVARD:HXPK5H",
+        "Title": "Programme",
+        "Author": "Boston Symphony Orchestra",
+        "Year": 1915,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112087645443",
+        "Title": "The Evangelical Herald",
+        "Author": "",
+        "Year": 1923,
+        "Publisher": "",
+        "category": [
+            "Church work",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:31951D03292761D",
+        "Title": "International Exchange Program, University of Minnesota, 1968-69",
+        "Author": "",
+        "Year": 1969,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "CORNELL:31924056918596",
+        "Title": "New York State Journal of Medicine",
+        "Author": "",
+        "Year": 1912,
+        "Publisher": "",
+        "category": [
+            "Medicine",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "PSU:000057718521",
+        "Title": "The Commercial & Financial Chronicle ...",
+        "Author": "",
+        "Year": 1903,
+        "Publisher": "",
+        "category": [
+            "Banks and banking",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Weekly Newspaper Representing the Industrial Interests of the United States"
+    },
+    {
+        "ISBN": "UCR:31210010378378",
+        "Title": "Journal of the American Chemical Society",
+        "Author": "American Chemical Society",
+        "Year": 1919,
+        "Publisher": "",
+        "category": [
+            "Chemistry",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OXFORD:603081786",
+        "Title": "Holy-days and holidays, a treasury of historical material, sermons, poetry [&c.] relating to holy days and holidays, compiled by E.M. Deems",
+        "Author": "Holy days",
+        "Year": 1902,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "HARVARD:HNQYIJ",
+        "Title": "Boys' Workers Round Table",
+        "Author": "",
+        "Year": 1918,
+        "Publisher": "",
+        "category": [
+            "Boys",
+            "BOOK"
+        ],
+        "language": "en"
+    }
+]
