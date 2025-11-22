@@ -3,4 +3,6 @@ export * from './BookCell';
 export * from './BookDetail';
 export * from './BookFilterDialog';
 export * from './BookForm';
+export * from './BookHorizontalCard';
+export * from './BookSection';
 export * from './BookSelectSearch';
