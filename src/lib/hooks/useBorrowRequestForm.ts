@@ -1,9 +1,12 @@
 import { useDialog } from '@/lib/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { BorrowType } from '@/components/borrow-requests/BorrowRequestForm';
+
 interface BorrowRequestFormState {
   startDate: string;
   endDate: string;
+  borrowType: BorrowType;
 }
 
 interface BorrowRequestFormErrors {
@@ -14,17 +17,20 @@ interface BorrowRequestFormErrors {
 interface UseBorrowRequestFormOptions {
   bookId: number;
   user?: { id: number; fullName: string } | null;
+  hasEbook?: boolean;
   onCreateBorrowRequest?: (data: {
     userId: number;
     bookId: number;
     startDate: string;
     endDate: string;
+    borrowType: BorrowType;
   }) => Promise<void>;
 }
 
 const initialState: BorrowRequestFormState = {
   startDate: '',
   endDate: '',
+  borrowType: 'book-copy',
 };
 
 // Helper to get today's date in YYYY-MM-DD format
@@ -44,10 +50,14 @@ const getMaxEndDate = (startDate: string): string => {
 export function useBorrowRequestForm({
   bookId,
   user,
+  hasEbook = false,
   onCreateBorrowRequest,
 }: UseBorrowRequestFormOptions) {
   const { dialog, openDialog, closeDialog } = useDialog();
-  const [form, setForm] = useState<BorrowRequestFormState>(initialState);
+  const [form, setForm] = useState<BorrowRequestFormState>({
+    ...initialState,
+    borrowType: hasEbook ? 'book-copy' : 'book-copy', // Default to book-copy
+  });
   const [errors, setErrors] = useState<BorrowRequestFormErrors>({});
   const formRef = useRef<BorrowRequestFormState>(form);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -59,12 +69,12 @@ export function useBorrowRequestForm({
   }, [form]);
 
   const setField = useCallback(
-    (key: keyof BorrowRequestFormState, value: string) => {
+    (key: keyof BorrowRequestFormState, value: string | BorrowType) => {
       setForm(prev => {
         const newForm = { ...prev, [key]: value };
 
         // Auto-update endDate max when startDate changes
-        if (key === 'startDate' && value) {
+        if (key === 'startDate' && typeof value === 'string' && value) {
           const maxEndDate = getMaxEndDate(value);
           // If current endDate is beyond max, adjust it
           if (newForm.endDate && newForm.endDate > maxEndDate) {
@@ -75,9 +85,9 @@ export function useBorrowRequestForm({
         return newForm;
       });
 
-      // Clear error when user starts typing
-      if (errors[key]) {
-        setErrors(prev => ({ ...prev, [key]: undefined }));
+      // Clear error when user starts typing (only for string fields)
+      if (typeof key === 'string' && errors[key as keyof BorrowRequestFormErrors]) {
+        setErrors(prev => ({ ...prev, [key as keyof BorrowRequestFormErrors]: undefined }));
       }
     },
     [errors]
@@ -127,10 +137,11 @@ export function useBorrowRequestForm({
     setForm({
       startDate: '',
       endDate: '',
+      borrowType: hasEbook ? 'book-copy' : 'book-copy',
     });
     setErrors({});
     setHasAttemptedSubmit(false);
-  }, []);
+  }, [hasEbook]);
 
   const handleBorrowSubmit = useCallback(
     async (data: BorrowRequestFormState) => {
@@ -143,6 +154,7 @@ export function useBorrowRequestForm({
           bookId: bookId,
           startDate: data.startDate,
           endDate: data.endDate,
+          borrowType: data.borrowType,
         });
         closeDialog();
         resetForm();
@@ -161,6 +173,7 @@ export function useBorrowRequestForm({
     setForm({
       startDate: today,
       endDate: '',
+      borrowType: hasEbook ? 'book-copy' : 'book-copy',
     });
     setErrors({});
     setHasAttemptedSubmit(false);
@@ -177,7 +190,7 @@ export function useBorrowRequestForm({
         }
       },
     });
-  }, [openDialog, validate, handleBorrowSubmit, setHasAttemptedSubmit]);
+  }, [openDialog, validate, handleBorrowSubmit, setHasAttemptedSubmit, hasEbook]);
 
   return {
     form,

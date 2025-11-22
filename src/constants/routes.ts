@@ -66,6 +66,7 @@ export const ROUTES = {
   SEARCH: '/search',
   BOOK_DETAIL: '/books/:id',
   FAVORITE: '/favorite',
+  MY_EBOOKS: '/my-ebooks',
   MY_BORROW_REQUESTS: '/my-borrow-requests',
   MY_BORROW_RECORDS: '/my-borrow-records',
   MY_VIOLATIONS: '/my-violations',

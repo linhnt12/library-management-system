@@ -33,6 +33,10 @@ export function ClientLayoutWrapper({ children }: ClientLayoutWrapperProps) {
       icon: RiBookShelfLine,
       children: [
         {
+          label: 'My Ebooks',
+          href: ROUTES.MY_EBOOKS,
+        },
+        {
           label: 'Borrow Requests',
           href: ROUTES.MY_BORROW_REQUESTS,
         },

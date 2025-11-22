@@ -7,6 +7,7 @@ export * from './book-item';
 export * from './borrow-record';
 export * from './borrow-request';
 export * from './category';
+export * from './ebook-borrow-request';
 export * from './favorite-book';
 export * from './file';
 export * from './mail';

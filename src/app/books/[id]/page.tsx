@@ -1,7 +1,7 @@
 'use client';
 
-import { BookApi, FavoriteBookApi } from '@/api';
-import { BookDetail, toaster } from '@/components';
+import { BookApi, EbookBorrowRequestApi, FavoriteBookApi } from '@/api';
+import { BookDetail, BorrowType, toaster } from '@/components';
 import { useCreateBorrowRequest } from '@/lib/hooks';
 import { BookDetail as BookDetailType } from '@/types';
 import { Box } from '@chakra-ui/react';
@@ -14,9 +14,10 @@ export default function PublicBookPage() {
   const bookId = Number(params.id);
   const [book, setBook] = useState<BookDetailType | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [hasEbook, setHasEbook] = useState(false);
   const createBorrowRequestMutation = useCreateBorrowRequest();
 
-  // Fetch book data
+  // Fetch book data and check for ebook
   useEffect(() => {
     const fetchBook = async () => {
       if (!bookId || bookId <= 0) {
@@ -27,6 +28,9 @@ export default function PublicBookPage() {
       try {
         const bookData = await BookApi.getBookById(bookId);
         setBook(bookData);
+
+        // Check if book has ebook
+        setHasEbook((bookData.bookEbookCount ?? 0) > 0);
       } catch (err) {
         console.error('Error fetching book:', err);
         toaster.create({
@@ -107,22 +111,51 @@ export default function PublicBookPage() {
     bookId: number;
     startDate: string;
     endDate: string;
+    borrowType: BorrowType;
   }) => {
-    // Transform data to match API format
-    // Quantity is always 1 (one copy per user)
-    await createBorrowRequestMutation.mutateAsync({
-      userId: data.userId,
-      startDate: data.startDate,
-      endDate: data.endDate,
-      items: [
-        {
+    if (data.borrowType === 'ebook') {
+      // Create ebook borrow request
+      try {
+        const response = await EbookBorrowRequestApi.createEbookBorrowRequest({
+          userId: data.userId,
           bookId: data.bookId,
-          quantity: 1,
           startDate: data.startDate,
           endDate: data.endDate,
-        },
-      ],
-    });
+        });
+        // Show success toast
+        toaster.create({
+          title: 'Success!',
+          description: response.message || 'Ebook borrowed successfully!',
+          type: 'success',
+          duration: 5000,
+        });
+      } catch (error) {
+        // Show error toast
+        toaster.create({
+          title: 'Error!',
+          description:
+            error instanceof Error ? error.message : 'An error occurred while borrowing the ebook!',
+          type: 'error',
+          duration: 5000,
+        });
+        throw error; // Re-throw to let the form handle it
+      }
+    } else {
+      // Create physical book borrow request
+      await createBorrowRequestMutation.mutateAsync({
+        userId: data.userId,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        items: [
+          {
+            bookId: data.bookId,
+            quantity: 1,
+            startDate: data.startDate,
+            endDate: data.endDate,
+          },
+        ],
+      });
+    }
   };
 
   return (
@@ -133,6 +166,7 @@ export default function PublicBookPage() {
         onAddToFavoriteClick={handleAddToFavorite}
         onRemoveFromFavoriteClick={handleRemoveFromFavorite}
         isFavorite={isFavorite}
+        hasEbook={hasEbook}
       />
     </Box>
   );
