@@ -6,9 +6,12 @@ import * as path from 'path';
 // =========================
 const GOOGLE_BOOKS_API_BASE_URL = 'https://www.googleapis.com/books/v1/volumes';
 const API_KEY = 'AIzaSyCIOEtIzG6orz3OAmi7CThCiPpboCL6-so';
-const SEARCH_KEYWORD = 'program';
-const START_INDEX = 0;
+const SEARCH_KEYWORDS = ['program', 'computer', 'technology', 'science', 'engineering']; // Array of search keywords
 const MAX_RESULTS = 20;
+const MIN_START_INDEX = 0;
+const MAX_START_INDEX = 200;
+const START_INDEX_STEP = 20;
+const DELAY_BETWEEN_REQUESTS_MS = 500; // Delay 500ms between requests to avoid rate limiting
 
 // =========================
 // Type Definitions
@@ -155,18 +158,28 @@ function transformVolumeToBookData(volume: GoogleBooksVolume): BookJsonData | nu
 }
 
 /**
- * Main function: to fetch books from Google Books API
+ * Helper function: Delay execution for specified milliseconds
  */
-async function fetchBooksFromGoogleAPI(): Promise<BookJsonData[]> {
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Main function: to fetch books from Google Books API with specific keyword and startIndex
+ */
+async function fetchBooksFromGoogleAPI(
+  keyword: string,
+  startIndex: number
+): Promise<BookJsonData[]> {
   const searchParams = new URLSearchParams({
-    q: SEARCH_KEYWORD,
-    startIndex: START_INDEX.toString(),
+    q: keyword,
+    startIndex: startIndex.toString(),
     maxResults: MAX_RESULTS.toString(),
     key: API_KEY,
   });
 
   const url = `${GOOGLE_BOOKS_API_BASE_URL}?${searchParams.toString()}`;
-  console.log(`Fetching books from: ${url}`);
+  console.log(`Fetching books from: ${url} (keyword: "${keyword}", startIndex: ${startIndex})`);
 
   try {
     const response = await fetch(url);
@@ -178,11 +191,15 @@ async function fetchBooksFromGoogleAPI(): Promise<BookJsonData[]> {
     const data: GoogleBooksResponse = await response.json();
 
     if (!data.items || data.items.length === 0) {
-      console.log('No books found in API response');
+      console.log(
+        `No books found in API response for keyword: "${keyword}", startIndex: ${startIndex}`
+      );
       return [];
     }
 
-    console.log(`Fetched ${data.items.length} books from API (Total: ${data.totalItems})`);
+    console.log(
+      `Fetched ${data.items.length} books from API (keyword: "${keyword}", startIndex: ${startIndex}, Total available: ${data.totalItems})`
+    );
 
     // Transform volumes to book data
     const booksData: BookJsonData[] = [];
@@ -198,7 +215,10 @@ async function fetchBooksFromGoogleAPI(): Promise<BookJsonData[]> {
 
     return booksData;
   } catch (error) {
-    console.error('Error fetching books from Google Books API:', error);
+    console.error(
+      `Error fetching books from Google Books API (keyword: "${keyword}", startIndex: ${startIndex}):`,
+      error
+    );
     throw error;
   }
 }
@@ -259,23 +279,86 @@ function saveBooksToJson(booksData: BookJsonData[], outputPath: string): void {
 async function main() {
   try {
     console.log('Starting to fetch books from Google Books API...');
-    console.log(`Search keyword: "${SEARCH_KEYWORD}"`);
-    console.log(`Start index: ${START_INDEX}, Max results: ${MAX_RESULTS}`);
+    console.log(`Search keywords: ${SEARCH_KEYWORDS.map(k => `"${k}"`).join(', ')}`);
+    console.log(
+      `Start index range: ${MIN_START_INDEX} to ${MAX_START_INDEX} (step: ${START_INDEX_STEP})`
+    );
+    console.log(`Max results per request: ${MAX_RESULTS}`);
+    console.log(`Delay between requests: ${DELAY_BETWEEN_REQUESTS_MS}ms\n`);
 
-    // Fetch books from API
-    const booksData = await fetchBooksFromGoogleAPI();
+    // Collect all books from all requests
+    const allBooksData: BookJsonData[] = [];
+    const requestsPerKeyword =
+      Math.floor((MAX_START_INDEX - MIN_START_INDEX) / START_INDEX_STEP) + 1;
+    const totalRequests = SEARCH_KEYWORDS.length * requestsPerKeyword;
+    let globalRequestCounter = 0;
 
-    if (booksData.length === 0) {
-      console.log('No books to save. Exiting.');
+    // Loop through each keyword
+    for (let keywordIndex = 0; keywordIndex < SEARCH_KEYWORDS.length; keywordIndex++) {
+      const keyword = SEARCH_KEYWORDS[keywordIndex];
+      console.log(
+        `\n${'='.repeat(60)}\n[Keyword ${keywordIndex + 1}/${SEARCH_KEYWORDS.length}] Processing keyword: "${keyword}"\n${'='.repeat(60)}`
+      );
+
+      // Loop through startIndex from 0 to 200 with step 20 for each keyword
+      for (
+        let startIndex = MIN_START_INDEX;
+        startIndex <= MAX_START_INDEX;
+        startIndex += START_INDEX_STEP
+      ) {
+        globalRequestCounter++;
+        const currentRequest = Math.floor((startIndex - MIN_START_INDEX) / START_INDEX_STEP) + 1;
+        console.log(
+          `\n[Request ${globalRequestCounter}/${totalRequests}] Keyword: "${keyword}" | startIndex: ${startIndex} (${currentRequest}/${requestsPerKeyword} for this keyword)`
+        );
+
+        try {
+          // Fetch books from API with current keyword and startIndex
+          const booksData = await fetchBooksFromGoogleAPI(keyword, startIndex);
+
+          if (booksData.length > 0) {
+            allBooksData.push(...booksData);
+            console.log(
+              `Added ${booksData.length} books. Total collected so far: ${allBooksData.length}`
+            );
+          } else {
+            console.log(`No books returned for keyword: "${keyword}", startIndex: ${startIndex}`);
+          }
+
+          // Add delay between requests to avoid rate limiting (except for the last request of the last keyword)
+          if (globalRequestCounter < totalRequests) {
+            await delay(DELAY_BETWEEN_REQUESTS_MS);
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching books for keyword: "${keyword}", startIndex: ${startIndex}:`,
+            error
+          );
+          // Continue with next request instead of stopping
+          console.log('Continuing with next request...');
+        }
+      }
+
+      // Add a longer delay between keywords to avoid rate limiting
+      if (keywordIndex < SEARCH_KEYWORDS.length - 1) {
+        console.log(`\nCompleted keyword "${keyword}". Waiting before next keyword...`);
+        await delay(DELAY_BETWEEN_REQUESTS_MS * 2); // 2x delay between keywords
+      }
+    }
+
+    if (allBooksData.length === 0) {
+      console.log('\nNo books to save. Exiting.');
       return;
     }
 
-    // Save to JSON file
+    // Save all collected books to JSON file
     const outputPath = path.join(__dirname, 'data-mock', 'google-books.json');
-    saveBooksToJson(booksData, outputPath);
+    saveBooksToJson(allBooksData, outputPath);
 
-    console.log('\nSummary:');
-    console.log(`   Fetched from API: ${booksData.length} books`);
+    console.log('\n=== Summary ===');
+    console.log(`   Total keywords processed: ${SEARCH_KEYWORDS.length}`);
+    console.log(`   Total requests made: ${totalRequests}`);
+    console.log(`   Total books fetched: ${allBooksData.length}`);
     console.log('   (See details above for existing/new books count)');
     console.log('Fetch completed successfully!');
   } catch (error) {

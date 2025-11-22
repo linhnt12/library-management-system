@@ -240,5 +240,2366 @@
             "BOOK"
         ],
         "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112106639963",
+        "Title": "Fortran Programs for the Design of Liquid-to-liquid Jet Pumps",
+        "Author": "Nelson L. Sanger",
+        "Year": 1971,
+        "Publisher": "",
+        "category": [
+            "Cavitation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "STANFORD:36105006285477",
+        "Title": "Oversight of HUD Housing Programs, Hearing Before ..., 94-1 ..., November 5, 1975",
+        "Author": "United States. Congress. Senate. Committee on Banking, Housing, and Urban Affairs",
+        "Year": 1975,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:31951T00246592S",
+        "Title": "Federal Register Index",
+        "Author": "",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "Administrative law",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCSD:31822037826237",
+        "Title": "The Social Security Administration's Employment Support Programs for Disability Beneficiaries",
+        "Author": "United States. Congress. House. Committee on Ways and Means. Subcommittee on Social Security",
+        "Year": 2011,
+        "Publisher": "",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearing Before the Subcommittee on Social Security of the Committee on Ways and Means, U.S. House of Representatives, One Hundred Eleventh Congress, First Session, May 19, 2009"
+    },
+    {
+        "ISBN": "LOC:00158542092",
+        "Title": "Agriculture, Rural Development, and Related Agencies Appropriations for 1983: Agricultural programs",
+        "Author": "United States. Congress. House. Committee on Appropriations. Subcommittee on Agriculture, Rural Development, and Related Agencies",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "United States",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "STANFORD:36105045647422",
+        "Title": "Effect of Fiscal Year 1983 Budget Resolutions on Public Assistance Programs",
+        "Author": "United States. Congress. House. Committee on Ways and Means. Subcommittee on Public Assistance and Unemployment Compensation",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "Budget",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearing Before the Subcommittee on Public Assistance and Unemployment Compensation of the Committee on Ways and Means, House of Representatives, Ninety-seventh Congress, Second Session, June 23, 1982"
+    },
+    {
+        "ISBN": "LOC:00101208679",
+        "Title": "Oversight Hearings on the Nature and Effectiveness of the Rehabilitation Programs of the U.S. Bureau of Prisons",
+        "Author": "United States. Congress. Senate. Committee on the Judiciary. Subcommittee on National Penitentiaries",
+        "Year": 1972,
+        "Publisher": "",
+        "category": [
+            "Criminals",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearing, Ninety-second Congress, Second Session"
+    },
+    {
+        "ISBN": "",
+        "Title": "Success by Design & Practice",
+        "Author": "Pradeep K. Suri ",
+        "Year": 2022,
+        "Publisher": "Blue Rose Publishers",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "The book is for Integrated Business Processes Analysis & Enterprise Architecture design in the Cloud. The author has covered essential topics in the book. Flexible and logical modules integrated across the Globe in a cloud server(s) with internal users and external user’s dashboards. The book describes the distribution of Application software programs roles & responsibilities and users (Multi locations) for Operation Level, Middle Management, and Top Management. The Author describes algorithms for designing robust enterprise database engine development as per schema design. Integrated Business flow/Process flow with control. Each step is defined step by step; the Author explains a few engines design and (BA) Business Analytics. Enterprise Design Database Engine for end-to-end finance & Account system deployed in the cloud architecture. Project Planning and control, Project Costing and (BA) Business Analytics."
+    },
+    {
+        "ISBN": "PURD:32754078110552",
+        "Title": "SBA Legislation and Programs",
+        "Author": "United States. Congress. House. Committee on Small Business",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "Loans",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Hearings Before the Committee on Small Business, House of Representatives, Ninety-seventh Congress, First Session ..."
+    },
+    {
+        "ISBN": "9783642185731",
+        "Title": "Wörterbuch der Elektronik, Datentechnik, Telekommunikation und Medien",
+        "Author": "Victor Ferretti",
+        "Year": 2013,
+        "Publisher": "Springer Science & Business Media",
+        "category": [
+            "Technology & Engineering",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Teil 1: Deutsch-Englisch",
+        "description": "Since the first edition was published, new technologies have emerged, especially in the area of convergence of computing and communications, accompanied by a lot of new technical terms. This third expanded and updated edition has been adaptetd to cope with this situation. The number of entries has been incremented by 35%. This dictionary offers a valuable guide to navigate through the entanglement of German and English terminology. The lexicographic concept (indication of the subject field for every term, short definitions, references to synonyms, antonyms, general and derivative terms) has been maintained, as well as the tabular layout."
+    },
+    {
+        "ISBN": "UCR:31210024750786",
+        "Title": "Federal Register",
+        "Author": "",
+        "Year": 2013,
+        "Publisher": "",
+        "category": [
+            "Delegated legislation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "CORNELL:31924055324200",
+        "Title": "Research Grants Index",
+        "Author": "National Institutes of Health (U.S.). Division of Research Grants",
+        "Year": 1973,
+        "Publisher": "",
+        "category": [
+            "Public health",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435077563344",
+        "Title": "Catalog of Federal Domestic Assistance",
+        "Author": "",
+        "Year": 2006,
+        "Publisher": "",
+        "category": [
+            "Economic assistance, Domestic",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Identifies and describes specific government assistance opportunities such as loans, grants, counseling, and procurement contracts available under many agencies and programs."
+    },
+    {
+        "ISBN": "UCBK:C050201903",
+        "Title": "Foreign Operations, Export Financing, and Related Programs Appropriations for 1995: Secretary of State",
+        "Author": "United States. Congress. House. Committee on Appropriations. Subcommittee on Foreign Operations, Export Financing, and Related Programs",
+        "Year": 1994,
+        "Publisher": "",
+        "category": [
+            "Economic assistance, American",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9788131803646",
+        "Title": "Object-Oriented C++ Programming",
+        "Author": "Hirday Narayan Yadav",
+        "Year": 2008,
+        "Publisher": "Firewall Media",
+        "category": [
+            "Information technology",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:31951002821762A",
+        "Title": "National Directory of Educational Programs in Gerontology",
+        "Author": "Association for Gerontology in Higher Education",
+        "Year": 1976,
+        "Publisher": "",
+        "category": [
+            "Geriatrics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Designed to inform educators, professionals, and students about gerontology-related courses, degree programs, educational services, and training programs in 1275 institutions in the United States, Guam, the Virgin Islands, Puerto Rico, and the Canal Zone. Geographical arrangement. Entries include coded identifying information of institution, address, contact person, and descriptive information. College, subject indexes."
+    },
+    {
+        "ISBN": "OSU:32435076471762",
+        "Title": "Library of Congress Subject Headings",
+        "Author": "Library of Congress",
+        "Year": 2007,
+        "Publisher": "",
+        "category": [
+            "Subject headings, Library of Congress",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9789350903612",
+        "Title": "Partha's Fundamentals of Pediatrics",
+        "Author": "A Parthasarathy",
+        "Year": 2013,
+        "Publisher": "JP Medical Ltd",
+        "category": [
+            "Medical",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "The second edition of Partha’s Fundamentals of Pediatrics has been thoroughly revised to bring trainees and physicians fully up to date with the latest developments and rapidly changing concepts in the field of paediatrics. Beginning with an introduction to physical examination, newborn care, growth and development, and immunisation, the following chapters describe different disciplines within paediatrics including – cardiology, neurology, pulmonology and endocrinology. Adolescent health, allergies, learning disabilities, skin diseases and child abuse are also discussed. The final sections examine radiology and imaging, drug therapy and surgical procedures. Enhanced with 560 images, illustrations and tables, this comprehensive guide helps with recognition, diagnosis and management of numerous paediatric disorders, with an emphasis on prevention, as well as treatment. Key points Comprehensive guide to complete field of paediatrics New edition fully revised with latest developments and concepts Emphasis on prevention as well as management of numerous disorders Includes 560 full colour images, illustrations and tables Previous edition published in 2008"
+    },
+    {
+        "ISBN": "STANFORD:36105019655336",
+        "Title": "Grants and Awards for the Fiscal Year Ended ...",
+        "Author": "National Science Foundation (U.S.)",
+        "Year": 0,
+        "Publisher": "",
+        "category": [
+            "Federal aid to research",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9789401809351",
+        "Title": "Business Process Model and Notation based on BPMNTM 2 Fundamental Courseware",
+        "Author": "Rob Vens",
+        "Year": 2023,
+        "Publisher": "Van Haren",
+        "category": [
+            "Architecture",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "#html-body [data-pb-style=XIN7QUI]{justify-content:flex-start;display:flex;flex-direction:column;background-position:left top;background-size:cover;background-repeat:no-repeat;background-attachment:scroll}This courseware is intended for educational purposes in Business Process Model and Notation. The Business Process Model and Notation based on BPMNTM 2 training introduces participants to the essence of the language. BPMN or Business Process Model and Notation is the standard for modeling business processes. Currently under the care of The Object Management Group® (OMG®), BPMN has had a checkered history which we believe reflects the complexity it seeks to standardise. Process models are much older than the kind of models that UML tried to standardize. These UML models often have a much more intimate relationship with software development. We can trace process models back to Frederick Winslow Taylor who was one of the first to attempt to look at production processes in a scientific way. This happened in the 19th century, at a time when people had unwavering faith in the ability of science (and technology) to solve all problems. Before you can proceed to control, improve or even innovate the processes of your organization, it is important to provide insight into the processes. How do you ensure that the knowledge of individuals comes together and is transferable and accessible to the entire organization? As a modeling language, BPMN offers a standard for communicating about business processes. BPMNTM is a registered trademark of Object Management Group® (OMG®) Limited, used under permission of OMG®) Limited. All rights reserved."
+    },
+    {
+        "ISBN": "9781461325352",
+        "Title": "Apple Macintosh Encyclopedia",
+        "Author": "Gary Phillips",
+        "Year": 2012,
+        "Publisher": "Springer Science & Business Media",
+        "category": [
+            "Computers",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "The Apple Macintosh Encyclopedia provides easily accessible, brief and understandable information on the topics that you are most likely to have questions about. We have carefully digested the manuals, books, magazine articles, and other information sources for the Macintosh. These, combined with our own experience in using the Macintosh and other personal computers, have been integrated into an alphabetical sequence of short entries in the style of an encyclopedia. The goal is to provide concise, useful and easy-to-understand information on a particular topic that is quickly accessible when you need it. Much of the information in the entries is not contained in the manuals provided with the Macintosh and various software products. For example, notice the discussion, under WIDTH, of the \"deferred\" nature of this command when used with a device name, the discussion of the colon (:) in Multiplan for ranges, or Saving, Problems With. These topics are omitted or inadequately covered in the standard manuals. The Macintosh is the first truly visual computer. In keeping with the highly visual nature of using the Macintosh, we have provided over 100 illustrations. Each shows exactly what you will see on the screen when exploring topics discussed in the text. The Macintosh Encyclopedia opens with a visual guide to icons, and remains highly visual in orientation throughout the text."
+    },
+    {
+        "ISBN": "IND:30000145035899",
+        "Title": "List of Classes of United States Government Publications Available for Selection by Depository Libraries",
+        "Author": "",
+        "Year": 1992,
+        "Publisher": "",
+        "category": [
+            "Government publications",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9781462529230",
+        "Title": "The CIPP Evaluation Model",
+        "Author": "Daniel L. Stufflebeam",
+        "Year": 2017,
+        "Publisher": "Guilford Publications",
+        "category": [
+            "Social Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "How to Evaluate for Improvement and Accountability",
+        "description": "\"The book's chapters provide background on how and why the CIPP (Context, Input, Process, Product) Model was developed; a detailed presentation of the model; an explanation of the key role of an evaluation-oriented leader, who can decide what and when to evaluate; detailed presentations on evaluation design, budgeting, and contracting; procedures and tools for collecting, analyzing, and reporting evaluation information; and procedures for conducting standards-based meta-evaluations (evaluations of evaluations). These topics are interspersed with illustrative evaluation cases in such areas as education, housing, and military personnel evaluation\"--"
+    },
+    {
+        "ISBN": "9780788183089",
+        "Title": "Catalog of Federal Domestic Assistance, 1999",
+        "Author": "Barry Leonard",
+        "Year": 1999,
+        "Publisher": "DIANE Publishing",
+        "category": [
+            "Political Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Contains 1,412 assistance programs administered by 57 Federal agencies in agriculture, crime control, education, employment and training, health and human services, housing and homeownership, and science and technology. Chapters: how to use the catalog; agency summary; agency programs; alpha. index of programs; applicant eligibility; deadlines index; functional index; subject index; deleted and added programs; crosswalk of changes to program numbers and titles; program descriptions: programs requiring executive order 12372 review; authorization appendix; agency addresses; sources of additional info.; and developing and writing grant proposals."
+    },
+    {
+        "ISBN": "MINN:30000010452716",
+        "Title": "Logistics Maintenance Management",
+        "Author": "United States. Department of the Army",
+        "Year": 1969,
+        "Publisher": "",
+        "category": [
+            "Logistics",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9780429797088",
+        "Title": "Project. Program. Change",
+        "Author": "Roland Gareis",
+        "Year": 2018,
+        "Publisher": "Taylor & Francis",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "This book gives managers an integrative approach to project, program, and change management. It describes the differences between change in projects versus programs with case studies in both areas and the different life cycles. While the project and change comprise much of the book, it is up to date with its emphasis on agile, scrum, and benefits. The book also describes methods to both initiate and manage a change and what must be done for success and business value."
+    },
+    {
+        "ISBN": "MINN:31951D03160097J",
+        "Title": "Research Awards Index",
+        "Author": "",
+        "Year": 1978,
+        "Publisher": "",
+        "category": [
+            "Medicine",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "SRLF:DD0001686419",
+        "Title": "Congressional Record",
+        "Author": "United States. Congress",
+        "Year": 0,
+        "Publisher": "",
+        "category": [
+            "Legislation",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Proceedings and Debates of the Congress"
+    },
+    {
+        "ISBN": "9780323241731",
+        "Title": "Public Health Nursing - Revised Reprint",
+        "Author": "Marcia Stanhope",
+        "Year": 2013,
+        "Publisher": "Elsevier Health Sciences",
+        "category": [
+            "Medical",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Population-Centered Health Care in the Community",
+        "description": "This Revised Reprint of our 8th edition, the \"gold standard\" in community health nursing, Public Health Nursing: Population-Centered Health Care in the Community, has been updated with a new Quality and Safety Education in Nursing (QSEN) appendix that features examples of incorporating knowledge, skills, and attitudes to improve quality and safety in community/public health nursing practice. As with the previous version, this text provides comprehensive and up-to-date content to keep you at the forefront of the ever-changing community health climate and prepare you for an effective nursing career. In addition to concepts and interventions for individuals, families, and communities, this text also incorporates real-life applications of the public nurse's role, Healthy People 2020 initiatives, new chapters on forensics and genomics, plus timely coverage of disaster management and important client populations such as pregnant teens, the homeless, immigrants, and more. Evidence-Based Practice boxes illustrate how the latest research findings apply to public/community health nursing.Separate chapters on disease outbreak investigation and disaster management describe the nurse's role in surveilling public health and managing these types of threats to public health.Separate unit on the public/community health nurse's role describes the different functions of the public/community health nurse within the community.Levels of Prevention boxes show how community/public health nurses deliver health care interventions at the primary, secondary, and tertiary levels of prevention.What Do You Think?, Did You Know?, and How To? boxes use practical examples and critical thinking exercises to illustrate chapter content.The Cutting Edge highlights significant issues and new approaches to community-oriented nursing practice.Practice Application provides case studies with critical thinking questions.Separate chapters on community health initiatives thoroughly describe different approaches to promoting health among populations.Appendixes offer additional resources and key information, such as screening and assessment tools and clinical practice guidelines. NEW! Quality and Safety Education in Nursing (QSEN) appendix features examples of incorporating knowledge, skills, and attitudes to improve quality and safety in community/public health nursing practice.NEW! Linking Content to Practice boxes provide real-life applications for chapter content.NEW! Healthy People 2020 feature boxes highlight the goals and objectives for promoting health and wellness over the next decade.NEW! Forensic Nursing in the Community chapter focuses on the unique role of forensic nurses in public health and safety, interpersonal violence, mass violence, and disasters. NEW! Genomics in Public Health Nursing chapter includes a history of genetics and genomics and their impact on public/community health nursing care."
+    },
+    {
+        "ISBN": "UFL:31262082068916",
+        "Title": "Scientific and Technical Aerospace Reports",
+        "Author": "",
+        "Year": 1967,
+        "Publisher": "",
+        "category": [
+            "Aeronautics",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112001075867",
+        "Title": "Federal Program Evaluations",
+        "Author": "",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Directory for the Congress",
+        "description": "Contains an inventory of evaluation reports produced by and for selected Federal agencies, including GAO evaluation reports that relate to the programs of those agencies."
+    },
+    {
+        "ISBN": "9780788101915",
+        "Title": "Directory of Federal Laboratory and Technology Resources",
+        "Author": "",
+        "Year": 1994,
+        "Publisher": "DIANE Publishing",
+        "category": [
+            "Political Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Guide to Services, Facilities and Expertise",
+        "description": "Describes the individual capabilities of each of 1,900 unique resources in the federal laboratory system, and provides the name and phone number of each contact. Includes government laboratories, research centers, testing facilities, and special technology information centers. Also includes a list of all federal laboratory technology transfer offices. Organized into 72 subject areas. Detailed indices."
+    },
+    {
+        "ISBN": "9780834203631",
+        "Title": "The AUPHA Manual of Health Services Management",
+        "Author": "Robert J. Taylor",
+        "Year": 1994,
+        "Publisher": "Jones & Bartlett Learning",
+        "category": [
+            "Medical",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "With contributions from more than 30 authorities in the field, this reference covers topics varying from management techniques to strategic planning, To ownership and governance, To a department-by-department breakdown of health care facility support services."
+    },
+    {
+        "ISBN": "UCR:31210017814599",
+        "Title": "Middle East regional cooperation programs",
+        "Author": "United States. Congress. House. Committee on Foreign Affairs. Subcommittee on Europe and the Middle East",
+        "Year": 1988,
+        "Publisher": "",
+        "category": [
+            "Agricultural development projects",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "hearing before the Subcommittee on Europe and the Middle East of the Committee on Foreign Affairs, House of Representatives, Ninety-ninth Congress, second session, May 6, 1986"
+    },
+    {
+        "ISBN": "9781784418496",
+        "Title": "Inquiry-Based Learning for Science, Technology, Engineering, and Math (STEM) Programs",
+        "Author": "Patrick Blessinger",
+        "Year": 2015,
+        "Publisher": "Emerald Group Publishing",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Conceptual and Practical Resource for Educators",
+        "description": "This volume covers the many issues and concepts of how IBL can be applied to STEM programs and serves as a conceptual and practical resource and guide for educators and offers practical examples of IBL in action and diverse strategies on how to implement IBL in different contexts."
+    },
+    {
+        "ISBN": "UCSD:31822021867726",
+        "Title": "A Resource Guide for Nutrition Management Programs for Older Persons",
+        "Author": "Marjorie Bogaert-Tullis",
+        "Year": 1987,
+        "Publisher": "",
+        "category": [
+            "Aged",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9781461563013",
+        "Title": "The Economics of Conservation Programs",
+        "Author": "Franz Wirl",
+        "Year": 2012,
+        "Publisher": "Springer Science & Business Media",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Demand side management (DSM) is one of the most topical issues in regulating electric utilities, both in the United States and internationally. What is DSM? It consists of various measures at the level of demand (households, commerce, industry, others), which are at least partially financed by electric utilities and which should either conserve energy or reduce the peak load. The practice of DSM originates from The Public Utility Regulatory Policy Act of 1978 (PURPA) that provided the political and legal framework to set energy conservation as a national goal, which encouraged regulatory commissions to initiate utility conservation programs; see e.g., Nowell-Tschirhart (1990) and Fox-Penner (1990). Moreover, integrated resource planning, which must account for DSM on a level playing field with supply, is written into the 1992 Energy Policy Act as the U.S. Government's preferred method of electric power planning. Although PURPA set energy conservation as a national priority, its implementation was left to the states with the consequence of considerable differences concerning efforts and rules. By 1993 16 states had already implemented integrated resource planning, 9 were in the process of doing so and further 9 considered implementation, (EPRI 1993b). Due to the Clean Air Act of 1990, 24 states are considering to include external costs in integrated resource planning."
+    },
+    {
+        "ISBN": "UCSD:31822021867726",
+        "Title": "A Resource Guide for Nutrition Management Programs for Older Persons",
+        "Author": "Marjorie Bogaert-Tullis",
+        "Year": 1987,
+        "Publisher": "",
+        "category": [
+            "Aged",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9781461563013",
+        "Title": "The Economics of Conservation Programs",
+        "Author": "Franz Wirl",
+        "Year": 2012,
+        "Publisher": "Springer Science & Business Media",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Demand side management (DSM) is one of the most topical issues in regulating electric utilities, both in the United States and internationally. What is DSM? It consists of various measures at the level of demand (households, commerce, industry, others), which are at least partially financed by electric utilities and which should either conserve energy or reduce the peak load. The practice of DSM originates from The Public Utility Regulatory Policy Act of 1978 (PURPA) that provided the political and legal framework to set energy conservation as a national goal, which encouraged regulatory commissions to initiate utility conservation programs; see e.g., Nowell-Tschirhart (1990) and Fox-Penner (1990). Moreover, integrated resource planning, which must account for DSM on a level playing field with supply, is written into the 1992 Energy Policy Act as the U.S. Government's preferred method of electric power planning. Although PURPA set energy conservation as a national priority, its implementation was left to the states with the consequence of considerable differences concerning efforts and rules. By 1993 16 states had already implemented integrated resource planning, 9 were in the process of doing so and further 9 considered implementation, (EPRI 1993b). Due to the Clean Air Act of 1990, 24 states are considering to include external costs in integrated resource planning."
+    },
+    {
+        "ISBN": "CORNELL:31924010298374",
+        "Title": "Agriculture, Rural Development, and Related Agencies Appropriations for 1983: Farm programs",
+        "Author": "United States. Congress. House. Committee on Appropriations. Subcommittee on Agriculture, Rural Development, and Related Agencies",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "United States",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210017991439",
+        "Title": "Cumulative List of Organizations Described in Section 170 (c) of the Internal Revenue Code of 1954",
+        "Author": "",
+        "Year": 2003,
+        "Publisher": "",
+        "category": [
+            "Charitable uses, trusts, and foundations",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "IOWA:31858045044512",
+        "Title": "The Kindergarten Magazine",
+        "Author": "",
+        "Year": 1903,
+        "Publisher": "",
+        "category": [
+            "Kindergarten",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C025696317",
+        "Title": "Operational Improvements for the Career Opportunities Development Program of the State Personnel Board",
+        "Author": "California. Office of the Auditor General",
+        "Year": 1977,
+        "Publisher": "",
+        "category": [
+            "California",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Report"
+    },
+    {
+        "ISBN": "WISC:89097632749",
+        "Title": "Improvement of Conditions in the Rural Schools",
+        "Author": "Oklahoma. State Department of Education",
+        "Year": 1912,
+        "Publisher": "",
+        "category": [
+            "Rural schools",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "PSU:000015984593",
+        "Title": "Citizens in the Making Through a Program of Pupil Activity",
+        "Author": "Walter L. Collins",
+        "Year": 1928,
+        "Publisher": "",
+        "category": [
+            "Citizenship",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Bk. 1-6 ... 1st to 6th Grade"
+    },
+    {
+        "ISBN": "UCAL:C2623291",
+        "Title": "New York School Journal",
+        "Author": "",
+        "Year": 1900,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015070323079",
+        "Title": "American Physical Education Review",
+        "Author": "",
+        "Year": 1925,
+        "Publisher": "",
+        "category": [
+            "Health",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Includes abstracts of magazine articles and \"Book reviews\"."
+    },
+    {
+        "ISBN": "UCR:31210018561926",
+        "Title": "Proceedings of the Society of American Foresters ... National Convention",
+        "Author": "Society of American Foresters. Convention",
+        "Year": 1915,
+        "Publisher": "",
+        "category": [
+            "Forests and forestry",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89047863956",
+        "Title": "The Minnesota Horticulturist",
+        "Author": "",
+        "Year": 1919,
+        "Publisher": "",
+        "category": [
+            "Fruit-culture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "STANFORD:36105006521095",
+        "Title": "Philippine Education",
+        "Author": "",
+        "Year": 1911,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCAL:$B603233",
+        "Title": "Quarterly Bulletin",
+        "Author": "California Conference of Social Work",
+        "Year": 1918,
+        "Publisher": "",
+        "category": [
+            "Charities",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015071299526",
+        "Title": "Kent County Boys' and Girls' Clubs",
+        "Author": "E. C. Lindemann",
+        "Year": 1918,
+        "Publisher": "",
+        "category": [
+            "Children",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Junior Extension Work in Agriculture and Home Economics : how to Conduct and Organize Boys' and Girls' Clubs"
+    },
+    {
+        "ISBN": "UCBK:C045139493",
+        "Title": "Official Voter Information Guide",
+        "Author": "",
+        "Year": 2000,
+        "Publisher": "",
+        "category": [
+            "California",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "General election"
+    },
+    {
+        "ISBN": "UIUC:30112097182254",
+        "Title": "Music News",
+        "Author": "",
+        "Year": 1912,
+        "Publisher": "",
+        "category": [
+            "Music",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89089245401",
+        "Title": "Model Tax Convention on Income and on Capital: Condensed Version 2005",
+        "Author": "Organisation for Economic Co-operation and Development. Committee on Fiscal Affairs",
+        "Year": 2005,
+        "Publisher": "OECD",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "The main purpose of the Convention is to provide a standardised system to deal with problems of international juridical double taxation (the imposition of comparable taxes in two or more States on the same taxpayer in relation to the same subject matter and for identical periods). This is the 6th edition of the condensed version of this publication, and includes the full text of the Model Tax Convention as it read on 15 July 2005 (but without the historical notes, the detailed list of tax conventions between OECD Member countries and the background reports that are included in the full edition)."
+    },
+    {
+        "ISBN": "UCR:31210021715287",
+        "Title": "Newsletter",
+        "Author": "Medical Board of California",
+        "Year": 2006,
+        "Publisher": "",
+        "category": [
+            "Medical personnel",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C079380190",
+        "Title": "State of California Consolidated Annual Performance & Evaluation Report (CAPER) for Implementation of the CDBG, ESG, HOME, HOPWA and Lead-based Paint Hazard Reduction Programs Pursuant to the State Consolidated Plan for the Period of ...",
+        "Author": "",
+        "Year": 2003,
+        "Publisher": "",
+        "category": [
+            "Housing",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "STANFORD:36105006521095",
+        "Title": "Philippine Education",
+        "Author": "",
+        "Year": 1911,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "COLUMBIA:CU55996132",
+        "Title": "Books of Travel",
+        "Author": "Urban T. Holmes (Jr.)",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "Voyages and travels",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89037103942",
+        "Title": "Domestic surplus removal programs for farm products",
+        "Author": "",
+        "Year": 1940,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210008778522",
+        "Title": "Loan and Grant Programs for the Division of Community Affairs",
+        "Author": "California. Department of Housing and Community Development. Division of Community Affairs",
+        "Year": 1991,
+        "Publisher": "",
+        "category": [
+            "Housing",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112087260441",
+        "Title": "International Conciliation",
+        "Author": "",
+        "Year": 1921,
+        "Publisher": "",
+        "category": [
+            "Arbitration, International",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112122546523",
+        "Title": "1981 Plan for Illinois Department of Rehabilitation Services",
+        "Author": "Illinois. Department of Rehabilitation Services",
+        "Year": 1980,
+        "Publisher": "",
+        "category": [
+            "Children with disabilities",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Part II."
+    },
+    {
+        "ISBN": "UIUC:30112121941642",
+        "Title": "Annual Report",
+        "Author": "Illinois Motor Vehicle Theft Prevention Council",
+        "Year": 1996,
+        "Publisher": "",
+        "category": [
+            "Automobile theft",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015075327570",
+        "Title": "Numerical Analysis of Roadside Design (NARD). Volume I: Users Manual. Final Report",
+        "Author": "Sudhamay Basu",
+        "Year": 1988,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89067609537",
+        "Title": "Biennial Report of the North Carolina State Department of Archives and History",
+        "Author": "North Carolina. State Department of Archives and History",
+        "Year": 1976,
+        "Publisher": "",
+        "category": [
+            "North Carolina",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89037095825",
+        "Title": "Special Report",
+        "Author": "",
+        "Year": 1968,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112070582199",
+        "Title": "Local Government Training Programs, Problems and Needs in Iowa",
+        "Author": "Clayton Ringgenberg",
+        "Year": 1968,
+        "Publisher": "",
+        "category": [
+            "Employees",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:31951P005112259",
+        "Title": "Perspectives on Labour and Income",
+        "Author": "",
+        "Year": 1990,
+        "Publisher": "",
+        "category": [
+            "Income",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112028217856",
+        "Title": "Marketing Wyoming Cattle",
+        "Author": "Andrew Vanvig",
+        "Year": 1987,
+        "Publisher": "",
+        "category": [
+            "Agricultural credit",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Including Average Prices of Cattle and Calves, Eastern Wyoming and Western Nebraska 1968-1986"
+    },
+    {
+        "ISBN": "UOM:39015076535676",
+        "Title": "Education Department Bulletin",
+        "Author": "",
+        "Year": 1917,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "1908-1912"
+    },
+    {
+        "ISBN": "IND:30000114353596",
+        "Title": "Journal of Farm Economics",
+        "Author": "",
+        "Year": 1925,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Includes papers and reports of the American Farm Economic Association."
+    },
+    {
+        "ISBN": "UCAL:B2932937",
+        "Title": "Religious Education",
+        "Author": "",
+        "Year": 1923,
+        "Publisher": "",
+        "category": [
+            "Christian education",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Available on microfilm from University Microfilms."
+    },
+    {
+        "ISBN": "STANFORD:36105019652317",
+        "Title": "Digest of Public General Bills and Resolutions",
+        "Author": "Library of Congress. Congressional Research Service",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "Bills, Legislative",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCI:31970022779307",
+        "Title": "Highway Safety Plan",
+        "Author": "California. Office of Traffic Safety",
+        "Year": 2002,
+        "Publisher": "",
+        "category": [
+            "Traffic safety",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCSD:31822030335871",
+        "Title": "Visual and Performing Arts Framework",
+        "Author": "",
+        "Year": 2004,
+        "Publisher": "",
+        "category": [
+            "Reference",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "For California Public Schools : Kindergarten Through Grade Twelve"
+    },
+    {
+        "ISBN": "WISC:89047863956",
+        "Title": "The Minnesota Horticulturist",
+        "Author": "",
+        "Year": 1919,
+        "Publisher": "",
+        "category": [
+            "Fruit-culture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015001312001",
+        "Title": "Financial Protection Against Atomic Hazards [final Report] Jan. 1957",
+        "Author": "Atomic Insurance Project",
+        "Year": 1957,
+        "Publisher": "",
+        "category": [
+            "Insurance, Nuclear hazards..",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCSD:31822026448365",
+        "Title": "Agenda - California Postsecondary Education Commission",
+        "Author": "California Postsecondary Education Commission",
+        "Year": 1987,
+        "Publisher": "",
+        "category": [
+            "Education, Higher",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Issues for 1974- include minutes, recommendations, special reports, etc."
+    },
+    {
+        "ISBN": "LLMC:MAR2T8V3QK0O",
+        "Title": "\"Code of Massachusetts regulations, 2010\"",
+        "Author": "",
+        "Year": 2010,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "9780160504891",
+        "Title": "Crime in the United States 1999",
+        "Author": "United States Government Printing Office",
+        "Year": 2000,
+        "Publisher": "Justice Department",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Uniform Crime Reports"
+    },
+    {
+        "ISBN": "UCR:31210023162280",
+        "Title": "California Transportation Journal",
+        "Author": "",
+        "Year": 2002,
+        "Publisher": "",
+        "category": [
+            "Transportation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C060905447",
+        "Title": "Annual Report",
+        "Author": "Australia. Department of Human Services and Health",
+        "Year": 1993,
+        "Publisher": "",
+        "category": [
+            "Australia",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210020961346",
+        "Title": "Improving Services for Migrant Students",
+        "Author": "Rachel Ehlers",
+        "Year": 2006,
+        "Publisher": "",
+        "category": [
+            "Children of migrant laborers",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89015235757",
+        "Title": "National Union Catalog",
+        "Author": "",
+        "Year": 1956,
+        "Publisher": "",
+        "category": [
+            "Union catalogs",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Includes entries for maps and atlases."
+    },
+    {
+        "ISBN": "WISC:89057483752",
+        "Title": "Philippine Development",
+        "Author": "",
+        "Year": 1981,
+        "Publisher": "",
+        "category": [
+            "Philippines",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210008778522",
+        "Title": "Loan and Grant Programs for the Division of Community Affairs",
+        "Author": "California. Department of Housing and Community Development. Division of Community Affairs",
+        "Year": 1991,
+        "Publisher": "",
+        "category": [
+            "Housing",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015010881525",
+        "Title": "Railway Age",
+        "Author": "",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "Railroads",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015077071416",
+        "Title": "The Kindergarten-primary Magazine",
+        "Author": "Bertha Johnston",
+        "Year": 1917,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCLA:L0053559738",
+        "Title": "Report by the Office of the Auditor General",
+        "Author": "California. Office of the Auditor General",
+        "Year": 1983,
+        "Publisher": "",
+        "category": [
+            "Student loans",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "California Student Aid Commission, state guaranteed loan reserve fund, financial audit report, year ended June 30 ..."
+    },
+    {
+        "ISBN": "SRLF:A0006354807",
+        "Title": "Journals of the Legislature of the State of California",
+        "Author": "California. Legislature",
+        "Year": 1946,
+        "Publisher": "",
+        "category": [
+            "California",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "SRLF:A0010304053",
+        "Title": "Education Code",
+        "Author": "California",
+        "Year": 1971,
+        "Publisher": "",
+        "category": [
+            "Educational law and legislation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "SRLF:A0010304053",
+        "Title": "Education Code",
+        "Author": "California",
+        "Year": 1971,
+        "Publisher": "",
+        "category": [
+            "Educational law and legislation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCLA:L0052511508",
+        "Title": "CSE Report",
+        "Author": "",
+        "Year": 1978,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C080387977",
+        "Title": "Universitas Riau",
+        "Author": "Universitas Riau",
+        "Year": 1997,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112074239762",
+        "Title": "Journal of the Senate",
+        "Author": "Illinois. General Assembly. Senate",
+        "Year": 1983,
+        "Publisher": "",
+        "category": [
+            "Illinois",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR0Y8V3QK0P",
+        "Title": "\"Code of Massachusetts regulations, 2005\"",
+        "Author": "",
+        "Year": 2005,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "WISC:89038526133",
+        "Title": "Oregon Wildlife",
+        "Author": "",
+        "Year": 1988,
+        "Publisher": "",
+        "category": [
+            "Fishing",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435009539727",
+        "Title": "Passenger Travel Forecasting",
+        "Author": "National Research Council (U.S.). Transportation Research Board",
+        "Year": 1979,
+        "Publisher": "",
+        "category": [
+            "Transportation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C064799126",
+        "Title": "Employment Equity in the Federal Public Service, Annual Report to Parliament",
+        "Author": "Canada. Treasury Board",
+        "Year": 1996,
+        "Publisher": "",
+        "category": [
+            "Affirmative action programs",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCSD:31822026083386",
+        "Title": "How Do Forest Landowners Learn?",
+        "Author": "Hal Voege",
+        "Year": 1997,
+        "Publisher": "",
+        "category": [
+            "Forest conservation",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Study of Resource Agency/landowner Interaction in Northern California"
+    },
+    {
+        "ISBN": "UOM:39015035830747",
+        "Title": "Journal of Health, Physical Education, Recreation",
+        "Author": "",
+        "Year": 1957,
+        "Publisher": "",
+        "category": [
+            "Health",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112070582199",
+        "Title": "Local Government Training Programs, Problems and Needs in Iowa",
+        "Author": "Clayton Ringgenberg",
+        "Year": 1968,
+        "Publisher": "",
+        "category": [
+            "Employees",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112053617087",
+        "Title": "Annual Report of the Executive Board for the Financial Year Ended April 30 ...",
+        "Author": "International Monetary Fund",
+        "Year": 1991,
+        "Publisher": "",
+        "category": [
+            "Electronic journals",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89004378675",
+        "Title": "Musical Gems of the Sabbath",
+        "Author": "Hannah Grad Goodman",
+        "Year": 1952,
+        "Publisher": "",
+        "category": [
+            "Jews",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015080373379",
+        "Title": "National Painters Magazine",
+        "Author": "",
+        "Year": 1915,
+        "Publisher": "",
+        "category": [
+            "Interior decoration",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "SRLF:A0006411557",
+        "Title": "Child-garden of Story, Song and Play",
+        "Author": "",
+        "Year": 1898,
+        "Publisher": "",
+        "category": [
+            "Kindergarten",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "STANFORD:36105019657456",
+        "Title": "Monthly Report of the Military Governor",
+        "Author": "Germany (Territory under Allied occupation, 1945-1955 : U.S. Zone). Office of Military Government",
+        "Year": 1948,
+        "Publisher": "",
+        "category": [
+            "Germany",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015075425150",
+        "Title": "Truck Operations and Regulations on Urban Freeways",
+        "Author": "William R. McCasland",
+        "Year": 1984,
+        "Publisher": "",
+        "category": [
+            "Express highways",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Considering lane restrictions, time-of-day restrictions, speed restrictions, route restrictions, driver training certification and enforcement with application to Texas."
+    },
+    {
+        "ISBN": "UIUC:30112113003450",
+        "Title": "Ohio EPA Resource Guide",
+        "Author": "",
+        "Year": 2001,
+        "Publisher": "",
+        "category": [
+            "Environmental law",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112046888704",
+        "Title": "Tobacco Abstracts",
+        "Author": "",
+        "Year": 1990,
+        "Publisher": "",
+        "category": [
+            "Tobacco",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCAL:X33778",
+        "Title": "Evaluating the Performance of the Education Machine by Simulation",
+        "Author": "Jaun-Der Wu",
+        "Year": 1988,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR3AGV3QK0G",
+        "Title": "\"Code of Massachusetts regulations, 1998\"",
+        "Author": "",
+        "Year": 1998,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UOM:39015088903102",
+        "Title": "Industrial and Labor Relations Review",
+        "Author": "",
+        "Year": 2011,
+        "Publisher": "",
+        "category": [
+            "Industrial relations",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "9781555426514",
+        "Title": "The Jossey-Bass Handbook of Nonprofit Leadership and Management",
+        "Author": "Robert D. Herman & Associates",
+        "Year": 1994,
+        "Publisher": "Jossey-Bass",
+        "category": [
+            "Business & Economics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "I expect the Jossey-Bass Handbook will be a basic reference and source of numerous ideas and guidance for practicing managers, leaders, students, and teachers in this field for years to come. It belongs on the bookshelf of every leader and manager of a nonprofit organization ?Dennis R. Young, Mandel Professor of Nonprofit Management, and governing director, Mandel Center for Nonprofit Organizations, Case Western Reserve University Herman and his associates have created a book that organizes a complex topic in a sensible and accessible way. Nationally recognized experts expand the reader's perception well beyond narrow managerial issues, but the managerial meat is here, too. Whether for reference or teaching purposes, a better set of topics and authors on nonprofit leadership and management is difficult to imagine. ?Bradford H. Gray, executive director, Program on Non-Profit Organizations (PONPO), Yale University The leading experts in the nonprofit field describe effective practices in all the distinctive and important functions, processes, and strategies of nonprofit leadership and management. Based on up-to-date research, theory, and experience, this comprehensive volume offers practical advice on every aspect of managing nonprofit organizations, including board development, strategic planning, lobbying, marketing, government contracting, volunteer programs, fund raising, financial accounting, compensation and benefits programs, risk management, and much more."
+    },
+    {
+        "ISBN": "WISC:89064455199",
+        "Title": "Kansas",
+        "Author": "",
+        "Year": 1976,
+        "Publisher": "",
+        "category": [
+            "Kansas",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112082143865",
+        "Title": "Proceedings",
+        "Author": "Chicago (Ill.). Board of Education",
+        "Year": 1965,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR3XVU3QK0L",
+        "Title": "\"Code of Massachusetts regulations, 1996\"",
+        "Author": "",
+        "Year": 1996,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UIUC:30112099136555",
+        "Title": "Congressional Record",
+        "Author": "United States. Congress",
+        "Year": 1980,
+        "Publisher": "",
+        "category": [
+            "Law",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Proceedings and Debates of the ... Congress"
+    },
+    {
+        "ISBN": "WISC:89034732065",
+        "Title": "Miscellaneous Publication - Texas Agricultural Experiment Station",
+        "Author": "",
+        "Year": 1946,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210023083254",
+        "Title": "Statutes of California and Digests of Measures",
+        "Author": "California",
+        "Year": 2006,
+        "Publisher": "",
+        "category": [
+            "Law",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112088814337",
+        "Title": "Directory of Certified Public Accountants and Public Accountants of Oklahoma Registered in Accordance with Oklahoma Statutes and Rules of the Oklahoma State Board of Public Accountancy",
+        "Author": "Oklahoma State Board of Public Accountancy",
+        "Year": 1984,
+        "Publisher": "",
+        "category": [
+            "Accountants",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCSD:31822037528494",
+        "Title": "National Demographic and Health Survey",
+        "Author": "",
+        "Year": 2008,
+        "Publisher": "",
+        "category": [
+            "Birth control",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR05XU3QK0G",
+        "Title": "\"Code of Massachusetts regulations, 2016\"",
+        "Author": "",
+        "Year": 2016,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UCBK:C044511342",
+        "Title": "The Philippine Review of Economics and Business",
+        "Author": "",
+        "Year": 1987,
+        "Publisher": "",
+        "category": [
+            "Business",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89042436030",
+        "Title": "Educational Media and Technology Yearbook",
+        "Author": "",
+        "Year": 1992,
+        "Publisher": "",
+        "category": [
+            "Educational technology",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015067075120",
+        "Title": "University of North Carolina Extension Bulletin",
+        "Author": "University of North Carolina (1793-1962). University Extension Division",
+        "Year": 1928,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112122601161",
+        "Title": "Illinois County Board Members Handbook",
+        "Author": "",
+        "Year": 1982,
+        "Publisher": "",
+        "category": [
+            "County government",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015007440038",
+        "Title": "C D A Journal",
+        "Author": "California Dental Association",
+        "Year": 1983,
+        "Publisher": "",
+        "category": [
+            "Dentistry",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCLA:L0074969734",
+        "Title": "Budget Report ... and Capital Budget",
+        "Author": "Georgia. Office of Planning and Budget",
+        "Year": 1992,
+        "Publisher": "",
+        "category": [
+            "Budget",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR9Z9U3QK0V",
+        "Title": "CMR",
+        "Author": "",
+        "Year": 2020,
+        "Publisher": "",
+        "category": [
+            "Administrative law",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "WISC:89107113433",
+        "Title": "Geographic Distribution of Federal Funds in Texas",
+        "Author": "",
+        "Year": 1976,
+        "Publisher": "",
+        "category": [
+            "Economic assistance, Domestic",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "1976-79",
+        "description": "Includes data for the executive branch of the federal government only."
+    },
+    {
+        "ISBN": "LLMC:MAR2QCV3QK0F",
+        "Title": "\"Code of Massachusetts regulations, 2000\"",
+        "Author": "",
+        "Year": 2000,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UCI:31970023573592",
+        "Title": "Residues in Fresh Produce",
+        "Author": "",
+        "Year": 1994,
+        "Publisher": "",
+        "category": [
+            "Pesticide residues in food",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LALL:CA-A021709-AR",
+        "Title": "California. Court of Appeal (1st Appellate District). Records and Briefs",
+        "Author": "California (State).",
+        "Year": 0,
+        "Publisher": "",
+        "category": [
+            "Law",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A021709, Appellant's Reply"
+    },
+    {
+        "ISBN": "STANFORD:36105000935994",
+        "Title": "Science",
+        "Author": "John Michels",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "Science",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Vols. for 1911-13 contain the Proceedings of the Helminothological Society of Washington, ISSN 0018-0120, 1st-15th meeting."
+    },
+    {
+        "ISBN": "MINN:31951000936467Q",
+        "Title": "Better Education for Mankato Area Children",
+        "Author": "University of Minnesota. College of Education. Bureau of Field Studies and Surveys",
+        "Year": 1955,
+        "Publisher": "",
+        "category": [
+            "Educational surveys",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Summary of the School Survey of the Mankato High School Area"
+    },
+    {
+        "ISBN": "UCAL:C2766538",
+        "Title": "Chicago Dairy Produce",
+        "Author": "",
+        "Year": 1912,
+        "Publisher": "",
+        "category": [
+            "Dairying",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:30000010682742",
+        "Title": "Research resources reporter",
+        "Author": "",
+        "Year": 1980,
+        "Publisher": "",
+        "category": [
+            "Medicine",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:319510005977833",
+        "Title": "FAPE, the First Decade",
+        "Author": "Bonifacio S. Salamanca",
+        "Year": 1981,
+        "Publisher": "",
+        "category": [
+            "Private schools",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112020873193",
+        "Title": "Survey Research",
+        "Author": "",
+        "Year": 1977,
+        "Publisher": "",
+        "category": [
+            "Market surveys",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCR:31210023565094",
+        "Title": "State Methadone Treatment Guidelines",
+        "Author": "Mark W. Parrino",
+        "Year": 1993,
+        "Publisher": "",
+        "category": [
+            "Drug abuse",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR27DV3QK0V",
+        "Title": "\"Code of Massachusetts regulations, 2001\"",
+        "Author": "",
+        "Year": 2001,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UOM:39015070144160",
+        "Title": "Michigan Journal of Physical Education",
+        "Author": "",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LALL:CA-B030067-OT02",
+        "Title": "California. Court of Appeal (2nd Appellate District). Records and Briefs",
+        "Author": "California (State).",
+        "Year": 0,
+        "Publisher": "",
+        "category": [
+            "Law",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "B030067, Other, 02",
+        "description": "Number of Exhibits: 47_x005F_x000D_ Received document entitled: EXHIBITS TO PETITION FOR WRIT"
+    },
+    {
+        "ISBN": "UILAW:0000000019985",
+        "Title": "Singh V. Moyer",
+        "Author": "",
+        "Year": 1988,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C104642747",
+        "Title": "California Energy Commission News & Comment",
+        "Author": "California Energy Commission",
+        "Year": 1979,
+        "Publisher": "",
+        "category": [
+            "Energy conservation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "WISC:89060461761",
+        "Title": "Nonpoint Source Water Pollution & Soil Conservation Programs",
+        "Author": "",
+        "Year": 1997,
+        "Publisher": "",
+        "category": [
+            "Soil conservation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR1HEV3QK0L",
+        "Title": "\"Code of Massachusetts regulations, 2007\"",
+        "Author": "",
+        "Year": 2007,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UIUC:30112121934779",
+        "Title": "State Consolidated Plan, Action Plan",
+        "Author": "Illinois Housing Development Authority",
+        "Year": 1999,
+        "Publisher": "",
+        "category": [
+            "Community development, Urban",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "As Submitted to the U.S. Department of Housing and Urban Development"
+    },
+    {
+        "ISBN": "UOM:39015095088764",
+        "Title": "Final Environmental Statement Related to the Operation of Virgil C. Summer Nuclear Station, Unit No. 1, Docket No. 50-395, South Carolina Electric and Gas Company",
+        "Author": "U.S. Nuclear Regulatory Commission. Office of Nuclear Reactor Regulation",
+        "Year": 1981,
+        "Publisher": "",
+        "category": [
+            "Environmental impact statements",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435031111057",
+        "Title": "New Serial Titles",
+        "Author": "",
+        "Year": 1989,
+        "Publisher": "",
+        "category": [
+            "Periodicals",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "A union list of serials commencing publication after Dec. 31, 1949."
+    },
+    {
+        "ISBN": "LALL:CA-F006670-AC02",
+        "Title": "California. Court of Appeal (5th Appellate District). Records and Briefs",
+        "Author": "California (State).",
+        "Year": 0,
+        "Publisher": "",
+        "category": [
+            "Law",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "F006670, Amicus Curiae, 02"
+    },
+    {
+        "ISBN": "CHI:44557362",
+        "Title": "Intermediate Hindi reader: Glossaries",
+        "Author": "Usha R. Jain",
+        "Year": 1972,
+        "Publisher": "",
+        "category": [
+            "Hindi language",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "MINN:30000006337244",
+        "Title": "Energy Research Abstracts",
+        "Author": "",
+        "Year": 1993,
+        "Publisher": "",
+        "category": [
+            "Power resources",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Semiannual, with semiannual and annual indexes. References to all scientific and technical literature coming from DOE, its laboratories, energy centers, and contractors. Includes all works deriving from DOE, other related government-sponsored information, and foreign nonnuclear information. Arranged under 39 categories, e.g., Biomedical sciences, basic studies; Biomedical sciences, applied studies; Health and safety; and Fusion energy. Entry gives bibliographical information and abstract. Corporate, author, subject, report number indexes."
+    },
+    {
+        "ISBN": "WISC:89060461761",
+        "Title": "Nonpoint Source Water Pollution & Soil Conservation Programs",
+        "Author": "",
+        "Year": 1997,
+        "Publisher": "",
+        "category": [
+            "Soil conservation",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112082149193",
+        "Title": "Virginia Journal of Education",
+        "Author": "",
+        "Year": 1925,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112111543457",
+        "Title": "School of Social Work",
+        "Author": "University of Connecticut. School of Social Work",
+        "Year": 1959,
+        "Publisher": "",
+        "category": [
+            "Schools of social work",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112107991405",
+        "Title": "Visual Education",
+        "Author": "University of Oklahoma. University Extension Division. Dept. of Visual Education",
+        "Year": 1923,
+        "Publisher": "",
+        "category": [
+            "Visual education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435031111057",
+        "Title": "New Serial Titles",
+        "Author": "",
+        "Year": 1989,
+        "Publisher": "",
+        "category": [
+            "Periodicals",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "A union list of serials commencing publication after Dec. 31, 1949."
+    },
+    {
+        "ISBN": "UCLA:L0103412938",
+        "Title": "Comprehensive Annual Financial Report for Fiscal Year Ended ...",
+        "Author": "California",
+        "Year": 2007,
+        "Publisher": "",
+        "category": [
+            "California",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCLA:L0100010230",
+        "Title": "Culture & Agriculture",
+        "Author": "",
+        "Year": 2001,
+        "Publisher": "",
+        "category": [
+            "Agricultural development projects",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Bulletin of the Anthropological Study Group on Agrarian Systems"
+    },
+    {
+        "ISBN": "STANFORD:36105110650160",
+        "Title": "County of Alameda Alcohol and Drug Programs, East Bay Community Recovery Project, July 1, 1995 Through June 30, 1996 : Final Audit Report",
+        "Author": "California. Department of Alcohol and Drug Programs. Audit Services Branch",
+        "Year": 2000,
+        "Publisher": "",
+        "category": [
+            "Alameda County (Calif.)",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112028189196",
+        "Title": "Popular Government",
+        "Author": "",
+        "Year": 1957,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UOM:39015076540429",
+        "Title": "Report",
+        "Author": "District of Columbia. Board of Education",
+        "Year": 1929,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "CHI:097902625",
+        "Title": "Bulletin",
+        "Author": "California. Dept. of Agriculture",
+        "Year": 1928,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCBK:C075257913",
+        "Title": "Proceedings of the ... Annual Convention of the Association of Southern Agricultural Workers",
+        "Author": "Association of Southern Agricultural Workers. Convention",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "NWU:35558002579148",
+        "Title": "Modern Hospital",
+        "Author": "",
+        "Year": 1926,
+        "Publisher": "",
+        "category": [
+            "Hospitals",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCLA:L0097232151",
+        "Title": "Bulletin",
+        "Author": "",
+        "Year": 2006,
+        "Publisher": "",
+        "category": [
+            "Turkic languages",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "NYPL:33433060883737",
+        "Title": "Vietnam Economic News",
+        "Author": "",
+        "Year": 2002,
+        "Publisher": "",
+        "category": [
+            "Business enterprises",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR5D6V3QK01",
+        "Title": "\"Code of Massachusetts regulations, 1991\"",
+        "Author": "",
+        "Year": 1991,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UIUC:30112007817601",
+        "Title": "Journal of the Franklin Institute",
+        "Author": "Franklin Institute (Philadelphia, Pa.)",
+        "Year": 1922,
+        "Publisher": "",
+        "category": [
+            "Meteorology",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Devoted to Science and the Mechanic Arts",
+        "description": "Vols. 1-69 include more or less complete patent reports of the U. S. Patent Office for years 1825-59."
+    },
+    {
+        "ISBN": "IND:30000119168403",
+        "Title": "Proceedings of the ... Annual Educational Conference",
+        "Author": "",
+        "Year": 1922,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "HARVARD:32044102790045",
+        "Title": "Journal of Education",
+        "Author": "",
+        "Year": 1919,
+        "Publisher": "",
+        "category": [
+            "Education",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCD:31175006925039",
+        "Title": "California Journal of Development",
+        "Author": "",
+        "Year": 1927,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UCAL:B4324456",
+        "Title": "Planning and National Recovery",
+        "Author": "",
+        "Year": 1929,
+        "Publisher": "",
+        "category": [
+            "Cities and towns",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "\"Twenty years of city planning progress in the United States [by] John Nolen\": 19th, p. 1-44."
+    },
+    {
+        "ISBN": "LLMC:MAR1HEV3QK0L",
+        "Title": "\"Code of Massachusetts regulations, 2007\"",
+        "Author": "",
+        "Year": 2007,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UOM:39015024479712",
+        "Title": "A Study of Boy Scouts and Their Scoutmasters",
+        "Author": "University of Michigan. Survey Research Center",
+        "Year": 1960,
+        "Publisher": "",
+        "category": [
+            "Boy Scouts",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "A Report of Four National Surveys"
+    },
+    {
+        "ISBN": "MSU:31293102074881",
+        "Title": "An Evaluation of Practices Used in Conducting Young Farmer Programs in Michigan",
+        "Author": "Howard Douglas Bernson",
+        "Year": 1957,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "NYPL:33433006252856",
+        "Title": "Michigan State Farmers' Institutes",
+        "Author": "Michigan. State Board of Agriculture",
+        "Year": 1895,
+        "Publisher": "",
+        "category": [
+            "Agriculture",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Winter of ..."
+    },
+    {
+        "ISBN": "LLMC:MAR33UU3QK0I",
+        "Title": "\"Code of Massachusetts regulations, 1999\"",
+        "Author": "",
+        "Year": 1999,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "LLMC:MAR4ZWU3QK0D",
+        "Title": "\"Code of Massachusetts regulations, 1992\"",
+        "Author": "",
+        "Year": 1992,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "CORNELL:31924104264415",
+        "Title": "Communicable Disease Center",
+        "Author": "United States. Communicable disease center. Atlanta, Ga",
+        "Year": 1948,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Activities [annual Report]"
+    },
+    {
+        "ISBN": "LLMC:MAR1JXU3QK0Z",
+        "Title": "\"Code of Massachusetts regulations, 2008\"",
+        "Author": "",
+        "Year": 2008,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UOM:39015019913790",
+        "Title": "American Aviation",
+        "Author": "",
+        "Year": 1951,
+        "Publisher": "",
+        "category": [
+            "Aeronautics",
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Issues for include Annual air transport progress issue."
+    },
+    {
+        "ISBN": "NYPL:33433109814461",
+        "Title": "Florida Public Works",
+        "Author": "",
+        "Year": 1940,
+        "Publisher": "",
+        "category": [
+            "Roads",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "UIUC:30112122538140",
+        "Title": "1981 Plan for Department of Public Aid",
+        "Author": "Illinois. Department of Public Aid",
+        "Year": 1980,
+        "Publisher": "",
+        "category": [
+            "Public welfare",
+            "BOOK"
+        ],
+        "language": "en",
+        "subtitle": "Part I, Fiscal Years 1979-1981 Human Services Data Report"
+    },
+    {
+        "ISBN": "LLMC:MAR753V3QK0C",
+        "Title": "\"Code of Massachusetts regulations, 2013\"",
+        "Author": "",
+        "Year": 2013,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "CORNELL:31924054885722",
+        "Title": "Annals of the American Academy of Political and Social Science",
+        "Author": "",
+        "Year": 1922,
+        "Publisher": "",
+        "category": [
+            "Political science",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "OSU:32435063083158",
+        "Title": "Proceedings of All Ohio Safety Congress",
+        "Author": "",
+        "Year": 1928,
+        "Publisher": "",
+        "category": [
+            "Accidents",
+            "BOOK"
+        ],
+        "language": "en"
+    },
+    {
+        "ISBN": "LLMC:MAR6DYU3QK0N",
+        "Title": "\"Code of Massachusetts regulations, 1989\"",
+        "Author": "",
+        "Year": 1989,
+        "Publisher": "",
+        "category": [
+            "BOOK"
+        ],
+        "language": "en",
+        "description": "Archival snapshot of entire looseleaf Code of Massachusetts Regulations held by the Social Law Library of Massachusetts as of January 2020."
+    },
+    {
+        "ISBN": "UCAL:C2605004",
+        "Title": "London Calling",
+        "Author": "",
+        "Year": 1947,
+        "Publisher": "",
+        "category": [
+            "International broadcasting",
+            "BOOK"
+        ],
+        "language": "en"
     }
 ]
