@@ -10,7 +10,7 @@ import {
   toaster,
 } from '@/components';
 import { BOOK_SORT_OPTIONS } from '@/constants';
-import { useBookFilters, useBooks } from '@/lib/hooks';
+import { useBookFilters, useBooks, useCategories } from '@/lib/hooks';
 import { FavoriteBooksListPayload } from '@/types';
 import { Box, Stack, Text } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -21,10 +21,12 @@ function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const searchQuery = searchParams.get('q') || '';
+  const categoryParam = searchParams.get('category') || '';
   const [sortBy, setSortBy] = useState(searchParams.get('sortBy') || 'newest');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [favoriteBooks, setFavoriteBooks] = useState<FavoriteBooksListPayload | null>(null);
+  const { data: categories } = useCategories();
 
   const {
     isFilterDialogOpen,
@@ -33,6 +35,7 @@ function SearchContent() {
     filterState,
     updateFilterState,
     appliedFilters,
+    setAppliedFilters,
     applyFilters,
     clearFilters,
   } = useBookFilters();
@@ -105,6 +108,33 @@ function SearchContent() {
       isFavorite: favoriteBookIds.has(book.id),
     }));
   }, [data?.books, favoriteBooks]);
+
+  // Handle category query parameter from URL
+  useEffect(() => {
+    if (categoryParam && categories) {
+      // Find category by name
+      const category = categories.find(
+        cat => cat.name.toLowerCase() === categoryParam.toLowerCase()
+      );
+
+      if (category) {
+        // Set category filter automatically
+        setAppliedFilters({
+          categoryIds: [category.id],
+        });
+
+        // Update filter state to reflect in filter dialog
+        updateFilterState({
+          selectedCategories: [
+            {
+              value: category.id.toString(),
+              label: category.name,
+            },
+          ],
+        });
+      }
+    }
+  }, [categoryParam, categories, setAppliedFilters, updateFilterState]);
 
   useEffect(() => {
     setPage(1);
@@ -185,9 +215,11 @@ function SearchContent() {
       {/* Search Results Info */}
       <Box mt={4}>
         <Text fontSize="sm" color="secondaryText.500">
-          {searchQuery
-            ? `Search results for "${searchQuery}": ${totalCount} books`
-            : `All books: ${totalCount} books`}
+          {categoryParam
+            ? `Category "${categoryParam}": ${totalCount} books`
+            : searchQuery
+              ? `Search results for "${searchQuery}": ${totalCount} books`
+              : `All books: ${totalCount} books`}
         </Text>
       </Box>
 

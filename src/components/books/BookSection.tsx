@@ -28,7 +28,7 @@ export function BookSection({ title, showAllLink, books, onBookClick }: BookSect
             href={showAllLink}
             fontSize="sm"
             color="secondaryText.500"
-            _hover={{ color: 'primary.500', textDecoration: 'underline' }}
+            _hover={{ color: 'primary.500' }}
             transition="color 0.2s"
           >
             Show All

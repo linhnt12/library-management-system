@@ -59,6 +59,7 @@ interface BookJsonData {
   language: string;
   subtitle?: string;
   description?: string;
+  coverImageUrl?: string;
 }
 
 // =========================
@@ -129,6 +130,29 @@ function buildCategoryArray(categories?: string[], printType?: string): string[]
 }
 
 /**
+ * Helper function: Extracts image URL from imageLinks (prefers thumbnail, then smallThumbnail)
+ */
+function extractImageUrl(imageLinks?: {
+  smallThumbnail?: string;
+  thumbnail?: string;
+}): string | undefined {
+  if (!imageLinks) {
+    return undefined;
+  }
+
+  // Prefer thumbnail, then smallThumbnail
+  if (imageLinks.thumbnail) {
+    return imageLinks.thumbnail;
+  }
+
+  if (imageLinks.smallThumbnail) {
+    return imageLinks.smallThumbnail;
+  }
+
+  return undefined;
+}
+
+/**
  * Helper function: Transforms Google Books volume to BookJsonData format
  */
 function transformVolumeToBookData(volume: GoogleBooksVolume): BookJsonData | null {
@@ -143,6 +167,7 @@ function transformVolumeToBookData(volume: GoogleBooksVolume): BookJsonData | nu
   const year = extractYear(volumeInfo.publishedDate);
   const author = getFirstAuthor(volumeInfo.authors);
   const category = buildCategoryArray(volumeInfo.categories, volumeInfo.printType);
+  const coverImageUrl = extractImageUrl(volumeInfo.imageLinks);
 
   return {
     ISBN: isbn,
@@ -154,6 +179,7 @@ function transformVolumeToBookData(volume: GoogleBooksVolume): BookJsonData | nu
     language: volumeInfo.language || 'en',
     subtitle: volumeInfo.subtitle || undefined,
     description: volumeInfo.description || undefined,
+    coverImageUrl: coverImageUrl,
   };
 }
 
