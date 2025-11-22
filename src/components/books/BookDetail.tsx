@@ -271,14 +271,18 @@ export function BookDetail({
         <Box flex="5">
           <Grid templateColumns={{ base: '1fr', lg: '2fr 3fr' }} gap={8} mb={6}>
             {/* Book Cover */}
-            <Image
-              src={book.coverImageUrl ?? ''}
-              alt={book.title}
-              objectFit="cover"
-              borderRadius="lg"
-              bg="gray.100"
-              boxShadow="md"
-            />
+            <Box width="100%" position="relative">
+              <Image
+                src={book.coverImageUrl ?? ''}
+                alt={book.title}
+                width="100%"
+                objectFit="contain"
+                borderRadius="lg"
+                bg="gray.100"
+                boxShadow="md"
+                minHeight="400px"
+              />
+            </Box>
 
             {/* Book Details */}
             <VStack align="start" gap={2}>

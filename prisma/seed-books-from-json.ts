@@ -14,6 +14,7 @@ interface BookJsonData {
   language: string;
   subtitle?: string;
   description?: string; // Added optional description field
+  coverImageUrl?: string; // Added optional coverImageUrl field
 }
 
 /**
@@ -142,7 +143,7 @@ async function seedBooksFromJson() {
         author = await findOrCreateAuthor('Unknown Author', authorsCache);
       }
 
-      // Tạo Book với đầy đủ các field bao gồm language, subtitle và description
+      // Tạo Book với đầy đủ các field bao gồm language, subtitle, description và coverImageUrl
       const book = await prisma.book.create({
         data: {
           authorId: author.id,
@@ -157,7 +158,10 @@ async function seedBooksFromJson() {
             bookData.description && bookData.description.trim() !== ''
               ? bookData.description
               : null,
-          coverImageUrl: null,
+          coverImageUrl:
+            bookData.coverImageUrl && bookData.coverImageUrl.trim() !== ''
+              ? bookData.coverImageUrl
+              : null,
           pageCount: null,
           price: null,
           edition: null,
