@@ -58,18 +58,11 @@ async function syncBooksToItems() {
     // Create labels from book metadata
     const labels: string[] = [];
     if (book.language) labels.push(book.language);
-    if (book.topic) {
-      try {
-        const topics = JSON.parse(book.topic);
-        if (Array.isArray(topics)) {
-          labels.push(...topics);
-        }
-      } catch {
-        // Ignore parse errors
-      }
-    }
     if (book.author) {
       labels.push(book.author.fullName);
+    }
+    if (book.subtitle) {
+      labels.push(book.subtitle);
     }
 
     // Check if item exists

@@ -100,17 +100,17 @@ model Author {
 model Book {
   id            Int     @id @default(autoincrement())
   authorId      Int
-  title         String
+  title         String  @db.Text
   isbn          String? @unique
   publishYear   Int?
-  publisher     String?
+  publisher     String? @db.Text
   pageCount     Int?
   price         Int?
   edition       String?
   description   String? @db.Text
+  subtitle      String? @db.Text
   coverImageUrl String?
   language      String? // Example: "vi"
-  topic         String? // Example: ["science", "technology", "engineering", "math"]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
