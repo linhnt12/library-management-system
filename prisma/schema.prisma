@@ -26,6 +26,7 @@ model User {
   role            Role
   status          UserStatus
   violationPoints Int        @default(0)
+  interest        String?    @db.Text // JSON array string, e.g., "[\"computer\",\"business\"]"
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -125,7 +126,7 @@ model Book {
   bookItems          BookItem[]
   borrowRequestItems BorrowRequestItem[]
   bookEditions       BookEdition[]
-  borrowEbooks      BorrowEbook[]
+  borrowEbooks       BorrowEbook[]
 }
 
 // =========================
@@ -464,7 +465,6 @@ enum DRMType {
   LCP
   CUSTOM
 }
-
 
 enum ActionType {
   GET
