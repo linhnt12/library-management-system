@@ -60,6 +60,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             categoryId: true,
           },
         },
+        bookEditions: {
+          where: { isDeleted: false },
+          select: {
+            id: true,
+            format: true,
+          },
+        },
       },
     });
 
@@ -67,7 +74,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       throw new NotFoundError('Book not found');
     }
 
-    return successResponse<BookDetail>(book);
+    // Calculate ebook and audio counts
+    const ebookCount = book.bookEditions?.filter(e => e.format === 'EBOOK').length ?? 0;
+    const audioCount = book.bookEditions?.filter(e => e.format === 'AUDIO').length ?? 0;
+
+    // Transform to BookDetail format (exclude bookEditions from response)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { bookEditions: _, ...bookWithoutEditions } = book;
+    const bookDetail: BookDetail = {
+      ...bookWithoutEditions,
+      bookEbookCount: ebookCount,
+      bookAudioCount: audioCount,
+    };
+
+    return successResponse<BookDetail>(bookDetail);
   } catch (error) {
     return handleRouteError(error, 'GET /api/books/[id]');
   }

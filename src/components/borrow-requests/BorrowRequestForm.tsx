@@ -1,13 +1,18 @@
 'use client';
 
-import { FormInput } from '@/components';
+import { FormInput, FormSelect } from '@/components';
 import { Box, Text, VStack } from '@chakra-ui/react';
+
+export type BorrowType = 'book-copy' | 'ebook';
 
 interface BorrowRequestFormProps {
   startDate: string;
   endDate: string;
+  borrowType?: BorrowType;
+  hasEbook?: boolean;
   onStartDateChange: (date: string) => void;
   onEndDateChange: (date: string) => void;
+  onBorrowTypeChange?: (type: BorrowType) => void;
   startDateError?: string;
   endDateError?: string;
 }
@@ -15,8 +20,11 @@ interface BorrowRequestFormProps {
 export function BorrowRequestForm({
   startDate,
   endDate,
+  borrowType = 'book-copy',
+  hasEbook = false,
   onStartDateChange,
   onEndDateChange,
+  onBorrowTypeChange,
   startDateError,
   endDateError,
 }: BorrowRequestFormProps) {
@@ -37,8 +45,32 @@ export function BorrowRequestForm({
   const maxEndDate = getMaxEndDate();
   const minStartDate = getMinStartDate();
 
+  // Only show borrow type selection if book has both options
+  const showBorrowTypeSelection = hasEbook;
+
+  const borrowTypeOptions = [
+    { label: 'Book Copy (Physical)', value: 'book-copy' },
+    { label: 'Ebook (Digital)', value: 'ebook' },
+  ];
+
   return (
     <VStack gap={6} align="stretch">
+      {/* Borrow Type Selection */}
+      {showBorrowTypeSelection && onBorrowTypeChange && (
+        <Box>
+          <Text fontSize="md" fontWeight="medium" mb={3}>
+            Borrow Type
+          </Text>
+          <FormSelect
+            items={borrowTypeOptions}
+            value={borrowType}
+            onChange={value => onBorrowTypeChange(value as BorrowType)}
+            placeholder="Select borrow type"
+            width="100%"
+            height="50px"
+          />
+        </Box>
+      )}
       <Box>
         <Text fontSize="md" fontWeight="medium" mb={3}>
           Start Date

@@ -34,7 +34,21 @@ export async function fetchWithAuth(
   input: RequestInfo | URL,
   init: RequestInit = {}
 ): Promise<Response> {
-  const response = await fetch(input, init);
+  // Normalize headers to a Headers instance
+  const headers = new Headers(init.headers as HeadersInit | undefined);
+
+  // If Authorization header is not already set, try to add it from cookie
+  if (!headers.has('Authorization')) {
+    const token = getAccessToken();
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+  }
+
+  // Create new init with updated headers
+  const initWithAuth: RequestInit = { ...init, headers };
+
+  const response = await fetch(input, initWithAuth);
 
   if (response.status !== 401) return response;
 
@@ -74,8 +88,7 @@ export async function fetchWithAuth(
     // Retry original request with updated Authorization header (if applicable)
     const token = getAccessToken();
 
-    // Normalize headers to a Headers instance so we can overwrite Authorization
-    const headers = new Headers(init.headers as HeadersInit | undefined);
+    // No need to update Authorization header if token is not present
     if (token) headers.set('Authorization', `Bearer ${token}`);
 
     const retryInit: RequestInit = { ...init, headers };

@@ -185,6 +185,8 @@ const StatCard = ({ label, value }: { label: string; value: string }) => (
   </VStack>
 );
 
+import { BorrowType } from '@/components/borrow-requests/BorrowRequestForm';
+
 interface BookDetailProps {
   book: BookDetailType;
   onEditClick?: () => void;
@@ -195,10 +197,12 @@ interface BookDetailProps {
     bookId: number;
     startDate: string;
     endDate: string;
+    borrowType: BorrowType;
   }) => Promise<void>;
   onAddToFavoriteClick?: () => void;
   onRemoveFromFavoriteClick?: () => void;
   isFavorite?: boolean;
+  hasEbook?: boolean;
 }
 
 export function BookDetail({
@@ -210,6 +214,7 @@ export function BookDetail({
   onAddToFavoriteClick,
   onRemoveFromFavoriteClick,
   isFavorite = false,
+  hasEbook = false,
 }: BookDetailProps) {
   // Get current user info
   const { data: user } = useMe();
@@ -228,6 +233,7 @@ export function BookDetail({
   } = useBorrowRequestForm({
     bookId: book.id,
     user: user ? { id: user.id, fullName: user.fullName } : null,
+    hasEbook,
     onCreateBorrowRequest,
   });
 
@@ -453,8 +459,11 @@ export function BookDetail({
                 <BorrowRequestForm
                   startDate={borrowForm.startDate}
                   endDate={borrowForm.endDate}
+                  borrowType={borrowForm.borrowType}
+                  hasEbook={hasEbook}
                   onStartDateChange={date => setBorrowField('startDate', date)}
                   onEndDateChange={date => setBorrowField('endDate', date)}
+                  onBorrowTypeChange={type => setBorrowField('borrowType', type)}
                   startDateError={borrowErrors.startDate}
                   endDateError={borrowErrors.endDate}
                 />

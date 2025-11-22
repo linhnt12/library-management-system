@@ -24,7 +24,11 @@ register({
 });
 
 import { CronManager } from '../src/lib/cron';
-import { borrowReminderTask, reservationReminderTask } from '../src/lib/cron/jobs';
+import {
+  borrowReminderTask,
+  ebookExpiredTask,
+  reservationReminderTask,
+} from '../src/lib/cron/jobs';
 
 // #region Register All Cron Jobs
 
@@ -50,6 +54,16 @@ CronManager.register({
   task: reservationReminderTask,
   description:
     'Check BorrowRequest startDate for PENDING requests and send reminder notifications (3 days before reservation expires)',
+  enabled: true,
+});
+
+// Register Ebook Expired Job
+// Runs every hour
+CronManager.register({
+  name: 'ebook-expired',
+  schedule: '0 * * * *', // Every hour
+  task: ebookExpiredTask,
+  description: 'Automatically return expired ebooks (BorrowRecords with returnDate < now)',
   enabled: true,
 });
 
